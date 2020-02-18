@@ -1,7 +1,7 @@
 #pragma once
+#include "Map.h"
 
 namespace AImap {
-
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
@@ -64,7 +64,6 @@ namespace AImap {
 			// 
 			// openFileDialog1
 			// 
-			this->openFileDialog1->FileName = L"fileMap";
 			this->openFileDialog1->Filter = L"Archivos de texto|*.txt";
 			// 
 			// button_OpenFile
@@ -119,14 +118,19 @@ namespace AImap {
 
 		}
 #pragma endregion
+	String ^aux;
+	
 	private: System::Void button_OpenFile_Click(System::Object^  sender, System::EventArgs^  e) {
 		if (openFileDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
 			textBox_FileNameMap->Text = openFileDialog1->FileName;
+			aux = openFileDialog1->FileName;
 		}
 	}
 	private: System::Void button_ChargeMap_Click(System::Object^  sender, System::EventArgs^  e) {
-		AImap::Map map(textBox_FileNameMap->Text);
-		Application::Run(%map);
+		Map ^map;
+		map = gcnew Map(this, aux);
+		this->Hide();
+		map->Show();
 	}
 };
 }
