@@ -429,13 +429,13 @@ public:
 	}
 
 	//Node* findData(const T& e) {
-	Node* findData(T& e) {
+	Node* findPositionXY(T& e) {
 		if (isEmpty()) {
 			return nullptr;
 		}
 		Node* aux(header->getNext());
 		while (aux != header) {
-			if (aux->getData().getName() == e.getName()) {
+			if (aux->getData().getPositionX() == e.getPositionX() && aux->getData().getPositionY() == e.getPositionY()) {
 				return aux;
 			}
 			aux = aux->getNext();
@@ -443,13 +443,13 @@ public:
 		return nullptr;
 	}
 
-	bool findIdProcess(int toFind) {
+	bool findasdfY(int x, int y) {
 		if (isEmpty()) {
 			return false;
 		}
 		Node* aux(header->getNext());
 		while (aux != header) {
-			if (aux->getData().getId() == toFind) {
+			if (aux->getData().getPositionX() == x && aux->getData().getPositionY() == y) {
 				return true;
 			}
 			aux = aux->getNext();

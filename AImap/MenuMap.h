@@ -64,6 +64,7 @@ namespace AImap {
 			// 
 			// openFileDialog1
 			// 
+			this->openFileDialog1->AutoUpgradeEnabled = false;
 			this->openFileDialog1->Filter = L"Archivos de texto|*.txt";
 			// 
 			// button_OpenFile
@@ -128,7 +129,7 @@ namespace AImap {
 	}
 	private: System::Void button_ChargeMap_Click(System::Object^  sender, System::EventArgs^  e) {
 		Map ^map;
-		map = gcnew Map(this, aux);
+		map = gcnew Map(aux);
 		this->Hide();
 		map->Show();
 	}

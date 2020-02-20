@@ -7,6 +7,8 @@ class Cell {
 		int id;
 		int idGround;
 		int visitCounter;
+		int positionX;
+		int positionY;
 
 	public:
 		int getId() {
@@ -19,6 +21,14 @@ class Cell {
 			return visitCounter;
 		}
 
+		int getPositionX() {
+			return positionX;
+		}
+
+		int getPositionY() {
+			return positionY;
+		}
+
 		void setId(const int& idX) {
 			id = idX;
 		}
@@ -27,5 +37,13 @@ class Cell {
 		}
 		void setVisitCounter(const int& visitCounderX){
 			visitCounter = visitCounderX;
+		}
+
+		void setPositionX(const int& positionXX) {
+			positionX = positionXX;
+		}
+
+		void setPositionY(const int& positionYY) {
+			positionY = positionYY;
 		}
 };

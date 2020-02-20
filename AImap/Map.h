@@ -11,7 +11,10 @@
 #include "collection.h"
 #include "cell.h"
 #include "arrayclass.h"
-#include "MenuMap.h"
+
+#define MAX_SIZE 15
+
+//ArrayClass<int, Cell> arrayData[110][110];
 
 namespace AImap {
 	using namespace System;
@@ -22,35 +25,44 @@ namespace AImap {
 	using namespace System::Drawing;
 
 	using namespace std;
+	//ArrayClass<int, Cell> arrayData[MAX_SIZE][MAX_SIZE];
+	
+	
 	/// <summary>
 	/// Resumen de Map
 	/// </summary>
 	public ref class Map : public System::Windows::Forms::Form
 	{
-	MenuMap ^menuM;
-	private:
-		Collection<Cell> *listCell;
-		Collection<ArrayClass<int>> *listArrayClass;
-		ArrayClass<int> *arrayData;
+	private:;
+	private: System::Windows::Forms::TextBox^  textBox1;
+	private: System::Windows::Forms::TextBox^  textBox_FileNameMap;
+	private: System::Windows::Forms::Panel^  panelMap;
+	private: System::ComponentModel::Container ^components;
 
-	private: System::Windows::Forms::Button^  button1;
-			 
+
+	Collection<ArrayClass<int, Cell>> *listArrayClass;
+	System::Windows::Forms::Button^  button1;
+	private: System::Windows::Forms::TabControl^  tabControl1;
+	private: System::Windows::Forms::TabPage^  tabPage1;
+	private: System::Windows::Forms::TabPage^  tabPage2;
+
+			 Collection<Cell> *listCell;
+				 
 	
 	public:
+			
 		Map(void)
 		{
 			InitializeComponent();
-			drawMap();
+			
 		}
 
-		Map(MenuMap ^menuMapX ,String ^fileNameMap) {
+		Map(String ^fileNameMap) {
 			InitializeComponent();
 			listCell = new Collection<Cell>;
-			listArrayClass = new Collection<ArrayClass<int>>;
-			arrayData = new ArrayClass<int>;
-			menuM = menuMapX;
-			drawMap();
-			//chargeMap(fileNameMap);
+			listArrayClass = new Collection<ArrayClass<int, Cell>>;
+			//arrayData = new ArrayClass<int>;
+			chargeMap(fileNameMap);
 
 		}
 	
@@ -65,18 +77,13 @@ namespace AImap {
 			{
 				delete components;
 			}
-			menuM->Close();
+			Application::Exit();
 		}
-	private: System::Windows::Forms::Panel^  panelMap;
-	private: System::Windows::Forms::TextBox^  txtPrueba;
-	private: System::Windows::Forms::TextBox^  txtPrueba2;
-	protected:
-
-	private:
+		
 		/// <summary>
 		/// Variable del diseñador necesaria.
 		/// </summary>
-		System::ComponentModel::Container ^components;
+		
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -86,38 +93,28 @@ namespace AImap {
 		void InitializeComponent(void)
 		{
 			this->panelMap = (gcnew System::Windows::Forms::Panel());
-			this->txtPrueba = (gcnew System::Windows::Forms::TextBox());
-			this->txtPrueba2 = (gcnew System::Windows::Forms::TextBox());
 			this->button1 = (gcnew System::Windows::Forms::Button());
+			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
+			this->textBox_FileNameMap = (gcnew System::Windows::Forms::TextBox());
+			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
+			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
+			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
+			this->tabControl1->SuspendLayout();
+			this->tabPage1->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// panelMap
 			// 
-			this->panelMap->Location = System::Drawing::Point(12, 208);
+			this->panelMap->AutoSize = true;
+			this->panelMap->Location = System::Drawing::Point(44, 121);
 			this->panelMap->Name = L"panelMap";
-			this->panelMap->Size = System::Drawing::Size(606, 377);
+			this->panelMap->Size = System::Drawing::Size(511, 392);
 			this->panelMap->TabIndex = 1;
 			this->panelMap->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Map::panelMap_Paint);
 			// 
-			// txtPrueba
-			// 
-			this->txtPrueba->Location = System::Drawing::Point(117, 3);
-			this->txtPrueba->Multiline = true;
-			this->txtPrueba->Name = L"txtPrueba";
-			this->txtPrueba->Size = System::Drawing::Size(266, 84);
-			this->txtPrueba->TabIndex = 1;
-			// 
-			// txtPrueba2
-			// 
-			this->txtPrueba2->Location = System::Drawing::Point(117, 118);
-			this->txtPrueba2->Multiline = true;
-			this->txtPrueba2->Name = L"txtPrueba2";
-			this->txtPrueba2->Size = System::Drawing::Size(266, 84);
-			this->txtPrueba2->TabIndex = 2;
-			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(514, 104);
+			this->button1->Location = System::Drawing::Point(493, 20);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(75, 23);
 			this->button1->TabIndex = 3;
@@ -125,28 +122,77 @@ namespace AImap {
 			this->button1->UseVisualStyleBackColor = true;
 			this->button1->Click += gcnew System::EventHandler(this, &Map::button1_Click);
 			// 
+			// textBox1
+			// 
+			this->textBox1->Location = System::Drawing::Point(55, 23);
+			this->textBox1->Multiline = true;
+			this->textBox1->Name = L"textBox1";
+			this->textBox1->ReadOnly = true;
+			this->textBox1->Size = System::Drawing::Size(216, 92);
+			this->textBox1->TabIndex = 4;
+			// 
+			// textBox_FileNameMap
+			// 
+			this->textBox_FileNameMap->Location = System::Drawing::Point(288, 23);
+			this->textBox_FileNameMap->Name = L"textBox_FileNameMap";
+			this->textBox_FileNameMap->Size = System::Drawing::Size(183, 20);
+			this->textBox_FileNameMap->TabIndex = 5;
+			// 
+			// tabControl1
+			// 
+			this->tabControl1->Controls->Add(this->tabPage1);
+			this->tabControl1->Controls->Add(this->tabPage2);
+			this->tabControl1->Location = System::Drawing::Point(12, 25);
+			this->tabControl1->Name = L"tabControl1";
+			this->tabControl1->SelectedIndex = 0;
+			this->tabControl1->Size = System::Drawing::Size(603, 560);
+			this->tabControl1->TabIndex = 6;
+			// 
+			// tabPage1
+			// 
+			this->tabPage1->Controls->Add(this->textBox1);
+			this->tabPage1->Controls->Add(this->textBox_FileNameMap);
+			this->tabPage1->Controls->Add(this->panelMap);
+			this->tabPage1->Controls->Add(this->button1);
+			this->tabPage1->Location = System::Drawing::Point(4, 22);
+			this->tabPage1->Name = L"tabPage1";
+			this->tabPage1->Padding = System::Windows::Forms::Padding(3);
+			this->tabPage1->Size = System::Drawing::Size(595, 534);
+			this->tabPage1->TabIndex = 0;
+			this->tabPage1->Text = L"tabPage1";
+			this->tabPage1->UseVisualStyleBackColor = true;
+			// 
+			// tabPage2
+			// 
+			this->tabPage2->Location = System::Drawing::Point(4, 22);
+			this->tabPage2->Name = L"tabPage2";
+			this->tabPage2->Padding = System::Windows::Forms::Padding(3);
+			this->tabPage2->Size = System::Drawing::Size(595, 496);
+			this->tabPage2->TabIndex = 1;
+			this->tabPage2->Text = L"tabPage2";
+			this->tabPage2->UseVisualStyleBackColor = true;
+			// 
 			// Map
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(630, 597);
-			this->Controls->Add(this->button1);
-			this->Controls->Add(this->txtPrueba2);
-			this->Controls->Add(this->txtPrueba);
-			this->Controls->Add(this->panelMap);
+			this->Controls->Add(this->tabControl1);
 			this->Name = L"Map";
 			this->Text = L"Map";
+			this->tabControl1->ResumeLayout(false);
+			this->tabPage1->ResumeLayout(false);
+			this->tabPage1->PerformLayout();
 			this->ResumeLayout(false);
-			this->PerformLayout();
 
 		}
 #pragma endregion
-		
+
 		void chargeMap(String ^fileNameMap) {
 			Cell cell;
-			std::string str;
+			std::string str, str2;
 			char character;
-			int column = 0, row = 0, counter = 0, value;
+			int column = 0, row = 0, counter = 0, value = 0, sizeMax = 15;
 			fstream readerFile;
 			marshalString(fileNameMap, str);
 			readerFile.open(str, ios::in);
@@ -169,37 +215,65 @@ namespace AImap {
 							if (isdigit(character)) {
 								str += character;
 							}
+							// Valida cada columna
 							else if (character == ',') {
-								cell.setId(counter);
-								cell.setIdGround(atoi(str.c_str()));
-								listCell->insertData(cell);
-								if (row <= 14) {
-									value = cell.getId();
-									arrayData->setRow(row);
-									arrayData->setColumn(column);
-									arrayData->setValue(cell.getId());
+								if (row <= 14 && column <= 14) {
+									cell.setId(counter++);
+									cell.setIdGround(atoi(str.c_str()));
+									cell.setPositionX(row);
+									cell.setPositionY(column);
+									listCell->insertData(cell);
+									textBox1->Text += listCell->getLast()->getData().getPositionX().ToString() + ",";
+									textBox1->Text += listCell->getLast()->getData().getPositionY().ToString() + "//";
 									column++;
 								}
-								counter++;
+								else if(column >= 15){
+									cell.setId(-1);
+									cell.setIdGround(-1);
+									cell.setPositionX(row);
+									cell.setPositionY(column);
+									listCell->insertData(cell);
+								}
 								//txtPrueba->Text += cell.getId().ToString();
 								str = "";
 							}
-							// Retorno de carro
-							else if (character == 10) {
-								cell.setId(counter);
-								cell.setIdGround(atoi(str.c_str()));
-								listCell->insertData(cell);
-								if (row <= 14) {
-									arrayData->setRow(row);
-									arrayData->setColumn(column);
-									arrayData->setValue(cell.getId());
-									row++;
+							// Retorno de carro (agrega la fila)
+							else if (character == 10 || character == 13) {
+								if (row == 0) {
+									sizeMax = column;
+									panelMap->Size.Height = 30 * (sizeMax + 1);
 								}
-								counter++;
+								//MessageBox::Show("Column: " + sizeMax.ToString());
+								if (counter < sizeMax) {
+									marshalString(row.ToString(), str);
+									marshalString(counter.ToString(), str2);
+									messageError("Error, el mapa tiene lados irregulares (Linea: " + str + ", Columna: " + str2 );
+									readerFile.close();
+									break;
+								}
+								if (row <= 14 && column <= 14) {
+									cell.setId(counter++);
+									cell.setIdGround(atoi(str.c_str()));
+									cell.setPositionX(row);
+									cell.setPositionY(column);
+									listCell->insertData(cell);
+
+									row++;
+									column = 0;
+								}
+								else if(row >= 15){
+									cell.setId(-1);
+									cell.setIdGround(-1);
+									cell.setPositionX(row);
+									cell.setPositionY(column);
+
+									listCell->insertData(cell);
+									
+									}
 								//txtPrueba->Text += cell.getId().ToString() + "\r\n";
 								str = "";
 							}
-							// Nueva línea
+							// Valida caracter inválido
 							else {
 								marshalString(fileNameMap, str);
 								messageError("No se puede leer el archivo '" + str + "', archivo corrupto.");
@@ -209,7 +283,7 @@ namespace AImap {
 						}
 					}
 				}
-				arrayData->setSize(row);
+				panelMap->Size.Width = 30 * (sizeMax + 1);
 			}
 			readerFile.close();
 		}
@@ -218,14 +292,31 @@ namespace AImap {
 
 		void drawMap() {
 			Graphics ^g = panelMap->CreateGraphics();
+			SolidBrush ^sb = gcnew SolidBrush(Color::Red);
 			Pen ^p = gcnew Pen(Color::Blue);
-			for (int i = 0; i < arrayData->getSize(); i++) {
-				for (int j = 0; j < arrayData->getSize(); j++) {
-					
-					g->DrawRectangle(p,  * 30, i * 30, 30, 30);
+			Cell cell;
+			string str;
+			
+			for (int i = 0; i < MAX_SIZE; i++) {
+				for (int j = 0; j < MAX_SIZE; j++) {
+					cell.setPositionX(j);
+					cell.setPositionY(i);
+
+					if (listCell->findPositionXY(cell) != nullptr) {
+						cell = listCell->findPositionXY(cell)->getData();
+						g->DrawRectangle(p, i * 30, j * 30, 30, 30);
+						g->DrawString(cell.getIdGround().ToString(), this->Font, sb, PointF(i * 30 + 10, j * 30 + 10));
+						if (cell.getIdGround() == 0) {
+							g->FillRectangle(sb, i * 30 + 1, j * 30 + 1, 29, 29);
+						}
+					}
+					else {
+						str += "- 1";
+					}
 					//txtPrueba2->Text = arrayData->getSize().ToString();
 				}
 			}
+			//MessageBox::Show();
 		}
 		// //////////////////////////////////////////////////////// HERRAMIENTAS ////////////////////////////////////////////////////////////// //
 
@@ -240,7 +331,8 @@ namespace AImap {
 			String ^systemStr = gcnew String(str.c_str());
 			MessageBox::Show("Error: " + systemStr);
 		}
-		
+	
+
 	private: System::Void panelMap_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
 		Graphics ^g = panelMap->CreateGraphics();
 		Pen ^p = gcnew Pen(Color::Black);
@@ -250,8 +342,12 @@ namespace AImap {
 			}
 		}
 	}
-private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-	drawMap();
+	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+		drawMap();
+	
+}
+private: System::Void Map_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
+	Application::Exit();
 }
 };
 }

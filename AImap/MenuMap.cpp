@@ -1,4 +1,5 @@
 #include "MenuMap.h"
+#include "Map.h"
 
 using namespace System;
 using namespace System::Windows::Forms;

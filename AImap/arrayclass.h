@@ -1,14 +1,12 @@
 #pragma once
 
-#include <iostream>
-
-
-template <class T> class ArrayClass {
+template <class T, class U> class ArrayClass {
 private:
 	T row;
 	T column;
 	T value;
 	T size = 0;
+	U cell;
 
 public:
 	T getRow() {
@@ -27,6 +25,10 @@ public:
 		return size;
 	}
 
+	U getCell() {
+		return cell;
+	}
+
 	void setRow(T rowX) {
 		row = rowX;
 	}
@@ -41,5 +43,9 @@ public:
 
 	void setSize(T& sizeX){
 		size = sizeX;
+	}
+
+	void setCell(U& cellX) {
+		cell = cellX;
 	}
 };
