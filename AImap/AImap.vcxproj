@@ -140,6 +140,7 @@
     <ClInclude Include="arrayclass.h" />
     <ClInclude Include="cell.h" />
     <ClInclude Include="collection.h" />
+    <ClInclude Include="colorclass.h" />
     <ClInclude Include="Map.h">
       <FileType>CppForm</FileType>
     </ClInclude>

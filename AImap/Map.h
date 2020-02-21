@@ -7,12 +7,16 @@
 #include <cstdlib>
 #include <cctype>
 #include <string>
+#include <sstream>
 
 #include "collection.h"
 #include "cell.h"
 #include "arrayclass.h"
+#include "colorclass.h"
 
 #define MAX_SIZE 15
+// Para crear botones dinámicos
+#define BUTTON_NAME_COLOR "btn_color"
 
 //ArrayClass<int, Cell> arrayData[110][110];
 
@@ -23,7 +27,6 @@ namespace AImap {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
-
 	using namespace std;
 	//ArrayClass<int, Cell> arrayData[MAX_SIZE][MAX_SIZE];
 	
@@ -38,15 +41,21 @@ namespace AImap {
 	private: System::Windows::Forms::TextBox^  textBox_FileNameMap;
 	private: System::Windows::Forms::Panel^  panelMap;
 	private: System::ComponentModel::Container ^components;
+	private: System::Windows::Forms::Button^  btn_play;
 
 
 	Collection<ArrayClass<int, Cell>> *listArrayClass;
-	System::Windows::Forms::Button^  button1;
+	Collection<Cell> *listCell;
+	Collection<ColorClass> *listColor;
+	//Collection<Button> *listButton;
+
+
 	private: System::Windows::Forms::TabControl^  tabControl1;
 	private: System::Windows::Forms::TabPage^  tabPage1;
+	private: System::Windows::Forms::ColorDialog^  colorDialog1;
 	private: System::Windows::Forms::TabPage^  tabPage2;
 
-			 Collection<Cell> *listCell;
+			 
 				 
 	
 	public:
@@ -61,12 +70,14 @@ namespace AImap {
 			InitializeComponent();
 			listCell = new Collection<Cell>;
 			listArrayClass = new Collection<ArrayClass<int, Cell>>;
+			listColor = new Collection<ColorClass>;
+			//listButton = new Collection<Button>;
+
 			//arrayData = new ArrayClass<int>;
 			chargeMap(fileNameMap);
-
+			chargeColor();
 		}
 	
-
 	protected:
 		/// <summary>
 		/// Limpiar los recursos que se estén usando.
@@ -93,12 +104,13 @@ namespace AImap {
 		void InitializeComponent(void)
 		{
 			this->panelMap = (gcnew System::Windows::Forms::Panel());
-			this->button1 = (gcnew System::Windows::Forms::Button());
+			this->btn_play = (gcnew System::Windows::Forms::Button());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->textBox_FileNameMap = (gcnew System::Windows::Forms::TextBox());
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
 			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
+			this->colorDialog1 = (gcnew System::Windows::Forms::ColorDialog());
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
 			this->SuspendLayout();
@@ -106,25 +118,25 @@ namespace AImap {
 			// panelMap
 			// 
 			this->panelMap->AutoSize = true;
-			this->panelMap->Location = System::Drawing::Point(44, 121);
+			this->panelMap->Location = System::Drawing::Point(44, 104);
 			this->panelMap->Name = L"panelMap";
 			this->panelMap->Size = System::Drawing::Size(511, 392);
 			this->panelMap->TabIndex = 1;
 			this->panelMap->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Map::panelMap_Paint);
 			// 
-			// button1
+			// btn_play
 			// 
-			this->button1->Location = System::Drawing::Point(493, 20);
-			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(75, 23);
-			this->button1->TabIndex = 3;
-			this->button1->Text = L"button1";
-			this->button1->UseVisualStyleBackColor = true;
-			this->button1->Click += gcnew System::EventHandler(this, &Map::button1_Click);
+			this->btn_play->Location = System::Drawing::Point(44, 502);
+			this->btn_play->Name = L"btn_play";
+			this->btn_play->Size = System::Drawing::Size(75, 23);
+			this->btn_play->TabIndex = 3;
+			this->btn_play->Text = L"Jugar";
+			this->btn_play->UseVisualStyleBackColor = true;
+			this->btn_play->Click += gcnew System::EventHandler(this, &Map::button1_Click);
 			// 
 			// textBox1
 			// 
-			this->textBox1->Location = System::Drawing::Point(55, 23);
+			this->textBox1->Location = System::Drawing::Point(44, 6);
 			this->textBox1->Multiline = true;
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->ReadOnly = true;
@@ -153,7 +165,7 @@ namespace AImap {
 			this->tabPage1->Controls->Add(this->textBox1);
 			this->tabPage1->Controls->Add(this->textBox_FileNameMap);
 			this->tabPage1->Controls->Add(this->panelMap);
-			this->tabPage1->Controls->Add(this->button1);
+			this->tabPage1->Controls->Add(this->btn_play);
 			this->tabPage1->Location = System::Drawing::Point(4, 22);
 			this->tabPage1->Name = L"tabPage1";
 			this->tabPage1->Padding = System::Windows::Forms::Padding(3);
@@ -167,7 +179,7 @@ namespace AImap {
 			this->tabPage2->Location = System::Drawing::Point(4, 22);
 			this->tabPage2->Name = L"tabPage2";
 			this->tabPage2->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage2->Size = System::Drawing::Size(595, 496);
+			this->tabPage2->Size = System::Drawing::Size(595, 534);
 			this->tabPage2->TabIndex = 1;
 			this->tabPage2->Text = L"tabPage2";
 			this->tabPage2->UseVisualStyleBackColor = true;
@@ -190,7 +202,9 @@ namespace AImap {
 
 		void chargeMap(String ^fileNameMap) {
 			Cell cell;
+			ColorClass color;
 			std::string str, str2;
+			std::stringstream toStr;
 			char character;
 			int column = 0, row = 0, counter = 0, value = 0, sizeMax = 15;
 			fstream readerFile;
@@ -223,6 +237,10 @@ namespace AImap {
 									cell.setPositionX(row);
 									cell.setPositionY(column);
 									listCell->insertData(cell);
+									if (!listColor->findId(cell.getIdGround())) {
+										color.setId(cell.getIdGround());
+										listColor->insertData(color);
+									}
 									textBox1->Text += listCell->getLast()->getData().getPositionX().ToString() + ",";
 									textBox1->Text += listCell->getLast()->getData().getPositionY().ToString() + "//";
 									column++;
@@ -257,6 +275,10 @@ namespace AImap {
 									cell.setPositionX(row);
 									cell.setPositionY(column);
 									listCell->insertData(cell);
+									if (!listColor->findId(cell.getIdGround())) {
+										color.setId(cell.getIdGround());
+										listColor->insertData(color);
+									}
 
 									row++;
 									column = 0;
@@ -288,6 +310,31 @@ namespace AImap {
 			readerFile.close();
 		}
 
+		void chargeColor() {
+			Button ^btn;
+			String ^systemStr;
+			ColorClass color = ColorClass();
+			int size = listColor->getItemCounter();
+			Collection<ColorClass>* listColor2 = new Collection<ColorClass>;
+
+			for (int i = 0; i < size; i++) {
+				btn = gcnew Button;
+
+				//Estableciendo propiedades de botones dinámicos de colores
+				systemStr = "btn_color" + i.ToString();
+				btn->Name = systemStr;
+				listColor[i]; 
+
+				btn->Text = "Seleccionar color";
+				btn->Location = Point(10,i * 25);
+				btn->Size = System::Drawing::Size(115, 23);
+				btn->BackColor = Color::Green;
+				//Creando los eventos del botón dinámico
+				btn->Click += gcnew System::EventHandler(this, &Map::btn_color_click);
+				tabPage2->Controls->Add(btn);
+			}
+			
+		}
 		
 
 		void drawMap() {
@@ -332,6 +379,31 @@ namespace AImap {
 			MessageBox::Show("Error: " + systemStr);
 		}
 	
+		void btn_color_click(Object^ sender, EventArgs^ e) {
+			Button ^btn;
+			ColorClass color;
+			int id, r, g, b;
+
+			btn = safe_cast<Button^>(sender);
+			//id = Int32::Parse(btn->Name->Substring(9));
+			
+			MessageBox::Show(id.ToString());
+
+			if (listColor->findId(id)) {
+				color = listColor->findId(id)->getData();
+				
+				if (colorDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+					r = colorDialog1->Color.R;
+					g= colorDialog1->Color.G;
+					b = colorDialog1->Color.B;
+					color.setColor(r,g,b);
+					/*MessageBox::Show("color establecido como: " + color.getColor(0).ToString() + " - " +
+						color.getColor(1).ToString() + " - " +
+						color.getColor(2).ToString() + " - " );*/
+				}
+			}
+
+		}
 
 	private: System::Void panelMap_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
 		Graphics ^g = panelMap->CreateGraphics();

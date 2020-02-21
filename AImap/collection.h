@@ -429,6 +429,34 @@ public:
 	}
 
 	//Node* findData(const T& e) {
+	Node* findId(int& toFind) {
+		if (isEmpty()) {
+			return nullptr;
+		}
+		Node* aux(header->getNext());
+		while (aux != header) {
+			if (aux->getData().getId() == toFind) {
+				return aux;
+			}
+			aux = aux->getNext();
+		}
+		return nullptr;
+	}
+
+	bool findId(const int& toFind) {
+		if (isEmpty()) {
+			return false;
+		}
+		Node* aux(header->getNext());
+		while (aux != header) {
+			if (aux->getData().getId() == toFind) {
+				return true;
+			}
+			aux = aux->getNext();
+		}
+		return false;
+	}
+
 	Node* findPositionXY(T& e) {
 		if (isEmpty()) {
 			return nullptr;
@@ -492,8 +520,13 @@ public:
 		isOrdered = true;
 	}
 
-	T& operator[](int idx) {
+	/*T& operator[](int idx) {
 		return retrieveData(idxToPos(idx));
+		
+	}*/
+
+	Node* operator[](int idx) {
+		return idxToPos(idx);
 	}
 
 	Collection& operator + (const Collection& c) {
