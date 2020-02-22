@@ -11,10 +11,12 @@
 
 #include "collection.h"
 #include "cell.h"
-#include "arrayclass.h"
+//#include "arrayclass.h"
 #include "colorclass.h"
 
 #define MAX_SIZE 15
+#define CELL_MAX_SIZE 40
+
 // Para crear botones dinámicos
 #define BUTTON_NAME_COLOR "btn_color"
 
@@ -28,7 +30,6 @@ namespace AImap {
 	using namespace System::Data;
 	using namespace System::Drawing;
 	using namespace std;
-	//ArrayClass<int, Cell> arrayData[MAX_SIZE][MAX_SIZE];
 	
 	
 	/// <summary>
@@ -42,21 +43,15 @@ namespace AImap {
 	private: System::Windows::Forms::Panel^  panelMap;
 	private: System::ComponentModel::Container ^components;
 	private: System::Windows::Forms::Button^  btn_play;
-
-
-	Collection<ArrayClass<int, Cell>> *listArrayClass;
-	Collection<Cell> *listCell;
-	Collection<ColorClass> *listColor;
-	//Collection<Button> *listButton;
-
-
 	private: System::Windows::Forms::TabControl^  tabControl1;
 	private: System::Windows::Forms::TabPage^  tabPage1;
 	private: System::Windows::Forms::ColorDialog^  colorDialog1;
 	private: System::Windows::Forms::TabPage^  tabPage2;
 
+	Collection<Cell> *listCell;
+	Collection<ColorClass> *listColor;
+	//Collection<Button> *listButton;
 			 
-				 
 	
 	public:
 			
@@ -69,7 +64,6 @@ namespace AImap {
 		Map(String ^fileNameMap) {
 			InitializeComponent();
 			listCell = new Collection<Cell>;
-			listArrayClass = new Collection<ArrayClass<int, Cell>>;
 			listColor = new Collection<ColorClass>;
 			//listButton = new Collection<Button>;
 
@@ -259,7 +253,7 @@ namespace AImap {
 							else if (character == 10 || character == 13) {
 								if (row == 0) {
 									sizeMax = column;
-									panelMap->Size.Height = 30 * (sizeMax + 1);
+									panelMap->Size.Height = CELL_MAX_SIZE * (sizeMax + 1);
 								}
 								//MessageBox::Show("Column: " + sizeMax.ToString());
 								if (counter < sizeMax) {
@@ -305,7 +299,7 @@ namespace AImap {
 						}
 					}
 				}
-				panelMap->Size.Width = 30 * (sizeMax + 1);
+				panelMap->Size.Width = CELL_MAX_SIZE * (sizeMax + 1);
 			}
 			readerFile.close();
 		}
@@ -323,8 +317,6 @@ namespace AImap {
 				//Estableciendo propiedades de botones dinámicos de colores
 				systemStr = "btn_color" + i.ToString();
 				btn->Name = systemStr;
-				listColor[i]; 
-
 				btn->Text = "Seleccionar color";
 				btn->Location = Point(10,i * 25);
 				btn->Size = System::Drawing::Size(115, 23);
@@ -334,13 +326,13 @@ namespace AImap {
 				tabPage2->Controls->Add(btn);
 			}
 			
-		}
-		
+		}	
 
 		void drawMap() {
 			Graphics ^g = panelMap->CreateGraphics();
 			SolidBrush ^sb = gcnew SolidBrush(Color::Red);
 			Pen ^p = gcnew Pen(Color::Blue);
+			ColorClass color;
 			Cell cell;
 			string str;
 			
@@ -351,11 +343,14 @@ namespace AImap {
 
 					if (listCell->findPositionXY(cell) != nullptr) {
 						cell = listCell->findPositionXY(cell)->getData();
-						g->DrawRectangle(p, i * 30, j * 30, 30, 30);
-						g->DrawString(cell.getIdGround().ToString(), this->Font, sb, PointF(i * 30 + 10, j * 30 + 10));
-						if (cell.getIdGround() == 0) {
-							g->FillRectangle(sb, i * 30 + 1, j * 30 + 1, 29, 29);
-						}
+
+						color = listColor->getDataByPosition(cell.getIdGround());
+						
+						g->DrawRectangle(p, i * CELL_MAX_SIZE, j * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
+						g->DrawString(cell.getIdGround().ToString(), this->Font, sb, PointF(i * CELL_MAX_SIZE + 10, j * CELL_MAX_SIZE + 10));
+						//MessageBox::Show(color.getColor(0).ToString() + "-" + color.getColor(1).ToString() + "-" + color.getColor(2).ToString());
+						sb = gcnew SolidBrush(Color::FromArgb(color.getColor(0), color.getColor(1), color.getColor(2)));
+						g->FillRectangle(sb, i * CELL_MAX_SIZE + 1, j * CELL_MAX_SIZE + 1, CELL_MAX_SIZE-1, CELL_MAX_SIZE-1);
 					}
 					else {
 						str += "- 1";
@@ -381,25 +376,22 @@ namespace AImap {
 	
 		void btn_color_click(Object^ sender, EventArgs^ e) {
 			Button ^btn;
-			ColorClass color;
+			ColorClass *color = new ColorClass();
 			int id, r, g, b;
 
 			btn = safe_cast<Button^>(sender);
-			//id = Int32::Parse(btn->Name->Substring(9));
+			id = Int32::Parse(btn->Name->Substring(9));
 			
 			MessageBox::Show(id.ToString());
 
 			if (listColor->findId(id)) {
-				color = listColor->findId(id)->getData();
-				
 				if (colorDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
 					r = colorDialog1->Color.R;
 					g= colorDialog1->Color.G;
 					b = colorDialog1->Color.B;
-					color.setColor(r,g,b);
-					/*MessageBox::Show("color establecido como: " + color.getColor(0).ToString() + " - " +
-						color.getColor(1).ToString() + " - " +
-						color.getColor(2).ToString() + " - " );*/
+					listColor->findId(id)->getData().setColor(r,g,b);
+					
+					MessageBox::Show("color establecido como: " + listColor->findId(id)->getData().getColor(0).ToString() + " - ");
 				}
 			}
 
@@ -410,7 +402,7 @@ namespace AImap {
 		Pen ^p = gcnew Pen(Color::Black);
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 2; j++) {
-				g->DrawRectangle(p, 2 * 30, i * 30, 30, 30);
+				g->DrawRectangle(p, 2 * CELL_MAX_SIZE, i * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
 			}
 		}
 	}
@@ -418,8 +410,8 @@ namespace AImap {
 		drawMap();
 	
 }
-private: System::Void Map_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
-	Application::Exit();
-}
+	private: System::Void Map_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
+		Application::Exit();
+	}
 };
 }

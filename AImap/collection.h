@@ -109,7 +109,7 @@ private:
 	}
 
 	Node* idxToPos(int idx) {
-		if (idx < 0 or idx >= itemCounter) {
+		if (idx < 0 || idx >= itemCounter) {
 			return nullptr;
 		}
 
@@ -520,14 +520,18 @@ public:
 		isOrdered = true;
 	}
 
-	/*T& operator[](int idx) {
+	T& getDataByPosition(int idx) {
+		return retrieveData(idxToPos(idx));
+	}
+
+	T& operator[](int idx) {
 		return retrieveData(idxToPos(idx));
 		
-	}*/
-
-	Node* operator[](int idx) {
-		return idxToPos(idx);
 	}
+
+	/*Node* operator[](int idx) {
+		return idxToPos(idx);
+	}*/
 
 	Collection& operator + (const Collection& c) {
 		copyCollection(c);
