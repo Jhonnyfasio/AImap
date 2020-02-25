@@ -20,7 +20,7 @@
 // Para crear botones dinámicos
 #define BUTTON_NAME_COLOR "btn_color"
 
-//ArrayClass<int, Cell> arrayData[110][110];
+#define FILENAME_LISTCOLOR "color.txt"
 
 namespace AImap {
 	using namespace System;
@@ -49,7 +49,17 @@ namespace AImap {
 	private: System::Windows::Forms::TabPage^  tabPage2;
 
 	Collection<Cell> *listCell;
-	Collection<ColorClass> *listColor;
+	private: System::Windows::Forms::NumericUpDown^  numericUpDown_Value;
+	private: System::Windows::Forms::Button^  button_SetColor;
+	private: System::Windows::Forms::Button^  button_AddColor;
+	private: System::Windows::Forms::TextBox^  textBox_GroundName;
+	private: System::Windows::Forms::Button^  button_EstadoFinal;
+	private: System::Windows::Forms::Button^  button_EstadoInicial;
+	private: System::Windows::Forms::Button^  button_ResetGrounds;
+	private: System::Windows::Forms::Button^  button_SaveGrounds;
+
+
+			 Collection<ColorClass> *listColor;
 	//Collection<Button> *listButton;
 			 
 	
@@ -65,6 +75,7 @@ namespace AImap {
 			InitializeComponent();
 			listCell = new Collection<Cell>;
 			listColor = new Collection<ColorClass>;
+
 			//listButton = new Collection<Button>;
 
 			//arrayData = new ArrayClass<int>;
@@ -103,10 +114,20 @@ namespace AImap {
 			this->textBox_FileNameMap = (gcnew System::Windows::Forms::TextBox());
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
+			this->button_EstadoFinal = (gcnew System::Windows::Forms::Button());
+			this->button_EstadoInicial = (gcnew System::Windows::Forms::Button());
 			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
+			this->button_ResetGrounds = (gcnew System::Windows::Forms::Button());
+			this->button_SaveGrounds = (gcnew System::Windows::Forms::Button());
+			this->numericUpDown_Value = (gcnew System::Windows::Forms::NumericUpDown());
+			this->button_SetColor = (gcnew System::Windows::Forms::Button());
+			this->button_AddColor = (gcnew System::Windows::Forms::Button());
+			this->textBox_GroundName = (gcnew System::Windows::Forms::TextBox());
 			this->colorDialog1 = (gcnew System::Windows::Forms::ColorDialog());
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
+			this->tabPage2->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown_Value))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// panelMap
@@ -134,7 +155,7 @@ namespace AImap {
 			this->textBox1->Multiline = true;
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->ReadOnly = true;
-			this->textBox1->Size = System::Drawing::Size(216, 92);
+			this->textBox1->Size = System::Drawing::Size(75, 92);
 			this->textBox1->TabIndex = 4;
 			// 
 			// textBox_FileNameMap
@@ -148,14 +169,16 @@ namespace AImap {
 			// 
 			this->tabControl1->Controls->Add(this->tabPage1);
 			this->tabControl1->Controls->Add(this->tabPage2);
-			this->tabControl1->Location = System::Drawing::Point(12, 25);
+			this->tabControl1->Location = System::Drawing::Point(-1, 0);
 			this->tabControl1->Name = L"tabControl1";
 			this->tabControl1->SelectedIndex = 0;
-			this->tabControl1->Size = System::Drawing::Size(603, 560);
+			this->tabControl1->Size = System::Drawing::Size(630, 585);
 			this->tabControl1->TabIndex = 6;
 			// 
 			// tabPage1
 			// 
+			this->tabPage1->Controls->Add(this->button_EstadoFinal);
+			this->tabPage1->Controls->Add(this->button_EstadoInicial);
 			this->tabPage1->Controls->Add(this->textBox1);
 			this->tabPage1->Controls->Add(this->textBox_FileNameMap);
 			this->tabPage1->Controls->Add(this->panelMap);
@@ -163,20 +186,96 @@ namespace AImap {
 			this->tabPage1->Location = System::Drawing::Point(4, 22);
 			this->tabPage1->Name = L"tabPage1";
 			this->tabPage1->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage1->Size = System::Drawing::Size(595, 534);
+			this->tabPage1->Size = System::Drawing::Size(622, 559);
 			this->tabPage1->TabIndex = 0;
 			this->tabPage1->Text = L"tabPage1";
 			this->tabPage1->UseVisualStyleBackColor = true;
 			// 
+			// button_EstadoFinal
+			// 
+			this->button_EstadoFinal->Location = System::Drawing::Point(143, 52);
+			this->button_EstadoFinal->Name = L"button_EstadoFinal";
+			this->button_EstadoFinal->Size = System::Drawing::Size(81, 23);
+			this->button_EstadoFinal->TabIndex = 7;
+			this->button_EstadoFinal->Text = L"Estado Final";
+			this->button_EstadoFinal->UseVisualStyleBackColor = true;
+			// 
+			// button_EstadoInicial
+			// 
+			this->button_EstadoInicial->Location = System::Drawing::Point(143, 23);
+			this->button_EstadoInicial->Name = L"button_EstadoInicial";
+			this->button_EstadoInicial->Size = System::Drawing::Size(81, 23);
+			this->button_EstadoInicial->TabIndex = 6;
+			this->button_EstadoInicial->Text = L"Estado Inicial";
+			this->button_EstadoInicial->UseVisualStyleBackColor = true;
+			// 
 			// tabPage2
 			// 
+			this->tabPage2->Controls->Add(this->button_ResetGrounds);
+			this->tabPage2->Controls->Add(this->button_SaveGrounds);
+			this->tabPage2->Controls->Add(this->numericUpDown_Value);
+			this->tabPage2->Controls->Add(this->button_SetColor);
+			this->tabPage2->Controls->Add(this->button_AddColor);
+			this->tabPage2->Controls->Add(this->textBox_GroundName);
 			this->tabPage2->Location = System::Drawing::Point(4, 22);
 			this->tabPage2->Name = L"tabPage2";
 			this->tabPage2->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage2->Size = System::Drawing::Size(595, 534);
+			this->tabPage2->Size = System::Drawing::Size(622, 559);
 			this->tabPage2->TabIndex = 1;
 			this->tabPage2->Text = L"tabPage2";
 			this->tabPage2->UseVisualStyleBackColor = true;
+			// 
+			// button_ResetGrounds
+			// 
+			this->button_ResetGrounds->Location = System::Drawing::Point(432, 35);
+			this->button_ResetGrounds->Name = L"button_ResetGrounds";
+			this->button_ResetGrounds->Size = System::Drawing::Size(84, 23);
+			this->button_ResetGrounds->TabIndex = 5;
+			this->button_ResetGrounds->Text = L"Reestablecer";
+			this->button_ResetGrounds->UseVisualStyleBackColor = true;
+			// 
+			// button_SaveGrounds
+			// 
+			this->button_SaveGrounds->Location = System::Drawing::Point(432, 6);
+			this->button_SaveGrounds->Name = L"button_SaveGrounds";
+			this->button_SaveGrounds->Size = System::Drawing::Size(84, 23);
+			this->button_SaveGrounds->TabIndex = 4;
+			this->button_SaveGrounds->Text = L"Guardar";
+			this->button_SaveGrounds->UseVisualStyleBackColor = true;
+			// 
+			// numericUpDown_Value
+			// 
+			this->numericUpDown_Value->Location = System::Drawing::Point(432, 109);
+			this->numericUpDown_Value->Name = L"numericUpDown_Value";
+			this->numericUpDown_Value->Size = System::Drawing::Size(39, 20);
+			this->numericUpDown_Value->TabIndex = 3;
+			// 
+			// button_SetColor
+			// 
+			this->button_SetColor->Location = System::Drawing::Point(432, 135);
+			this->button_SetColor->Name = L"button_SetColor";
+			this->button_SetColor->Size = System::Drawing::Size(75, 23);
+			this->button_SetColor->TabIndex = 2;
+			this->button_SetColor->Text = L"Color";
+			this->button_SetColor->UseVisualStyleBackColor = true;
+			this->button_SetColor->Click += gcnew System::EventHandler(this, &Map::button_SetColor_Click);
+			// 
+			// button_AddColor
+			// 
+			this->button_AddColor->Location = System::Drawing::Point(432, 164);
+			this->button_AddColor->Name = L"button_AddColor";
+			this->button_AddColor->Size = System::Drawing::Size(75, 23);
+			this->button_AddColor->TabIndex = 1;
+			this->button_AddColor->Text = L"Añadir";
+			this->button_AddColor->UseVisualStyleBackColor = true;
+			this->button_AddColor->Click += gcnew System::EventHandler(this, &Map::button_AddColor_Click);
+			// 
+			// textBox_GroundName
+			// 
+			this->textBox_GroundName->Location = System::Drawing::Point(432, 83);
+			this->textBox_GroundName->Name = L"textBox_GroundName";
+			this->textBox_GroundName->Size = System::Drawing::Size(100, 20);
+			this->textBox_GroundName->TabIndex = 0;
 			// 
 			// Map
 			// 
@@ -184,11 +283,15 @@ namespace AImap {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(630, 597);
 			this->Controls->Add(this->tabControl1);
+			this->Location = System::Drawing::Point(30, 30);
 			this->Name = L"Map";
 			this->Text = L"Map";
 			this->tabControl1->ResumeLayout(false);
 			this->tabPage1->ResumeLayout(false);
 			this->tabPage1->PerformLayout();
+			this->tabPage2->ResumeLayout(false);
+			this->tabPage2->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown_Value))->EndInit();
 			this->ResumeLayout(false);
 
 		}
@@ -306,16 +409,22 @@ namespace AImap {
 
 		void chargeColor() {
 			Button ^btn;
-			String ^systemStr;
+			ComboBox ^comboBox;
+			TextBox ^textBox;
+			NumericUpDown^ numericUpDown;
+			String ^systemStr, ^idStr;
 			ColorClass color = ColorClass();
-			int size = listColor->getItemCounter();
+			int size = listColor->getItemCounter(), id;
 			Collection<ColorClass>* listColor2 = new Collection<ColorClass>;
 
 			for (int i = 0; i < size; i++) {
 				btn = gcnew Button;
-
+				comboBox = gcnew ComboBox;
+				//textBox = gcnew TextBox;
+				numericUpDown = gcnew NumericUpDown;
+				idStr = listColor->getDataByPosition(i).getId().ToString();
 				//Estableciendo propiedades de botones dinámicos de colores
-				systemStr = "btn_color" + i.ToString();
+				systemStr = "btn_color" + idStr;
 				btn->Name = systemStr;
 				btn->Text = "Seleccionar color";
 				btn->Location = Point(10,i * 25);
@@ -323,7 +432,32 @@ namespace AImap {
 				btn->BackColor = Color::Green;
 				//Creando los eventos del botón dinámico
 				btn->Click += gcnew System::EventHandler(this, &Map::btn_color_click);
+
+				systemStr = "comboBox_Color" + idStr;
+				comboBox->Name = systemStr;
+				comboBox->Text = "Escoga un terreno";
+				comboBox->Location = Point(135, i * 25);
+				comboBox->Size = System::Drawing::Size(115, 23);
+				comboBox->DropDownStyle = ComboBoxStyle::DropDownList;
+				comboBox->Leave += gcnew System::EventHandler(this, &Map::comboBox_Color_Name);
+				
+				
+				/*systemStr = "textBox_Color" + i.ToString();
+				textBox->Name = systemStr;
+				textBox->Location = Point(260, i * 25);
+				textBox->Size = System::Drawing::Size(115, 23);
+				textBox->Visible = true;*/
+
+				systemStr = "numericUpDown_Color" + idStr;
+				numericUpDown->Name = systemStr;
+				numericUpDown->Location = Point(260, i * 25);
+				numericUpDown->Size = System::Drawing::Size(39, 20);
+				
+
+				tabPage2->Controls->Add(comboBox);
 				tabPage2->Controls->Add(btn);
+				tabPage2->Controls->Add(numericUpDown);
+				//tabPage2->Controls->Add(textBox);
 			}
 			
 		}	
@@ -332,7 +466,7 @@ namespace AImap {
 			Graphics ^g = panelMap->CreateGraphics();
 			SolidBrush ^sb = gcnew SolidBrush(Color::Red);
 			Pen ^p = gcnew Pen(Color::Blue);
-			ColorClass color;
+			ColorClass color, colorTwo;
 			Cell cell;
 			string str;
 			
@@ -343,8 +477,11 @@ namespace AImap {
 
 					if (listCell->findPositionXY(cell) != nullptr) {
 						cell = listCell->findPositionXY(cell)->getData();
-
-						color = listColor->getDataByPosition(cell.getIdGround());
+						
+						colorTwo.setId(cell.getIdGround());
+						//color = listColor->getDataByPosition(cell.getIdGround());
+						color = listColor->findData(colorTwo)->getData();
+						//color = listColor[123];
 						
 						g->DrawRectangle(p, i * CELL_MAX_SIZE, j * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
 						g->DrawString(cell.getIdGround().ToString(), this->Font, sb, PointF(i * CELL_MAX_SIZE + 10, j * CELL_MAX_SIZE + 10));
@@ -361,6 +498,8 @@ namespace AImap {
 			//MessageBox::Show();
 		}
 		// //////////////////////////////////////////////////////// HERRAMIENTAS ////////////////////////////////////////////////////////////// //
+
+		ColorClass *colorAux = new ColorClass();
 
 		void marshalString(String ^ s, std::string& os) {
 			using namespace Runtime::InteropServices;
@@ -383,19 +522,59 @@ namespace AImap {
 			id = Int32::Parse(btn->Name->Substring(9));
 			
 			MessageBox::Show(id.ToString());
-
-			if (listColor->findId(id)) {
+			
+			if (listColor->getPointerDataByPosition(id) != nullptr) {
 				if (colorDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
 					r = colorDialog1->Color.R;
 					g= colorDialog1->Color.G;
 					b = colorDialog1->Color.B;
-					listColor->findId(id)->getData().setColor(r,g,b);
+					listColor->getDataByPosition(id).setColor(r, g, b);
+					//listColor->findId(id)->getData().setColor(r,g,b);
 					
-					MessageBox::Show("color establecido como: " + listColor->findId(id)->getData().getColor(0).ToString() + " - ");
+					MessageBox::Show("color establecido como: " + listColor->getDataByPosition(id).getColor(0) + " - ");
 				}
 			}
 
 		}
+
+		void comboBox_Color_Name(Object^ sender, EventArgs^ e) {
+			ComboBox ^comboBox;
+			ColorClass color, colorTwo;
+			string str, str2;
+			String ^systemStr;
+			String ^systemStr2;
+			int id;
+
+			comboBox = safe_cast<ComboBox^>(sender);
+
+			if (comboBox->Text == "") {
+				MessageBox::Show("Error, no puede haber campos vacíos en los nombres");
+			}
+			if (comboBox->Text == "Escoga un terreno") {
+				MessageBox::Show("Error, debe de escoger un nombre válido");
+				}
+			else {
+				id = Int32::Parse(comboBox->Name->Substring(14));
+				marshalString(comboBox->Text, str);
+				color.setGroundName(str);
+				//colorTwo = listColor->findData()->getData();
+
+				if (listColor->findData(color) == nullptr) {
+					listColor->findData(color)->getData().setGroundName(str);
+				}
+				else if (listColor->getDataByPosition(id).getId()) {
+
+				}
+				else {
+					str = listColor->findData(color)->getData().getGroundName();
+					systemStr = gcnew String(str.c_str());
+					systemStr2 = gcnew String(color.getGroundName().c_str());
+					MessageBox::Show("Error, el nombre para este terreno ya existe, ingrese uno nuevo - " + systemStr + "-" + 
+					systemStr2);
+				}
+			}
+			
+			}
 
 	private: System::Void panelMap_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
 		Graphics ^g = panelMap->CreateGraphics();
@@ -412,6 +591,53 @@ namespace AImap {
 }
 	private: System::Void Map_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
 		Application::Exit();
+	}
+	private: System::Void button_SetColor_Click(System::Object^  sender, System::EventArgs^  e) {
+		Button ^btn;
+		int id, r, g, b;
+	
+		if (colorDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+			r = colorDialog1->Color.R;
+			g = colorDialog1->Color.G;
+			b = colorDialog1->Color.B;
+
+			colorAux->setColor(r, g, b);
+
+			MessageBox::Show("color establecido como: " + colorAux->getColor(0).ToString() + " - ");
+		}
+	}
+	private: System::Void button_AddColor_Click(System::Object^  sender, System::EventArgs^  e) {
+		String ^systemStr = "";
+		string str;
+
+		if (numericUpDown_Value->Value < 0 || 100 < numericUpDown_Value->Value) {
+			systemStr = "El valor del terreno no puede ser inferior a 0 o superior a 100\n";
+		}
+		if (textBox_GroundName->Text == "") {
+			systemStr += "Ingrese un nombre para el terreno\n";
+		}
+		if (colorAux->getColor(0) == -1) {
+			systemStr += "Debe establecer un color primero";
+		}
+		if (systemStr != "") {
+			MessageBox::Show("Error, se presentaron los siguientes errores al ingresar el terreno: \n" + systemStr);
+		}
+		else {
+			
+			marshalString(textBox_GroundName->Text, str);
+			colorAux->setGroundName(str);
+			colorAux->setValue(int(numericUpDown_Value->Value));
+			colorAux->setId(listColor->getLast()->getData().getId() + 1);
+
+			listColor->insertData(*colorAux);
+			if (listColor->findData(*colorAux)) {
+				MessageBox::Show("Terreno ingresado correctamente");
+			}
+			else {
+				MessageBox::Show("Error, no se ha podido ingresar el terreno correctamente, vuelva a intentarlo.");
+			}
+			
+		}
 	}
 };
 }

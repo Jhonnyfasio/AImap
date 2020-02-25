@@ -140,7 +140,7 @@ private:
 		}
 
 		if (left->getNext() == right) {
-			if (left->getData().getName() > right->getData().getName()) {
+			if (left->getData() > right->getData()) {
 				swapData(left, right);
 			}
 
@@ -150,11 +150,11 @@ private:
 		Node *i(left), *j(right);
 
 		while (i != j) {
-			while (i != j and i->getData().getName() <= right->getData().getName()) {
+			while (i != j and i->getData() <= right->getData()) {
 				i = i->getNext();
 			}
 
-			while (i != j and j->getData().getName() > right->getData().getName()) {
+			while (i != j and j->getData() > right->getData()) {
 				j = j->getPrev();
 			}
 
@@ -428,7 +428,20 @@ public:
 		return p->getPrev();
 	}
 
-	//Node* findData(const T& e) {
+	Node* findData(const T& e) {
+		if (isEmpty()) {
+			return nullptr;
+		}
+		Node* aux(header->getNext());
+		while (aux != header) {
+			if (aux->getData() == e) {
+				return aux;
+			}
+			aux = aux->getNext();
+		}
+		return nullptr;
+	}
+
 	Node* findId(int& toFind) {
 		if (isEmpty()) {
 			return nullptr;
@@ -518,6 +531,10 @@ public:
 		qckSort(header->getNext(), header->getPrev());
 
 		isOrdered = true;
+	}
+
+	Node* getPointerDataByPosition(int idx) {
+		return idxToPos(idx);
 	}
 
 	T& getDataByPosition(int idx) {

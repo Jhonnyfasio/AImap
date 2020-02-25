@@ -46,4 +46,42 @@ class Cell {
 		void setPositionY(const int& positionYY) {
 			positionY = positionYY;
 		}
+
+		Cell& operator =(const Cell& c){
+			id = c.id;
+			idGround = c.idGround;
+			visitCounter = c.visitCounter;
+			positionX = c.positionX;
+			positionY = c.positionY;
+
+			return *this;
+		}
+
+		bool operator == (const Cell& c) {
+			return id == c.id;
+		}
+
+		bool operator != (const Cell& c) {
+			return id != c.id;
+		}
+
+		bool operator < (const Cell& c) {
+			return id < c.id;
+		}
+
+		bool operator > (const Cell& c) {
+			return id > c.id;
+		}
+
+		bool operator <= (const Cell& c) {
+			return id <= c.id;
+		}
+
+		bool operator >= (const Cell& c) {
+			return id >= c.id;
+		}
+
+		bool operator [](const Cell& c){
+
+		}
 };
