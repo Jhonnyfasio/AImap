@@ -10,10 +10,12 @@ class ColorClass {
 
 	public:
 		ColorClass() {
+			id = -1;
 			color[0] = -1;
 			color[1] = -1;
 			color[2] = -1;
 			groundName = "";
+			value = -1;
 		}
 
 		int getId() {

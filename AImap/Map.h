@@ -11,8 +11,8 @@
 
 #include "collection.h"
 #include "cell.h"
-//#include "arrayclass.h"
 #include "colorclass.h"
+#include "player.h"
 
 #define MAX_SIZE 15
 #define CELL_MAX_SIZE 40
@@ -20,7 +20,8 @@
 // Para crear botones dinámicos
 #define BUTTON_NAME_COLOR "btn_color"
 
-#define FILENAME_LISTCOLOR "color.txt"
+#define FILENAME_LISTCOLOR "Grounds.txt"
+#define FILENAME_LISTPLAYER "Player.txt"
 
 namespace AImap {
 	using namespace System;
@@ -29,6 +30,8 @@ namespace AImap {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::IO;
+	using namespace System::Reflection;
 	using namespace std;
 	
 	
@@ -48,7 +51,7 @@ namespace AImap {
 	private: System::Windows::Forms::ColorDialog^  colorDialog1;
 	private: System::Windows::Forms::TabPage^  tabPage2;
 
-	Collection<Cell> *listCell;
+	
 	private: System::Windows::Forms::NumericUpDown^  numericUpDown_Value;
 	private: System::Windows::Forms::Button^  button_SetColor;
 	private: System::Windows::Forms::Button^  button_AddColor;
@@ -58,8 +61,11 @@ namespace AImap {
 	private: System::Windows::Forms::Button^  button_ResetGrounds;
 	private: System::Windows::Forms::Button^  button_SaveGrounds;
 
+	Collection<Cell> *listCell;
+	Collection<ColorClass> *listColor;
+	private: System::Windows::Forms::PictureBox^  pictureBox1;
 
-			 Collection<ColorClass> *listColor;
+			 Collection<Player> *listPlayer;
 	//Collection<Button> *listButton;
 			 
 	
@@ -75,12 +81,15 @@ namespace AImap {
 			InitializeComponent();
 			listCell = new Collection<Cell>;
 			listColor = new Collection<ColorClass>;
+			listPlayer = new Collection<Player>;
 
 			//listButton = new Collection<Button>;
 
 			//arrayData = new ArrayClass<int>;
 			chargeMap(fileNameMap);
 			chargeColor();
+			chargePlayerFile();
+			chargePlayer();
 		}
 	
 	protected:
@@ -108,6 +117,7 @@ namespace AImap {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(Map::typeid));
 			this->panelMap = (gcnew System::Windows::Forms::Panel());
 			this->btn_play = (gcnew System::Windows::Forms::Button());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
@@ -117,6 +127,7 @@ namespace AImap {
 			this->button_EstadoFinal = (gcnew System::Windows::Forms::Button());
 			this->button_EstadoInicial = (gcnew System::Windows::Forms::Button());
 			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
+			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->button_ResetGrounds = (gcnew System::Windows::Forms::Button());
 			this->button_SaveGrounds = (gcnew System::Windows::Forms::Button());
 			this->numericUpDown_Value = (gcnew System::Windows::Forms::NumericUpDown());
@@ -127,6 +138,7 @@ namespace AImap {
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
 			this->tabPage2->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown_Value))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -211,6 +223,7 @@ namespace AImap {
 			// 
 			// tabPage2
 			// 
+			this->tabPage2->Controls->Add(this->pictureBox1);
 			this->tabPage2->Controls->Add(this->button_ResetGrounds);
 			this->tabPage2->Controls->Add(this->button_SaveGrounds);
 			this->tabPage2->Controls->Add(this->numericUpDown_Value);
@@ -225,9 +238,18 @@ namespace AImap {
 			this->tabPage2->Text = L"tabPage2";
 			this->tabPage2->UseVisualStyleBackColor = true;
 			// 
+			// pictureBox1
+			// 
+			this->pictureBox1->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox1.Image")));
+			this->pictureBox1->Location = System::Drawing::Point(68, 9);
+			this->pictureBox1->Name = L"pictureBox1";
+			this->pictureBox1->Size = System::Drawing::Size(492, 335);
+			this->pictureBox1->TabIndex = 6;
+			this->pictureBox1->TabStop = false;
+			// 
 			// button_ResetGrounds
 			// 
-			this->button_ResetGrounds->Location = System::Drawing::Point(432, 35);
+			this->button_ResetGrounds->Location = System::Drawing::Point(385, 250);
 			this->button_ResetGrounds->Name = L"button_ResetGrounds";
 			this->button_ResetGrounds->Size = System::Drawing::Size(84, 23);
 			this->button_ResetGrounds->TabIndex = 5;
@@ -236,7 +258,7 @@ namespace AImap {
 			// 
 			// button_SaveGrounds
 			// 
-			this->button_SaveGrounds->Location = System::Drawing::Point(432, 6);
+			this->button_SaveGrounds->Location = System::Drawing::Point(385, 221);
 			this->button_SaveGrounds->Name = L"button_SaveGrounds";
 			this->button_SaveGrounds->Size = System::Drawing::Size(84, 23);
 			this->button_SaveGrounds->TabIndex = 4;
@@ -245,14 +267,14 @@ namespace AImap {
 			// 
 			// numericUpDown_Value
 			// 
-			this->numericUpDown_Value->Location = System::Drawing::Point(432, 109);
+			this->numericUpDown_Value->Location = System::Drawing::Point(385, 324);
 			this->numericUpDown_Value->Name = L"numericUpDown_Value";
 			this->numericUpDown_Value->Size = System::Drawing::Size(39, 20);
 			this->numericUpDown_Value->TabIndex = 3;
 			// 
 			// button_SetColor
 			// 
-			this->button_SetColor->Location = System::Drawing::Point(432, 135);
+			this->button_SetColor->Location = System::Drawing::Point(385, 350);
 			this->button_SetColor->Name = L"button_SetColor";
 			this->button_SetColor->Size = System::Drawing::Size(75, 23);
 			this->button_SetColor->TabIndex = 2;
@@ -262,7 +284,7 @@ namespace AImap {
 			// 
 			// button_AddColor
 			// 
-			this->button_AddColor->Location = System::Drawing::Point(432, 164);
+			this->button_AddColor->Location = System::Drawing::Point(385, 379);
 			this->button_AddColor->Name = L"button_AddColor";
 			this->button_AddColor->Size = System::Drawing::Size(75, 23);
 			this->button_AddColor->TabIndex = 1;
@@ -272,7 +294,7 @@ namespace AImap {
 			// 
 			// textBox_GroundName
 			// 
-			this->textBox_GroundName->Location = System::Drawing::Point(432, 83);
+			this->textBox_GroundName->Location = System::Drawing::Point(385, 298);
 			this->textBox_GroundName->Name = L"textBox_GroundName";
 			this->textBox_GroundName->Size = System::Drawing::Size(100, 20);
 			this->textBox_GroundName->TabIndex = 0;
@@ -291,6 +313,7 @@ namespace AImap {
 			this->tabPage1->PerformLayout();
 			this->tabPage2->ResumeLayout(false);
 			this->tabPage2->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown_Value))->EndInit();
 			this->ResumeLayout(false);
 
@@ -307,11 +330,12 @@ namespace AImap {
 			fstream readerFile;
 			marshalString(fileNameMap, str);
 			readerFile.open(str, ios::in);
-
+			//MessageBox::Show(gcnew String(str.c_str()));
+			
 			cell.setVisitCounter(0);
 
 			if (!readerFile.is_open()) {
-				messageError("Error, archivo de lectura no disponible");
+				messageError("Error, archivo'" + str + "'de lectura no disponible");
 			}
 			else {
 				while (!readerFile.eof()) {
@@ -439,7 +463,7 @@ namespace AImap {
 				comboBox->Location = Point(135, i * 25);
 				comboBox->Size = System::Drawing::Size(115, 23);
 				comboBox->DropDownStyle = ComboBoxStyle::DropDownList;
-				comboBox->Leave += gcnew System::EventHandler(this, &Map::comboBox_Color_Name);
+				//comboBox->Leave += gcnew System::EventHandler(this, &Map::comboBox_Color_Name);
 				
 				
 				/*systemStr = "textBox_Color" + i.ToString();
@@ -461,6 +485,110 @@ namespace AImap {
 			}
 			
 		}	
+
+		void chargeColorFile() {
+			Cell cell;
+			ColorClass color = ColorClass();;
+			std::string str, str2, str3;
+			fstream readerFile;
+
+			readerFile.open(FILENAME_LISTCOLOR, ios::in);
+
+			cell.setVisitCounter(0);
+
+			if (!readerFile.is_open()) {
+				messageError("Error, archivo de lectura no disponible");
+			}
+			else {
+				while (!readerFile.eof()) {
+					getline(readerFile, str, '°');
+					color.setGroundName(str);
+					getline(readerFile, str, '°');
+					getline(readerFile, str2, '°');
+					getline(readerFile, str3, '°');
+					color.setColor(atoi(str.c_str()), atoi(str2.c_str()), atoi(str3.c_str()));
+
+					if (!readerFile.eof())
+						listColor->insertData(color);
+				}
+			}
+			readerFile.close();
+		}
+
+		void chargePlayerFile() {
+			Assembly ^assembly = Assembly::GetExecutingAssembly();
+			StreamReader ^reader;
+			Player player;
+			std::string str, str2, str3, file;
+			String ^systemStr;
+			fstream readerFile;
+			
+			systemStr = "AImap.Player.txt";
+			reader = gcnew StreamReader(assembly->GetManifestResourceStream(systemStr));
+			systemStr = reader->ReadToEnd();
+			marshalString(systemStr, file);
+
+			MessageBox::Show(systemStr);
+
+			/*C:\\Users\\Juan Balderrama\\source\\repos\\AImap\\AImap\\*/
+			readerFile.open("algo123.txt", ios::app);
+			readerFile.close();
+			readerFile.open(FILENAME_LISTPLAYER, ios::in);
+
+			if (!readerFile.is_open()) {
+				messageError("Error, archivo '" + str +  "' de lectura no disponible");
+			}
+			else {
+				while (!readerFile.eof()) {
+					getline(readerFile, str, '°');
+					player.setId(atoi(str.c_str()));
+					getline(readerFile, str, '°');
+					player.setName(str);
+
+					if (!readerFile.eof()) {
+						listPlayer->insertData(player);
+					}
+				}
+			}
+
+			readerFile.close();
+			//MessageBox::Show("Added " + listPlayer->getItemCounter().ToString());
+		}
+
+		void chargePlayer() {
+			ComboBox ^comboBox;
+			PictureBox ^pictureBox;
+			String ^systemStr;
+			Player player;
+			int items;
+			AImap::Resources::ResourceManager ^manager;
+			comboBox = gcnew ComboBox;
+			pictureBox = gcnew PictureBox;
+			//pictureBox->Image = AImap::Resources::
+
+			comboBox->Name = "comboBox_Player";
+			comboBox->Text = "Escoga un personaje";
+			comboBox->Location = Point(370, 10);
+			comboBox->Size = System::Drawing::Size(115, 23);
+			comboBox->DropDownStyle = ComboBoxStyle::DropDownList;
+			items = listPlayer->getItemCounter();
+			
+			pictureBox->Name = "pictureBox_Player";
+			pictureBox->Location = Point(370, 40);
+			pictureBox->Size = System::Drawing::Size(115, 115);
+			
+
+
+			for (int i = 0; i < items; i++) {
+				player = listPlayer->getDataByPosition(i);
+				systemStr = gcnew String(player.getName().c_str());
+				systemStr = player.getId().ToString() + " - " + systemStr;
+				comboBox->Items->Add(systemStr);
+			}
+			tabPage2->Controls->Add(comboBox);
+			tabPage2->Controls->Add(pictureBox);
+			
+		}
 
 		void drawMap() {
 			Graphics ^g = panelMap->CreateGraphics();
