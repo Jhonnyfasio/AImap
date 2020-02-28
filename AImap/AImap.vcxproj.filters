@@ -44,6 +44,15 @@
     <ClInclude Include="player.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="resource1.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="resource2.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Map.resx">
@@ -52,21 +61,29 @@
     <EmbeddedResource Include="MenuMap.resx">
       <Filter>Archivos de recursos</Filter>
     </EmbeddedResource>
+    <EmbeddedResource Include="Custom.resx">
+      <Filter>Archivos de recursos</Filter>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Recursos\Fish.gif">
+    <ResourceCompile Include="AImap.rc">
       <Filter>Archivos de recursos</Filter>
-    </Image>
-    <Image Include="prueba.bmp">
-      <Filter>Archivos de recursos</Filter>
-    </Image>
-    <Image Include="Fish.bmp">
-      <Filter>Archivos de recursos</Filter>
-    </Image>
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Player.txt">
+    <Text Include="Recursos\Default_Ground.txt">
       <Filter>Archivos de recursos</Filter>
     </Text>
+    <Text Include="Recursos\Default_Player.txt">
+      <Filter>Archivos de recursos</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Recursos\NyanCat.gif">
+      <Filter>Archivos de recursos</Filter>
+    </Image>
+    <Image Include="Recursos\Virus.gif">
+      <Filter>Archivos de recursos</Filter>
+    </Image>
   </ItemGroup>
 </Project>

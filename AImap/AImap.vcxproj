@@ -95,6 +95,8 @@
       <AdditionalDependencies />
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>main</EntryPointSymbol>
+      <EmbedManagedResourceFile>
+      </EmbedManagedResourceFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -148,8 +150,12 @@
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="player.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="resource1.h" />
+    <ClInclude Include="resource2.h" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Custom.resx" />
     <EmbeddedResource Include="Map.resx">
       <DependentUpon>Map.h</DependentUpon>
     </EmbeddedResource>
@@ -158,18 +164,15 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Player.txt">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <DeploymentContent>false</DeploymentContent>
-    </Text>
+    <ResourceCompile Include="AImap.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Fish.bmp" />
-    <Image Include="prueba.bmp" />
-    <Image Include="Recursos\Fish.gif">
-      <DeploymentContent>false</DeploymentContent>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-    </Image>
+    <Text Include="Recursos\Default_Ground.txt" />
+    <Text Include="Recursos\Default_Player.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Recursos\NyanCat.gif" />
+    <Image Include="Recursos\Virus.gif" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
