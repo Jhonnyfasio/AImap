@@ -36,7 +36,7 @@ class ColorClass {
 		void setId(const int& idX) {
 			id = idX;
 		}
-		void setColor(const int& r, const int& g, const int& b) {
+		void setColor(const int r, const int g, const int b) {
 			color[0] = r;
 			color[1] = g;
 			color[2] = b;

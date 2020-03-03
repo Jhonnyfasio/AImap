@@ -4,6 +4,7 @@
 #include <exception>
 #include <iostream>
 #include <cstring>
+#include "colorclass.h"
 
 template<class T> class Collection {
 public:
@@ -541,28 +542,28 @@ public:
 		return retrieveData(idxToPos(idx));
 	}
 
-	T& operator[](int idx) {
+	T& operator[](const int idx) {
 		return retrieveData(idxToPos(idx));
-		
 	}
 
 	/*Node* operator[](int idx) {
 		return idxToPos(idx);
 	}*/
 
-	Collection& operator + (const Collection& c) {
+	/*Collection& operator + (const Collection& c) {
 		copyCollection(c);
 
 		return *this;
 	}
 
-	Collection& operator=(const Collection& c) {
+	Collection& operator = (const Collection& c) {
 		deleteAll();
 
 		copyCollection(c);
 
 		return *this;
-	}
+	}*/
+
 
 	std::string toStringToDisk() {
 		std::string acumulator("");

@@ -44,14 +44,11 @@ namespace AImap {
 	private: System::Windows::Forms::TextBox^  textBox_FileNameMap;
 	private: System::Windows::Forms::Panel^  panelMap;
 	private: System::ComponentModel::IContainer^  components;
-
 	private: System::Windows::Forms::Button^  btn_play;
 	private: System::Windows::Forms::TabControl^  tabControl1;
 	private: System::Windows::Forms::TabPage^  tabPage1;
 	private: System::Windows::Forms::ColorDialog^  colorDialog1;
 	private: System::Windows::Forms::TabPage^  tabPage2;
-
-	
 	private: System::Windows::Forms::NumericUpDown^  numericUpDown_Value;
 	private: System::Windows::Forms::Button^  button_SetColor;
 	private: System::Windows::Forms::Button^  button_AddColor;
@@ -60,21 +57,21 @@ namespace AImap {
 	private: System::Windows::Forms::Button^  button_EstadoInicial;
 	private: System::Windows::Forms::Button^  button_ResetGrounds;
 	private: System::Windows::Forms::Button^  button_SaveGrounds;
-
-	Collection<Cell> *listCell;
-	Collection<ColorClass> *listColor;
-
 	private: System::Windows::Forms::ImageList^  imageList_Player;
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::ComboBox^  comboBox1;
 	private: System::Windows::Forms::PictureBox^  pictureBox_Player;
-
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::ComboBox^  comboBox_Player;
 
-
-			 Collection<Player> *listPlayer;
+	Collection<Cell> *listCell;
+	Collection<ColorClass> *listColor;
+	Collection<Player> *listPlayer;
+	Collection<ColorClass> *listColorInUse;
+	Collection<ColorClass> *listGround;
+	cli::array<ComboBox^>^ arrayComboBox;
 	//Collection<Button> *listButton;
+	int publicSizeMax;
 			 
 	
 	public:
@@ -90,11 +87,13 @@ namespace AImap {
 			listCell = new Collection<Cell>;
 			listColor = new Collection<ColorClass>;
 			listPlayer = new Collection<Player>;
+			listGround = new Collection<ColorClass>;
 
 			//listButton = new Collection<Button>;
 
 			//arrayData = new ArrayClass<int>;
 			chargeMap(fileNameMap);
+			chargeColorFile();
 			chargeColor();
 			chargePlayerFile();
 		}
@@ -440,7 +439,7 @@ namespace AImap {
 							// Retorno de carro (agrega la fila)
 							else if (character == 10 || character == 13) {
 								if (row == 0) {
-									sizeMax = column;
+									publicSizeMax = sizeMax = column;
 									panelMap->Size.Height = CELL_MAX_SIZE * (sizeMax + 1);
 								}
 								//MessageBox::Show("Column: " + sizeMax.ToString());
@@ -497,15 +496,25 @@ namespace AImap {
 			ComboBox ^comboBox;
 			TextBox ^textBox;
 			String ^systemStr, ^idStr;
-			ColorClass color = ColorClass();
-			int size = listColor->getItemCounter(), id;
-			Collection<ColorClass>* listColor2 = new Collection<ColorClass>;
+			ColorClass color;
+			int size = listColor->getItemCounter(), id, sizeListGround = listGround->getItemCounter();
+			cli::array <String^>^ nameColor = gcnew cli::array<String^>(sizeListGround);
+			arrayComboBox = gcnew cli::array<ComboBox^>(size);
+
+			for (int i = 0; i < sizeListGround; i++) {
+				//nameColor[i] = listColor->getDataByPosition(i).getGroundName();
+				//listColorInUse[i] = listColor[i];
+				
+				nameColor[i] = gcnew String(listGround->getDataByPosition(i).getGroundName().c_str());
+				//MessageBox::Show(nameColor[i]);
+			}
 
 			for (int i = 0; i < size; i++) {
 				btn = gcnew Button;
 				comboBox = gcnew ComboBox;
 				textBox = gcnew TextBox;
-				idStr = listColor->getDataByPosition(i).getId().ToString();
+				color = listColor->getDataByPosition(i);
+				idStr = color.getId().ToString();
 
 				//Estableciendo propiedades de botones dinámicos de colores
 				systemStr = "btn_color" + idStr;
@@ -513,17 +522,19 @@ namespace AImap {
 				btn->Text = "Seleccionar color";
 				btn->Location = Point(10,i * 25);
 				btn->Size = System::Drawing::Size(115, 23);
-				btn->BackColor = Color::Green;
+				btn->BackColor = Color::Gray;
 				//Creando los eventos del botón dinámico
 				btn->Click += gcnew System::EventHandler(this, &Map::btn_color_click);
 
 				systemStr = "comboBox_Color" + idStr;
 				comboBox->Name = systemStr;
-				comboBox->Text = "Escoga un terreno";
 				comboBox->Location = Point(135, i * 25);
 				comboBox->Size = System::Drawing::Size(115, 23);
 				comboBox->DropDownStyle = ComboBoxStyle::DropDownList;
-				//comboBox->Leave += gcnew System::EventHandler(this, &Map::comboBox_Color_Name);
+				comboBox->Items->AddRange(nameColor);
+				comboBox->Text = "Escoga un terreno";
+				comboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &Map::comboBox_Color_Name);
+				arrayComboBox[i] = comboBox;
 				
 				
 				/*systemStr = "textBox_Color" + i.ToString();
@@ -532,10 +543,11 @@ namespace AImap {
 				textBox->Size = System::Drawing::Size(115, 23);
 				textBox->Visible = true;*/
 
-				systemStr = "numericUpDown_Color" + idStr;
+				
 				textBox->Name = "textBox_Color" + idStr;
+				//systemStr = "numericUpDown_Color" + idStr;
 				textBox->Location = Point(260, i * 25);
-				textBox->Size = System::Drawing::Size(115, 23);
+				textBox->Size = System::Drawing::Size(60, 23);
 				textBox->Leave += gcnew System::EventHandler(this, &Map::textBox_Color_Float);
 				
 
@@ -549,31 +561,35 @@ namespace AImap {
 
 		void chargeColorFile() {
 			Cell cell;
-			ColorClass color = ColorClass();;
+			ColorClass color;
 			std::string str, str2, str3;
 			fstream readerFile;
+			cli::array <String^>^ nameColor = gcnew cli::array<String^>(200);
+			String^ algo;
+			int i = 0;
 
-			//readerFile.open(FILENAME_LISTCOLOR, ios::in);
+			auto execAssem = System::Reflection::Assembly::GetExecutingAssembly();
+			auto resourceName = execAssem->GetName()->Name + ".Custom";
+			auto resourceManager = gcnew Resources::ResourceManager(resourceName, execAssem);
+			auto reader = cli::safe_cast<String^>(resourceManager->GetObject("Default_Ground"));
+			
+			//algo = reader->ReadToEnd();
+			nameColor = reader->Split('|');
+			for(int i=0;i<nameColor->Length-1; i+=4)
+			{
+				marshalString(nameColor[i], str);
+				color.setGroundName(str);
+				//color.setId(Int32::Parse(nameColor[i + 1]));
+				int uno, dos, tres;
+				uno = Int32::Parse(nameColor[i + 1]);
+				dos = Int32::Parse(nameColor[i + 2]);
+				tres = Int32::Parse(nameColor[i + 3]);
+				color.setColor(uno, dos, tres);
+				//MessageBox::Show(nameColor->Length.ToString() + " - " + i.ToString() + " - " + color.getColor(2).ToString());
 
-			cell.setVisitCounter(0);
-
-			if (!readerFile.is_open()) {
-				messageError("Error, archivo de lectura no disponible");
+				//listColor->operator[](i).setGroundName(str);
+				listGround->insertData(color);
 			}
-			else {
-				while (!readerFile.eof()) {
-					getline(readerFile, str, '°');
-					color.setGroundName(str);
-					getline(readerFile, str, '°');
-					getline(readerFile, str2, '°');
-					getline(readerFile, str3, '°');
-					color.setColor(atoi(str.c_str()), atoi(str2.c_str()), atoi(str3.c_str()));
-
-					if (!readerFile.eof())
-						listColor->insertData(color);
-				}
-			}
-			readerFile.close();
 		}
 
 		void chargePlayerFile() {
@@ -613,8 +629,11 @@ namespace AImap {
 			Cell cell;
 			string str;
 			
-			for (int i = 0; i < MAX_SIZE; i++) {
-				for (int j = 0; j < MAX_SIZE; j++) {
+			panelMap->Size.Width = publicSizeMax * CELL_MAX_SIZE;
+			panelMap->Size.Height = publicSizeMax * CELL_MAX_SIZE;
+
+			for (int i = 0; i < publicSizeMax; i++) {
+				for (int j = 0; j < publicSizeMax; j++) {
 					cell.setPositionX(j);
 					cell.setPositionY(i);
 
@@ -640,6 +659,11 @@ namespace AImap {
 			}
 			//MessageBox::Show();
 		}
+
+		void validateBeforePlay() {
+			
+		}
+		
 		// //////////////////////////////////////////////////////// HERRAMIENTAS ////////////////////////////////////////////////////////////// //
 
 		ColorClass *colorAux = new ColorClass();
@@ -689,15 +713,23 @@ namespace AImap {
 			int id;
 
 			comboBox = safe_cast<ComboBox^>(sender);
-
-			if (comboBox->Text == "") {
-				MessageBox::Show("Error, no puede haber campos vacíos en los nombres");
+			id = Int32::Parse(comboBox->Name->Substring(14));
+			
+			//MessageBox::Show("CHANGED");
+			
+			for each (ComboBox^ var in arrayComboBox)
+			{
+				if (comboBox->SelectedIndex > 0) {
+					var->Items->RemoveAt(comboBox->SelectedIndex);
+				}
+				
 			}
-			if (comboBox->Text == "Escoga un terreno") {
+
+			/*if (comboBox->Text == "Escoga un terreno") {
 				MessageBox::Show("Error, debe de escoger un nombre válido");
 				}
 			else {
-				id = Int32::Parse(comboBox->Name->Substring(14));
+				
 				marshalString(comboBox->Text, str);
 				color.setGroundName(str);
 				//colorTwo = listColor->findData()->getData();
@@ -715,7 +747,7 @@ namespace AImap {
 					MessageBox::Show("Error, el nombre para este terreno ya existe, ingrese uno nuevo - " + systemStr + "-" + 
 					systemStr2);
 				}
-			}
+			}*/
 			
 			}
 
