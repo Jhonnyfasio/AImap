@@ -12,15 +12,16 @@
 
 #include "collection.h"
 #include "cell.h"
-#include "colorclass.h"
+#include "ground.h"
 #include "player.h"
 
 #define MAX_SIZE 15
-#define CELL_MAX_SIZE 40
+#define CELL_MAX_SIZE 50
 
 // Para crear botones dinámicos
-#define BUTTON_NAME_COLOR "btn_color"
-
+#define BUTTON_NAME_COLOR "btn_Color"
+#define TEXTBOX_NAME_COLOR "textBox_Color"
+#define COMBOBOX_NAME_COLOR "comboBox_Color"
 
 namespace AImap {
 	using namespace System;
@@ -58,18 +59,19 @@ namespace AImap {
 	private: System::Windows::Forms::Button^  button_ResetGrounds;
 	private: System::Windows::Forms::Button^  button_SaveGrounds;
 	private: System::Windows::Forms::ImageList^  imageList_Player;
-	private: System::Windows::Forms::Label^  label1;
+
 	private: System::Windows::Forms::ComboBox^  comboBox1;
 	private: System::Windows::Forms::PictureBox^  pictureBox_Player;
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::ComboBox^  comboBox_Player;
 
 	Collection<Cell> *listCell;
-	Collection<ColorClass> *listColor;
+	Collection<Ground> *listGround;
 	Collection<Player> *listPlayer;
-	Collection<ColorClass> *listColorInUse;
-	Collection<ColorClass> *listGround;
+	Collection<Ground> *listColorInUse;
+	Collection<ColorClass> *listColor;
 	cli::array<ComboBox^>^ arrayComboBox;
+	cli::array<Button^>^ arrayButton;
 	//Collection<Button> *listButton;
 	int publicSizeMax;
 			 
@@ -85,9 +87,9 @@ namespace AImap {
 		Map(String ^fileNameMap) {
 			InitializeComponent();
 			listCell = new Collection<Cell>;
-			listColor = new Collection<ColorClass>;
+			listGround = new Collection<Ground>;
 			listPlayer = new Collection<Player>;
-			listGround = new Collection<ColorClass>;
+			listColor = new Collection<ColorClass>;
 
 			//listButton = new Collection<Button>;
 
@@ -132,8 +134,6 @@ namespace AImap {
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
 			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
-			this->label1 = (gcnew System::Windows::Forms::Label());
-			this->imageList_Player = (gcnew System::Windows::Forms::ImageList(this->components));
 			this->button_EstadoFinal = (gcnew System::Windows::Forms::Button());
 			this->button_EstadoInicial = (gcnew System::Windows::Forms::Button());
 			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
@@ -146,6 +146,7 @@ namespace AImap {
 			this->button_SetColor = (gcnew System::Windows::Forms::Button());
 			this->button_AddColor = (gcnew System::Windows::Forms::Button());
 			this->textBox_GroundName = (gcnew System::Windows::Forms::TextBox());
+			this->imageList_Player = (gcnew System::Windows::Forms::ImageList(this->components));
 			this->colorDialog1 = (gcnew System::Windows::Forms::ColorDialog());
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
@@ -157,15 +158,14 @@ namespace AImap {
 			// panelMap
 			// 
 			this->panelMap->AutoSize = true;
-			this->panelMap->Location = System::Drawing::Point(44, 104);
+			this->panelMap->Location = System::Drawing::Point(9, 104);
 			this->panelMap->Name = L"panelMap";
-			this->panelMap->Size = System::Drawing::Size(511, 392);
+			this->panelMap->Size = System::Drawing::Size(750, 750);
 			this->panelMap->TabIndex = 1;
-			this->panelMap->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Map::panelMap_Paint);
 			// 
 			// btn_play
 			// 
-			this->btn_play->Location = System::Drawing::Point(44, 502);
+			this->btn_play->Location = System::Drawing::Point(543, 57);
 			this->btn_play->Name = L"btn_play";
 			this->btn_play->Size = System::Drawing::Size(75, 23);
 			this->btn_play->TabIndex = 3;
@@ -196,13 +196,12 @@ namespace AImap {
 			this->tabControl1->Location = System::Drawing::Point(-1, 0);
 			this->tabControl1->Name = L"tabControl1";
 			this->tabControl1->SelectedIndex = 0;
-			this->tabControl1->Size = System::Drawing::Size(630, 585);
+			this->tabControl1->Size = System::Drawing::Size(777, 890);
 			this->tabControl1->TabIndex = 6;
 			// 
 			// tabPage1
 			// 
 			this->tabPage1->Controls->Add(this->comboBox1);
-			this->tabPage1->Controls->Add(this->label1);
 			this->tabPage1->Controls->Add(this->button_EstadoFinal);
 			this->tabPage1->Controls->Add(this->button_EstadoInicial);
 			this->tabPage1->Controls->Add(this->textBox1);
@@ -212,7 +211,7 @@ namespace AImap {
 			this->tabPage1->Location = System::Drawing::Point(4, 22);
 			this->tabPage1->Name = L"tabPage1";
 			this->tabPage1->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage1->Size = System::Drawing::Size(622, 559);
+			this->tabPage1->Size = System::Drawing::Size(769, 864);
 			this->tabPage1->TabIndex = 0;
 			this->tabPage1->Text = L"tabPage1";
 			this->tabPage1->UseVisualStyleBackColor = true;
@@ -224,23 +223,6 @@ namespace AImap {
 			this->comboBox1->Name = L"comboBox1";
 			this->comboBox1->Size = System::Drawing::Size(121, 21);
 			this->comboBox1->TabIndex = 10;
-			// 
-			// label1
-			// 
-			this->label1->ForeColor = System::Drawing::SystemColors::ActiveCaptionText;
-			this->label1->ImageIndex = 0;
-			this->label1->ImageList = this->imageList_Player;
-			this->label1->Location = System::Drawing::Point(210, 38);
-			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(52, 50);
-			this->label1->TabIndex = 8;
-			this->label1->Text = L"label1";
-			// 
-			// imageList_Player
-			// 
-			this->imageList_Player->ImageStream = (cli::safe_cast<System::Windows::Forms::ImageListStreamer^>(resources->GetObject(L"imageList_Player.ImageStream")));
-			this->imageList_Player->TransparentColor = System::Drawing::Color::Transparent;
-			this->imageList_Player->Images->SetKeyName(0, L"Fish.gif");
 			// 
 			// button_EstadoFinal
 			// 
@@ -274,7 +256,7 @@ namespace AImap {
 			this->tabPage2->Location = System::Drawing::Point(4, 22);
 			this->tabPage2->Name = L"tabPage2";
 			this->tabPage2->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage2->Size = System::Drawing::Size(622, 559);
+			this->tabPage2->Size = System::Drawing::Size(782, 574);
 			this->tabPage2->TabIndex = 1;
 			this->tabPage2->Text = L"tabPage2";
 			this->tabPage2->UseVisualStyleBackColor = true;
@@ -359,14 +341,25 @@ namespace AImap {
 			this->textBox_GroundName->Size = System::Drawing::Size(100, 20);
 			this->textBox_GroundName->TabIndex = 0;
 			// 
+			// imageList_Player
+			// 
+			this->imageList_Player->ImageStream = (cli::safe_cast<System::Windows::Forms::ImageListStreamer^>(resources->GetObject(L"imageList_Player.ImageStream")));
+			this->imageList_Player->TransparentColor = System::Drawing::Color::Transparent;
+			this->imageList_Player->Images->SetKeyName(0, L"Fish.gif");
+			// 
 			// Map
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(630, 597);
+			this->AutoSize = true;
+			this->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
+			this->ClientSize = System::Drawing::Size(775, 894);
 			this->Controls->Add(this->tabControl1);
+			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedDialog;
+			this->HelpButton = true;
 			this->Location = System::Drawing::Point(30, 30);
 			this->Name = L"Map";
+			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"Map";
 			this->tabControl1->ResumeLayout(false);
 			this->tabPage1->ResumeLayout(false);
@@ -382,7 +375,7 @@ namespace AImap {
 
 		void chargeMap(String ^fileNameMap) {
 			Cell cell;
-			ColorClass color;
+			Ground ground;
 			std::string str, str2;
 			std::stringstream toStr;
 			char character;
@@ -418,9 +411,9 @@ namespace AImap {
 									cell.setPositionX(row);
 									cell.setPositionY(column);
 									listCell->insertData(cell);
-									if (!listColor->findId(cell.getIdGround())) {
-										color.setId(cell.getIdGround());
-										listColor->insertData(color);
+									if (!listGround->findId(cell.getIdGround())) {
+										ground.setId(cell.getIdGround());
+										listGround->insertData(ground);
 									}
 									textBox1->Text += listCell->getLast()->getData().getPositionX().ToString() + ",";
 									textBox1->Text += listCell->getLast()->getData().getPositionY().ToString() + "//";
@@ -437,10 +430,12 @@ namespace AImap {
 								str = "";
 							}
 							// Retorno de carro (agrega la fila)
-							else if (character == 10 || character == 13) {
+							else if (character == 10 || character == 13 || 3) {
 								if (row == 0) {
 									publicSizeMax = sizeMax = column;
 									panelMap->Size.Height = CELL_MAX_SIZE * (sizeMax + 1);
+									MessageBox::Show(publicSizeMax.ToString());
+									
 								}
 								//MessageBox::Show("Column: " + sizeMax.ToString());
 								if (counter < sizeMax) {
@@ -456,9 +451,9 @@ namespace AImap {
 									cell.setPositionX(row);
 									cell.setPositionY(column);
 									listCell->insertData(cell);
-									if (!listColor->findId(cell.getIdGround())) {
-										color.setId(cell.getIdGround());
-										listColor->insertData(color);
+									if (!listGround->findId(cell.getIdGround())) {
+										ground.setId(cell.getIdGround());
+										listGround->insertData(ground);
 									}
 
 									row++;
@@ -496,16 +491,17 @@ namespace AImap {
 			ComboBox ^comboBox;
 			TextBox ^textBox;
 			String ^systemStr, ^idStr;
-			ColorClass color;
-			int size = listColor->getItemCounter(), id, sizeListGround = listGround->getItemCounter();
-			cli::array <String^>^ nameColor = gcnew cli::array<String^>(sizeListGround);
+			Ground ground;
+			int size = listGround->getItemCounter(), id, sizeListGround = listColor->getItemCounter();
+			cli::array <String^>^ nameGround = gcnew cli::array<String^>(sizeListGround);
 			arrayComboBox = gcnew cli::array<ComboBox^>(size);
+			arrayButton = gcnew cli::array<Button^>(size);
 
 			for (int i = 0; i < sizeListGround; i++) {
 				//nameColor[i] = listColor->getDataByPosition(i).getGroundName();
 				//listColorInUse[i] = listColor[i];
 				
-				nameColor[i] = gcnew String(listGround->getDataByPosition(i).getGroundName().c_str());
+				nameGround[i] = gcnew String(listColor->getDataByPosition(i).getName().c_str());
 				//MessageBox::Show(nameColor[i]);
 			}
 
@@ -513,11 +509,11 @@ namespace AImap {
 				btn = gcnew Button;
 				comboBox = gcnew ComboBox;
 				textBox = gcnew TextBox;
-				color = listColor->getDataByPosition(i);
-				idStr = color.getId().ToString();
+				ground = listGround->getDataByPosition(i);
+				idStr = ground.getId().ToString();
 
 				//Estableciendo propiedades de botones dinámicos de colores
-				systemStr = "btn_color" + idStr;
+				systemStr = BUTTON_NAME_COLOR + idStr;
 				btn->Name = systemStr;
 				btn->Text = "Seleccionar color";
 				btn->Location = Point(10,i * 25);
@@ -526,12 +522,12 @@ namespace AImap {
 				//Creando los eventos del botón dinámico
 				btn->Click += gcnew System::EventHandler(this, &Map::btn_color_click);
 
-				systemStr = "comboBox_Color" + idStr;
+				systemStr = COMBOBOX_NAME_COLOR + idStr;
 				comboBox->Name = systemStr;
 				comboBox->Location = Point(135, i * 25);
 				comboBox->Size = System::Drawing::Size(115, 23);
 				comboBox->DropDownStyle = ComboBoxStyle::DropDownList;
-				comboBox->Items->AddRange(nameColor);
+				comboBox->Items->AddRange(nameGround);
 				comboBox->Text = "Escoga un terreno";
 				comboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &Map::comboBox_Color_Name);
 				arrayComboBox[i] = comboBox;
@@ -544,7 +540,7 @@ namespace AImap {
 				textBox->Visible = true;*/
 
 				
-				textBox->Name = "textBox_Color" + idStr;
+				textBox->Name = TEXTBOX_NAME_COLOR + idStr;
 				//systemStr = "numericUpDown_Color" + idStr;
 				textBox->Location = Point(260, i * 25);
 				textBox->Size = System::Drawing::Size(60, 23);
@@ -578,7 +574,8 @@ namespace AImap {
 			for(int i=0;i<nameColor->Length-1; i+=4)
 			{
 				marshalString(nameColor[i], str);
-				color.setGroundName(str);
+				color.setId(i);
+				color.setName(str);
 				//color.setId(Int32::Parse(nameColor[i + 1]));
 				int uno, dos, tres;
 				uno = Int32::Parse(nameColor[i + 1]);
@@ -588,7 +585,7 @@ namespace AImap {
 				//MessageBox::Show(nameColor->Length.ToString() + " - " + i.ToString() + " - " + color.getColor(2).ToString());
 
 				//listColor->operator[](i).setGroundName(str);
-				listGround->insertData(color);
+				listColor->insertData(color);
 			}
 		}
 
@@ -625,34 +622,34 @@ namespace AImap {
 			Graphics ^g = panelMap->CreateGraphics();
 			SolidBrush ^sb = gcnew SolidBrush(Color::Red);
 			Pen ^p = gcnew Pen(Color::Blue);
-			ColorClass color, colorTwo;
+			Ground ground, groundTwo;
 			Cell cell;
 			string str;
 			
 			panelMap->Size.Width = publicSizeMax * CELL_MAX_SIZE;
 			panelMap->Size.Height = publicSizeMax * CELL_MAX_SIZE;
 
-			for (int i = 0; i < publicSizeMax; i++) {
-				for (int j = 0; j < publicSizeMax; j++) {
+			for (int i = 0; i <= publicSizeMax; i++) {
+				for (int j = 0; j <= publicSizeMax; j++) {
 					cell.setPositionX(j);
 					cell.setPositionY(i);
 
 					if (listCell->findPositionXY(cell) != nullptr) {
 						cell = listCell->findPositionXY(cell)->getData();
 						
-						colorTwo.setId(cell.getIdGround());
+						groundTwo.setId(cell.getIdGround());
 						//color = listColor->getDataByPosition(cell.getIdGround());
-						color = listColor->findData(colorTwo)->getData();
+						ground = listGround->findData(groundTwo)->getData();
 						//color = listColor[123];
 						
 						g->DrawRectangle(p, i * CELL_MAX_SIZE, j * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
 						g->DrawString(cell.getIdGround().ToString(), this->Font, sb, PointF(i * CELL_MAX_SIZE + 10, j * CELL_MAX_SIZE + 10));
 						//MessageBox::Show(color.getColor(0).ToString() + "-" + color.getColor(1).ToString() + "-" + color.getColor(2).ToString());
-						sb = gcnew SolidBrush(Color::FromArgb(color.getColor(0), color.getColor(1), color.getColor(2)));
+						sb = gcnew SolidBrush(Color::FromArgb(ground.getColor(0), ground.getColor(1), ground.getColor(2)));
 						g->FillRectangle(sb, i * CELL_MAX_SIZE + 1, j * CELL_MAX_SIZE + 1, CELL_MAX_SIZE-1, CELL_MAX_SIZE-1);
 					}
 					else {
-						str += "- 1";
+						MessageBox::Show("not found at " + i.ToString() + "-" + j.ToString());
 					}
 					//txtPrueba2->Text = arrayData->getSize().ToString();
 				}
@@ -666,7 +663,7 @@ namespace AImap {
 		
 		// //////////////////////////////////////////////////////// HERRAMIENTAS ////////////////////////////////////////////////////////////// //
 
-		ColorClass *colorAux = new ColorClass();
+		Ground *colorAux = new Ground();
 
 		void marshalString(String ^ s, std::string& os) {
 			using namespace Runtime::InteropServices;
@@ -690,15 +687,15 @@ namespace AImap {
 			
 			MessageBox::Show(id.ToString());
 			
-			if (listColor->getPointerDataByPosition(id) != nullptr) {
+			if (listGround->getPointerDataByPosition(id) != nullptr) {
 				if (colorDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
 					r = colorDialog1->Color.R;
 					g= colorDialog1->Color.G;
 					b = colorDialog1->Color.B;
-					listColor->getDataByPosition(id).setColor(r, g, b);
+					listGround->getDataByPosition(id).setColor(r, g, b);
 					//listColor->findId(id)->getData().setColor(r,g,b);
 					
-					MessageBox::Show("color establecido como: " + listColor->getDataByPosition(id).getColor(0) + " - ");
+					MessageBox::Show("color establecido como: " + listGround->getDataByPosition(id).getColor(0) + " - ");
 				}
 			}
 
@@ -706,24 +703,57 @@ namespace AImap {
 
 		void comboBox_Color_Name(Object^ sender, EventArgs^ e) {
 			ComboBox ^comboBox;
-			ColorClass color, colorTwo;
-			string str, str2;
+			Button ^button = gcnew Button;
+			Button ^buttonAux = gcnew Button;
+			Ground ground;
+			ColorClass color;
+			Color newColor;
+			string str;
 			String ^systemStr;
 			String ^systemStr2;
 			int id;
+			bool repeated = false;
 
 			comboBox = safe_cast<ComboBox^>(sender);
 			id = Int32::Parse(comboBox->Name->Substring(14));
 			
 			//MessageBox::Show("CHANGED");
-			
 			for each (ComboBox^ var in arrayComboBox)
 			{
-				if (comboBox->SelectedIndex > 0) {
-					var->Items->RemoveAt(comboBox->SelectedIndex);
+				//tabPage2->Controls->Find("btn_color1");
+				if (comboBox->SelectedIndex == var->SelectedIndex && comboBox->Name != var->Name) {
+					comboBox->SelectedIndex = -1;
+					repeated = true;
+					newColor = Color::Gray;
 				}
-				
 			}
+			if (!repeated) {
+				for each(Object^ var in tabPage2->Controls) {
+					if (var->GetType() == button->GetType()) {
+						button = cli::safe_cast<Button^>(var);
+						//MessageBox::Show("Changing1: " + button->Name);
+						if (button->Name == BUTTON_NAME_COLOR + id.ToString()) {
+							
+							marshalString(comboBox->Text, str);
+							color.setName(str);
+							
+							if (listColor->findData(color) != nullptr) {
+								color = listColor->findData(color)->getData();
+								buttonAux = button;
+								newColor = Color::FromArgb(color.getColor(0), color.getColor(1), color.getColor(2));
+								ground.setId(id);
+								if (listGround->findData(ground) != nullptr) {
+									//MessageBox::Show("asdf: " + button->Name);
+									listGround->findData(ground)->getData().setColor(color.getColor(0), color.getColor(1), color.getColor(2));
+								}
+								
+							}
+							
+						}
+					}
+				}
+			}
+			buttonAux->BackColor = newColor;
 
 			/*if (comboBox->Text == "Escoga un terreno") {
 				MessageBox::Show("Error, debe de escoger un nombre válido");
@@ -816,12 +846,12 @@ namespace AImap {
 		else {
 			
 			marshalString(textBox_GroundName->Text, str);
-			colorAux->setGroundName(str);
+			colorAux->setName(str);
 			colorAux->setValue(int(numericUpDown_Value->Value));
-			colorAux->setId(listColor->getLast()->getData().getId() + 1);
+			colorAux->setId(listGround->getLast()->getData().getId() + 1);
 
-			listColor->insertData(*colorAux);
-			if (listColor->findData(*colorAux)) {
+			listGround->insertData(*colorAux);
+			if (listGround->findData(*colorAux)) {
 				MessageBox::Show("Terreno ingresado correctamente");
 			}
 			else {

@@ -275,19 +275,6 @@ public:
 		return aux;
 	}
 
-	std::string listData() {
-		std::string acumulator("");
-		Node* aux(header);
-		aux = aux->getNext();
-		while (aux != header) {
-			acumulator += aux->getData().toString();
-			acumulator += " |------|-------|-------|\n";
-			//std::cout <<acumulator;
-			aux = aux->getNext();
-		}
-		return acumulator;
-	}
-
 	int getItemCounter() {
 		return itemCounter;
 	}
@@ -542,15 +529,11 @@ public:
 		return retrieveData(idxToPos(idx));
 	}
 
-	T& operator[](const int idx) {
+	T& operator [] (const int idx) {
 		return retrieveData(idxToPos(idx));
 	}
 
-	/*Node* operator[](int idx) {
-		return idxToPos(idx);
-	}*/
-
-	/*Collection& operator + (const Collection& c) {
+	Collection& operator + (const Collection& c) {
 		copyCollection(c);
 
 		return *this;
@@ -562,21 +545,7 @@ public:
 		copyCollection(c);
 
 		return *this;
-	}*/
-
-
-	std::string toStringToDisk() {
-		std::string acumulator("");
-		Node* aux(header->getNext());
-		while (aux != header) {
-			acumulator += aux->getData().getName() + "\n";
-			//std::cout <<aux->getData().toDisk()<< std::endl;
-			aux = aux->getNext();
-		}
-		//std::cout <<acumulator<< std::endl;
-		return acumulator;
 	}
-
 
 };
 

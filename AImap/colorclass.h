@@ -3,9 +3,8 @@
 class ColorClass {
 	private:
 		int id;
+		std::string name;
 		int color[3];
-		float value;
-		std::string groundName;
 
 
 	public:
@@ -14,23 +13,18 @@ class ColorClass {
 			color[0] = -1;
 			color[1] = -1;
 			color[2] = -1;
-			groundName = "";
-			value = -1;
+			name = "";
 		}
 
 		int getId() {
 			return id;
 		}
-		int getColor(const int& colorX){
+		int getColor(const int& colorX) {
 			return color[colorX];
 		}
 
-		float getValue() {
-			return value;
-		}
-
-		std::string getGroundName() {
-			return groundName;
+		std::string getName() {
+			return name;
 		}
 
 		void setId(const int& idX) {
@@ -42,12 +36,8 @@ class ColorClass {
 			color[2] = b;
 		}
 
-		void setValue(const float& valueX) {
-			value = valueX;
-		}
-
-		void setGroundName(const std::string& groundNameX) {
-			groundName = groundNameX;
+		void setName(const std::string& nameX) {
+			name = nameX;
 		}
 
 		ColorClass& operator = (const ColorClass& c) {
@@ -55,32 +45,31 @@ class ColorClass {
 			color[0] = c.color[0];
 			color[1] = c.color[1];
 			color[2] = c.color[2];
-			value = c.value;
-			groundName = c.groundName;
+			name = c.name;
 			return *this;
 		}
-		
+
 		bool operator == (const ColorClass& c) {
-			return id == c.id;
+			return name == c.name;
 		}
 
 		bool operator != (const ColorClass& c) {
-			return id != c.id;
+			return name != c.name;
 		}
 
 		bool operator < (const ColorClass& c) {
-			return id < c.id;
+			return name < c.name;
 		}
 
 		bool operator > (const ColorClass& c) {
-			return id > c.id;
+			return name > c.name;
 		}
 
 		bool operator <= (const ColorClass& c) {
-			return id <= c.id;
+			return name <= c.name;
 		}
 
 		bool operator >= (const ColorClass& c) {
-			return id >= c.id;
+			return name >= c.name;
 		}
 };
