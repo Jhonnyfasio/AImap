@@ -42,7 +42,8 @@ namespace AImap {
 	{
 	private:;
 	private: System::Windows::Forms::TextBox^  textBox1;
-	private: System::Windows::Forms::TextBox^  textBox_FileNameMap;
+	private: System::Windows::Forms::TextBox^  txtPrueba2;
+
 	private: System::Windows::Forms::Panel^  panelMap;
 	private: System::ComponentModel::IContainer^  components;
 	private: System::Windows::Forms::Button^  btn_play;
@@ -50,7 +51,7 @@ namespace AImap {
 	private: System::Windows::Forms::TabPage^  tabPage1;
 	private: System::Windows::Forms::ColorDialog^  colorDialog1;
 	private: System::Windows::Forms::TabPage^  tabPage2;
-	private: System::Windows::Forms::NumericUpDown^  numericUpDown_Value;
+
 	private: System::Windows::Forms::Button^  button_SetColor;
 	private: System::Windows::Forms::Button^  button_AddColor;
 	private: System::Windows::Forms::TextBox^  textBox_GroundName;
@@ -72,7 +73,10 @@ namespace AImap {
 	Collection<ColorClass> *listColor;
 	cli::array<ComboBox^>^ arrayComboBox;
 	cli::array<Button^>^ arrayButton;
-	//Collection<Button> *listButton;
+	String ^fileNameMapGlobal;
+	private: System::Windows::Forms::PictureBox^  pictureBox_Play;
+	private: System::Windows::Forms::PictureBox^  pictureBox_Start;
+			 //Collection<Button> *listButton;
 	int publicSizeMax;
 			 
 	
@@ -90,14 +94,10 @@ namespace AImap {
 			listGround = new Collection<Ground>;
 			listPlayer = new Collection<Player>;
 			listColor = new Collection<ColorClass>;
-
+			fileNameMapGlobal = fileNameMap;
 			//listButton = new Collection<Button>;
 
 			//arrayData = new ArrayClass<int>;
-			chargeMap(fileNameMap);
-			chargeColorFile();
-			chargeColor();
-			chargePlayerFile();
 		}
 	
 	protected:
@@ -128,11 +128,13 @@ namespace AImap {
 			this->components = (gcnew System::ComponentModel::Container());
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(Map::typeid));
 			this->panelMap = (gcnew System::Windows::Forms::Panel());
+			this->pictureBox_Play = (gcnew System::Windows::Forms::PictureBox());
 			this->btn_play = (gcnew System::Windows::Forms::Button());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
-			this->textBox_FileNameMap = (gcnew System::Windows::Forms::TextBox());
+			this->txtPrueba2 = (gcnew System::Windows::Forms::TextBox());
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
+			this->pictureBox_Start = (gcnew System::Windows::Forms::PictureBox());
 			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
 			this->button_EstadoFinal = (gcnew System::Windows::Forms::Button());
 			this->button_EstadoInicial = (gcnew System::Windows::Forms::Button());
@@ -142,26 +144,36 @@ namespace AImap {
 			this->comboBox_Player = (gcnew System::Windows::Forms::ComboBox());
 			this->button_ResetGrounds = (gcnew System::Windows::Forms::Button());
 			this->button_SaveGrounds = (gcnew System::Windows::Forms::Button());
-			this->numericUpDown_Value = (gcnew System::Windows::Forms::NumericUpDown());
 			this->button_SetColor = (gcnew System::Windows::Forms::Button());
 			this->button_AddColor = (gcnew System::Windows::Forms::Button());
 			this->textBox_GroundName = (gcnew System::Windows::Forms::TextBox());
 			this->imageList_Player = (gcnew System::Windows::Forms::ImageList(this->components));
 			this->colorDialog1 = (gcnew System::Windows::Forms::ColorDialog());
+			this->panelMap->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Play))->BeginInit();
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->BeginInit();
 			this->tabPage2->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Player))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown_Value))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// panelMap
 			// 
 			this->panelMap->AutoSize = true;
+			this->panelMap->Controls->Add(this->pictureBox_Play);
 			this->panelMap->Location = System::Drawing::Point(9, 104);
 			this->panelMap->Name = L"panelMap";
 			this->panelMap->Size = System::Drawing::Size(750, 750);
 			this->panelMap->TabIndex = 1;
+			// 
+			// pictureBox_Play
+			// 
+			this->pictureBox_Play->Location = System::Drawing::Point(114, 52);
+			this->pictureBox_Play->Name = L"pictureBox_Play";
+			this->pictureBox_Play->Size = System::Drawing::Size(50, 50);
+			this->pictureBox_Play->TabIndex = 0;
+			this->pictureBox_Play->TabStop = false;
 			// 
 			// btn_play
 			// 
@@ -182,12 +194,12 @@ namespace AImap {
 			this->textBox1->Size = System::Drawing::Size(75, 92);
 			this->textBox1->TabIndex = 4;
 			// 
-			// textBox_FileNameMap
+			// txtPrueba2
 			// 
-			this->textBox_FileNameMap->Location = System::Drawing::Point(288, 23);
-			this->textBox_FileNameMap->Name = L"textBox_FileNameMap";
-			this->textBox_FileNameMap->Size = System::Drawing::Size(183, 20);
-			this->textBox_FileNameMap->TabIndex = 5;
+			this->txtPrueba2->Location = System::Drawing::Point(388, 23);
+			this->txtPrueba2->Name = L"txtPrueba2";
+			this->txtPrueba2->Size = System::Drawing::Size(183, 20);
+			this->txtPrueba2->TabIndex = 5;
 			// 
 			// tabControl1
 			// 
@@ -201,11 +213,12 @@ namespace AImap {
 			// 
 			// tabPage1
 			// 
+			this->tabPage1->Controls->Add(this->pictureBox_Start);
 			this->tabPage1->Controls->Add(this->comboBox1);
 			this->tabPage1->Controls->Add(this->button_EstadoFinal);
 			this->tabPage1->Controls->Add(this->button_EstadoInicial);
 			this->tabPage1->Controls->Add(this->textBox1);
-			this->tabPage1->Controls->Add(this->textBox_FileNameMap);
+			this->tabPage1->Controls->Add(this->txtPrueba2);
 			this->tabPage1->Controls->Add(this->panelMap);
 			this->tabPage1->Controls->Add(this->btn_play);
 			this->tabPage1->Location = System::Drawing::Point(4, 22);
@@ -216,10 +229,23 @@ namespace AImap {
 			this->tabPage1->Text = L"tabPage1";
 			this->tabPage1->UseVisualStyleBackColor = true;
 			// 
+			// pictureBox_Start
+			// 
+			this->pictureBox_Start->Cursor = System::Windows::Forms::Cursors::SizeAll;
+			this->pictureBox_Start->Location = System::Drawing::Point(241, 23);
+			this->pictureBox_Start->Name = L"pictureBox_Start";
+			this->pictureBox_Start->Size = System::Drawing::Size(50, 50);
+			this->pictureBox_Start->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->pictureBox_Start->TabIndex = 11;
+			this->pictureBox_Start->TabStop = false;
+			this->pictureBox_Start->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &Map::pictureBox_Start_MouseDown);
+			this->pictureBox_Start->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &Map::pictureBox_Start_MouseMove);
+			this->pictureBox_Start->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &Map::pictureBox_Start_MouseUp);
+			// 
 			// comboBox1
 			// 
 			this->comboBox1->FormattingEnabled = true;
-			this->comboBox1->Location = System::Drawing::Point(340, 57);
+			this->comboBox1->Location = System::Drawing::Point(388, 59);
 			this->comboBox1->Name = L"comboBox1";
 			this->comboBox1->Size = System::Drawing::Size(121, 21);
 			this->comboBox1->TabIndex = 10;
@@ -249,14 +275,13 @@ namespace AImap {
 			this->tabPage2->Controls->Add(this->comboBox_Player);
 			this->tabPage2->Controls->Add(this->button_ResetGrounds);
 			this->tabPage2->Controls->Add(this->button_SaveGrounds);
-			this->tabPage2->Controls->Add(this->numericUpDown_Value);
 			this->tabPage2->Controls->Add(this->button_SetColor);
 			this->tabPage2->Controls->Add(this->button_AddColor);
 			this->tabPage2->Controls->Add(this->textBox_GroundName);
 			this->tabPage2->Location = System::Drawing::Point(4, 22);
 			this->tabPage2->Name = L"tabPage2";
 			this->tabPage2->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage2->Size = System::Drawing::Size(782, 574);
+			this->tabPage2->Size = System::Drawing::Size(769, 864);
 			this->tabPage2->TabIndex = 1;
 			this->tabPage2->Text = L"tabPage2";
 			this->tabPage2->UseVisualStyleBackColor = true;
@@ -307,16 +332,9 @@ namespace AImap {
 			this->button_SaveGrounds->Text = L"Guardar";
 			this->button_SaveGrounds->UseVisualStyleBackColor = true;
 			// 
-			// numericUpDown_Value
-			// 
-			this->numericUpDown_Value->Location = System::Drawing::Point(385, 411);
-			this->numericUpDown_Value->Name = L"numericUpDown_Value";
-			this->numericUpDown_Value->Size = System::Drawing::Size(39, 20);
-			this->numericUpDown_Value->TabIndex = 3;
-			// 
 			// button_SetColor
 			// 
-			this->button_SetColor->Location = System::Drawing::Point(385, 437);
+			this->button_SetColor->Location = System::Drawing::Point(9, 673);
 			this->button_SetColor->Name = L"button_SetColor";
 			this->button_SetColor->Size = System::Drawing::Size(75, 23);
 			this->button_SetColor->TabIndex = 2;
@@ -326,7 +344,7 @@ namespace AImap {
 			// 
 			// button_AddColor
 			// 
-			this->button_AddColor->Location = System::Drawing::Point(385, 466);
+			this->button_AddColor->Location = System::Drawing::Point(9, 702);
 			this->button_AddColor->Name = L"button_AddColor";
 			this->button_AddColor->Size = System::Drawing::Size(75, 23);
 			this->button_AddColor->TabIndex = 1;
@@ -336,7 +354,7 @@ namespace AImap {
 			// 
 			// textBox_GroundName
 			// 
-			this->textBox_GroundName->Location = System::Drawing::Point(385, 385);
+			this->textBox_GroundName->Location = System::Drawing::Point(9, 647);
 			this->textBox_GroundName->Name = L"textBox_GroundName";
 			this->textBox_GroundName->Size = System::Drawing::Size(100, 20);
 			this->textBox_GroundName->TabIndex = 0;
@@ -361,13 +379,16 @@ namespace AImap {
 			this->Name = L"Map";
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"Map";
+			this->Shown += gcnew System::EventHandler(this, &Map::Map_Shown);
+			this->panelMap->ResumeLayout(false);
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Play))->EndInit();
 			this->tabControl1->ResumeLayout(false);
 			this->tabPage1->ResumeLayout(false);
 			this->tabPage1->PerformLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->EndInit();
 			this->tabPage2->ResumeLayout(false);
 			this->tabPage2->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Player))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown_Value))->EndInit();
 			this->ResumeLayout(false);
 
 		}
@@ -398,7 +419,7 @@ namespace AImap {
 					}
 					else if (!readerFile.eof()) {
 						readerFile.get(character);
-						//txtPrueba2->Text += character;
+						txtPrueba2->Text += character;
 						if (!readerFile.eof()) {
 							if (isdigit(character)) {
 								str += character;
@@ -430,7 +451,7 @@ namespace AImap {
 								str = "";
 							}
 							// Retorno de carro (agrega la fila)
-							else if (character == 10 || character == 13 || 3) {
+							else if (character == 10 || character == 13 || character == 3) {
 								if (row == 0) {
 									publicSizeMax = sizeMax = column;
 									panelMap->Size.Height = CELL_MAX_SIZE * (sizeMax + 1);
@@ -474,8 +495,10 @@ namespace AImap {
 							// Valida caracter inválido
 							else {
 								marshalString(fileNameMap, str);
-								messageError("No se puede leer el archivo '" + str + "', archivo corrupto.");
+								MessageBox::Show("No se puede leer el archivo '" + fileNameMap + "', archivo corrupto en fila: " + 
+									(row + 1).ToString() + " columna: " + (column + 1).ToString() + ".");
 								readerFile.close();
+								//this->Close();
 								break;
 							}
 						}
@@ -655,12 +678,15 @@ namespace AImap {
 				}
 			}
 			//MessageBox::Show();
+			pictureBox_Play->Image = pictureBox_Player->Image;
 		}
 
 		void validateBeforePlay() {
 			
 		}
 		
+		//void 
+
 		// //////////////////////////////////////////////////////// HERRAMIENTAS ////////////////////////////////////////////////////////////// //
 
 		Ground *colorAux = new Ground();
@@ -831,9 +857,6 @@ namespace AImap {
 		String ^systemStr = "";
 		string str;
 
-		if (numericUpDown_Value->Value < 0 || 100 < numericUpDown_Value->Value) {
-			systemStr = "El valor del terreno no puede ser inferior a 0 o superior a 100\n";
-		}
 		if (textBox_GroundName->Text == "") {
 			systemStr += "Ingrese un nombre para el terreno\n";
 		}
@@ -847,7 +870,6 @@ namespace AImap {
 			
 			marshalString(textBox_GroundName->Text, str);
 			colorAux->setName(str);
-			colorAux->setValue(int(numericUpDown_Value->Value));
 			colorAux->setId(listGround->getLast()->getData().getId() + 1);
 
 			listGround->insertData(*colorAux);
@@ -873,6 +895,27 @@ namespace AImap {
 		pictureBox_Player->Image = bitMap;
 		
 		//MessageBox::Show("Function");
+	}
+	private: System::Void Map_Shown(System::Object^  sender, System::EventArgs^  e) {
+		chargeMap(fileNameMapGlobal);
+		chargeColorFile();
+		chargeColor();
+		chargePlayerFile();
+		}
+	// Eventos para Drag & drop de estado inicial y final
+	Point ^coordenadas;
+	private: System::Void pictureBox_Start_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+		coordenadas->Y = MousePosition.Y - pictureBox_Start->Top;
+		coordenadas->X = MousePosition.X - pictureBox_Start->Left;
+	}
+	private: System::Void pictureBox_Start_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+		if (e->Button == Windows::Forms::MouseButtons::Left) {
+			pictureBox_Start->Top = MousePosition.Y - coordenadas->Y;
+			pictureBox_Start->Left = MousePosition.X - coordenadas->X;
+		}
+	}
+	private: System::Void pictureBox_Start_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+	
 	}
 };
 }
