@@ -88,5 +88,8 @@
     <Image Include="Recursos\Virus.gif">
       <Filter>Archivos de recursos</Filter>
     </Image>
+    <Image Include="Recursos\Start.gif">
+      <Filter>Archivos de recursos</Filter>
+    </Image>
   </ItemGroup>
 </Project>

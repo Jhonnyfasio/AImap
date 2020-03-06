@@ -76,6 +76,7 @@ namespace AImap {
 	String ^fileNameMapGlobal;
 	private: System::Windows::Forms::PictureBox^  pictureBox_Play;
 	private: System::Windows::Forms::PictureBox^  pictureBox_Start;
+	private: System::Windows::Forms::Panel^  panel1;
 			 //Collection<Button> *listButton;
 	int publicSizeMax;
 			 
@@ -134,6 +135,7 @@ namespace AImap {
 			this->txtPrueba2 = (gcnew System::Windows::Forms::TextBox());
 			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
 			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
+			this->panel1 = (gcnew System::Windows::Forms::Panel());
 			this->pictureBox_Start = (gcnew System::Windows::Forms::PictureBox());
 			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
 			this->button_EstadoFinal = (gcnew System::Windows::Forms::Button());
@@ -153,6 +155,7 @@ namespace AImap {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Play))->BeginInit();
 			this->tabControl1->SuspendLayout();
 			this->tabPage1->SuspendLayout();
+			this->panel1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->BeginInit();
 			this->tabPage2->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Player))->BeginInit();
@@ -160,12 +163,17 @@ namespace AImap {
 			// 
 			// panelMap
 			// 
+			this->panelMap->AllowDrop = true;
 			this->panelMap->AutoSize = true;
+			this->panelMap->BackColor = System::Drawing::Color::Transparent;
+			this->panelMap->Controls->Add(this->panel1);
 			this->panelMap->Controls->Add(this->pictureBox_Play);
 			this->panelMap->Location = System::Drawing::Point(9, 104);
 			this->panelMap->Name = L"panelMap";
-			this->panelMap->Size = System::Drawing::Size(750, 750);
+			this->panelMap->Size = System::Drawing::Size(1221, 805);
 			this->panelMap->TabIndex = 1;
+			this->panelMap->DragDrop += gcnew System::Windows::Forms::DragEventHandler(this, &Map::panelMap_DragDrop);
+			this->panelMap->DragEnter += gcnew System::Windows::Forms::DragEventHandler(this, &Map::panelMap_DragEnter);
 			// 
 			// pictureBox_Play
 			// 
@@ -213,7 +221,6 @@ namespace AImap {
 			// 
 			// tabPage1
 			// 
-			this->tabPage1->Controls->Add(this->pictureBox_Start);
 			this->tabPage1->Controls->Add(this->comboBox1);
 			this->tabPage1->Controls->Add(this->button_EstadoFinal);
 			this->tabPage1->Controls->Add(this->button_EstadoInicial);
@@ -229,10 +236,19 @@ namespace AImap {
 			this->tabPage1->Text = L"tabPage1";
 			this->tabPage1->UseVisualStyleBackColor = true;
 			// 
+			// panel1
+			// 
+			this->panel1->BackColor = System::Drawing::Color::Transparent;
+			this->panel1->Controls->Add(this->pictureBox_Start);
+			this->panel1->Location = System::Drawing::Point(25, 30);
+			this->panel1->Name = L"panel1";
+			this->panel1->Size = System::Drawing::Size(750, 750);
+			this->panel1->TabIndex = 12;
+			// 
 			// pictureBox_Start
 			// 
 			this->pictureBox_Start->Cursor = System::Windows::Forms::Cursors::SizeAll;
-			this->pictureBox_Start->Location = System::Drawing::Point(241, 23);
+			this->pictureBox_Start->Location = System::Drawing::Point(53, 10);
 			this->pictureBox_Start->Name = L"pictureBox_Start";
 			this->pictureBox_Start->Size = System::Drawing::Size(50, 50);
 			this->pictureBox_Start->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
@@ -385,6 +401,7 @@ namespace AImap {
 			this->tabControl1->ResumeLayout(false);
 			this->tabPage1->ResumeLayout(false);
 			this->tabPage1->PerformLayout();
+			this->panel1->ResumeLayout(false);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->EndInit();
 			this->tabPage2->ResumeLayout(false);
 			this->tabPage2->PerformLayout();
@@ -455,7 +472,7 @@ namespace AImap {
 								if (row == 0) {
 									publicSizeMax = sizeMax = column;
 									panelMap->Size.Height = CELL_MAX_SIZE * (sizeMax + 1);
-									MessageBox::Show(publicSizeMax.ToString());
+									//MessageBox::Show(publicSizeMax.ToString());
 									
 								}
 								//MessageBox::Show("Column: " + sizeMax.ToString());
@@ -495,8 +512,8 @@ namespace AImap {
 							// Valida caracter inválido
 							else {
 								marshalString(fileNameMap, str);
-								MessageBox::Show("No se puede leer el archivo '" + fileNameMap + "', archivo corrupto en fila: " + 
-									(row + 1).ToString() + " columna: " + (column + 1).ToString() + ".");
+								/*MessageBox::Show("No se puede leer el archivo '" + fileNameMap + "', archivo corrupto en fila: " + 
+									(row + 1).ToString() + " columna: " + (column + 1).ToString() + ".");*/
 								readerFile.close();
 								//this->Close();
 								break;
@@ -901,12 +918,21 @@ namespace AImap {
 		chargeColorFile();
 		chargeColor();
 		chargePlayerFile();
+		panelMap->SendToBack();
+		panelMap->Invalidate();
+		auto execAssem = System::Reflection::Assembly::GetExecutingAssembly();
+		auto resourceName = execAssem->GetName()->Name + ".Custom";
+		auto resourceManager = gcnew Resources::ResourceManager(resourceName, execAssem);
+		auto reader = cli::safe_cast<Bitmap^>(resourceManager->GetObject("Start"));
+
+		pictureBox_Start->Image = reader;
 		}
 	// Eventos para Drag & drop de estado inicial y final
-	Point ^coordenadas;
+	Point ^coordenadas = gcnew Point;
 	private: System::Void pictureBox_Start_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 		coordenadas->Y = MousePosition.Y - pictureBox_Start->Top;
 		coordenadas->X = MousePosition.X - pictureBox_Start->Left;
+		//pictureBox_Start->DoDragDrop()
 	}
 	private: System::Void pictureBox_Start_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 		if (e->Button == Windows::Forms::MouseButtons::Left) {
@@ -916,6 +942,12 @@ namespace AImap {
 	}
 	private: System::Void pictureBox_Start_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 	
+	}
+	private: System::Void panelMap_DragEnter(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e) {
+		e->Effect = DragDropEffects::Move;
+	}
+	private: System::Void panelMap_DragDrop(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e) {
+		panelMap->Controls->Add(pictureBox_Start);
 	}
 };
 }

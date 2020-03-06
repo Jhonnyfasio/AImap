@@ -173,6 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Recursos\NyanCat.gif" />
+    <Image Include="Recursos\Start.gif" />
     <Image Include="Recursos\Virus.gif" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
