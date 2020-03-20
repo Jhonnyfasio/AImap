@@ -41,30 +41,30 @@ namespace AImap {
 	public ref class Map : public System::Windows::Forms::Form
 	{
 	private:;
-	private: System::Windows::Forms::TextBox^  textBox1;
-	private: System::Windows::Forms::TextBox^  txtPrueba2;
 
-	private: System::Windows::Forms::Panel^  panelMap;
+
+
+
 	private: System::ComponentModel::IContainer^  components;
-	private: System::Windows::Forms::Button^  btn_play;
-	private: System::Windows::Forms::TabControl^  tabControl1;
-	private: System::Windows::Forms::TabPage^  tabPage1;
-	private: System::Windows::Forms::ColorDialog^  colorDialog1;
-	private: System::Windows::Forms::TabPage^  tabPage2;
 
-	private: System::Windows::Forms::Button^  button_SetColor;
-	private: System::Windows::Forms::Button^  button_AddColor;
-	private: System::Windows::Forms::TextBox^  textBox_GroundName;
-	private: System::Windows::Forms::Button^  button_EstadoFinal;
-	private: System::Windows::Forms::Button^  button_EstadoInicial;
-	private: System::Windows::Forms::Button^  button_ResetGrounds;
-	private: System::Windows::Forms::Button^  button_SaveGrounds;
+
+
+	private: System::Windows::Forms::ColorDialog^  colorDialog1;
+
+
+
+
+
+
+
+
+
 	private: System::Windows::Forms::ImageList^  imageList_Player;
 
-	private: System::Windows::Forms::ComboBox^  comboBox1;
-	private: System::Windows::Forms::PictureBox^  pictureBox_Player;
-	private: System::Windows::Forms::Label^  label2;
-	private: System::Windows::Forms::ComboBox^  comboBox_Player;
+
+
+
+
 
 	Collection<Cell> *listCell;
 	Collection<Ground> *listGround;
@@ -74,9 +74,28 @@ namespace AImap {
 	cli::array<ComboBox^>^ arrayComboBox;
 	cli::array<Button^>^ arrayButton;
 	String ^fileNameMapGlobal;
-	private: System::Windows::Forms::PictureBox^  pictureBox_Play;
+	Point pictureBoxStarPoint;
+	int goal;
+	int start;
+	private: System::Windows::Forms::PictureBox^  pictureBox_Player;
+	private: System::Windows::Forms::Label^  label2;
+	private: System::Windows::Forms::ComboBox^  comboBox_Player;
+	private: System::Windows::Forms::Button^  button_ResetGrounds;
+	private: System::Windows::Forms::Button^  button_SaveGrounds;
 	private: System::Windows::Forms::PictureBox^  pictureBox_Start;
-	private: System::Windows::Forms::Panel^  panel1;
+	private: System::Windows::Forms::ComboBox^  comboBox1;
+
+
+	private: System::Windows::Forms::TextBox^  textBox1;
+	private: System::Windows::Forms::TextBox^  txtPrueba2;
+	private: System::Windows::Forms::Panel^  panelMap;
+	private: System::Windows::Forms::Button^  btn_play;
+	private: System::Windows::Forms::PictureBox^  pictureBox_Goal;
+	private: System::Windows::Forms::Label^  label1;
+	private: System::Windows::Forms::Label^  label3;
+
+
+
 			 //Collection<Button> *listButton;
 	int publicSizeMax;
 			 
@@ -97,7 +116,7 @@ namespace AImap {
 			listColor = new Collection<ColorClass>;
 			fileNameMapGlobal = fileNameMap;
 			//listButton = new Collection<Button>;
-
+			pictureBoxStarPoint = pictureBox_Start->Location;
 			//arrayData = new ArrayClass<int>;
 		}
 	
@@ -128,131 +147,89 @@ namespace AImap {
 		{
 			this->components = (gcnew System::ComponentModel::Container());
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(Map::typeid));
-			this->panelMap = (gcnew System::Windows::Forms::Panel());
-			this->pictureBox_Play = (gcnew System::Windows::Forms::PictureBox());
-			this->btn_play = (gcnew System::Windows::Forms::Button());
-			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
-			this->txtPrueba2 = (gcnew System::Windows::Forms::TextBox());
-			this->tabControl1 = (gcnew System::Windows::Forms::TabControl());
-			this->tabPage1 = (gcnew System::Windows::Forms::TabPage());
-			this->panel1 = (gcnew System::Windows::Forms::Panel());
-			this->pictureBox_Start = (gcnew System::Windows::Forms::PictureBox());
-			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
-			this->button_EstadoFinal = (gcnew System::Windows::Forms::Button());
-			this->button_EstadoInicial = (gcnew System::Windows::Forms::Button());
-			this->tabPage2 = (gcnew System::Windows::Forms::TabPage());
+			this->imageList_Player = (gcnew System::Windows::Forms::ImageList(this->components));
+			this->colorDialog1 = (gcnew System::Windows::Forms::ColorDialog());
 			this->pictureBox_Player = (gcnew System::Windows::Forms::PictureBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->comboBox_Player = (gcnew System::Windows::Forms::ComboBox());
 			this->button_ResetGrounds = (gcnew System::Windows::Forms::Button());
 			this->button_SaveGrounds = (gcnew System::Windows::Forms::Button());
-			this->button_SetColor = (gcnew System::Windows::Forms::Button());
-			this->button_AddColor = (gcnew System::Windows::Forms::Button());
-			this->textBox_GroundName = (gcnew System::Windows::Forms::TextBox());
-			this->imageList_Player = (gcnew System::Windows::Forms::ImageList(this->components));
-			this->colorDialog1 = (gcnew System::Windows::Forms::ColorDialog());
-			this->panelMap->SuspendLayout();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Play))->BeginInit();
-			this->tabControl1->SuspendLayout();
-			this->tabPage1->SuspendLayout();
-			this->panel1->SuspendLayout();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->BeginInit();
-			this->tabPage2->SuspendLayout();
+			this->pictureBox_Start = (gcnew System::Windows::Forms::PictureBox());
+			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
+			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
+			this->txtPrueba2 = (gcnew System::Windows::Forms::TextBox());
+			this->panelMap = (gcnew System::Windows::Forms::Panel());
+			this->btn_play = (gcnew System::Windows::Forms::Button());
+			this->pictureBox_Goal = (gcnew System::Windows::Forms::PictureBox());
+			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->label3 = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Player))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->BeginInit();
 			this->SuspendLayout();
 			// 
-			// panelMap
+			// imageList_Player
 			// 
-			this->panelMap->AllowDrop = true;
-			this->panelMap->AutoSize = true;
-			this->panelMap->BackColor = System::Drawing::Color::Transparent;
-			this->panelMap->Controls->Add(this->panel1);
-			this->panelMap->Controls->Add(this->pictureBox_Play);
-			this->panelMap->Location = System::Drawing::Point(9, 104);
-			this->panelMap->Name = L"panelMap";
-			this->panelMap->Size = System::Drawing::Size(1221, 805);
-			this->panelMap->TabIndex = 1;
-			this->panelMap->DragDrop += gcnew System::Windows::Forms::DragEventHandler(this, &Map::panelMap_DragDrop);
-			this->panelMap->DragEnter += gcnew System::Windows::Forms::DragEventHandler(this, &Map::panelMap_DragEnter);
+			this->imageList_Player->ImageStream = (cli::safe_cast<System::Windows::Forms::ImageListStreamer^>(resources->GetObject(L"imageList_Player.ImageStream")));
+			this->imageList_Player->TransparentColor = System::Drawing::Color::Transparent;
+			this->imageList_Player->Images->SetKeyName(0, L"Fish.gif");
 			// 
-			// pictureBox_Play
+			// pictureBox_Player
 			// 
-			this->pictureBox_Play->Location = System::Drawing::Point(114, 52);
-			this->pictureBox_Play->Name = L"pictureBox_Play";
-			this->pictureBox_Play->Size = System::Drawing::Size(50, 50);
-			this->pictureBox_Play->TabIndex = 0;
-			this->pictureBox_Play->TabStop = false;
+			this->pictureBox_Player->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox_Player.Image")));
+			this->pictureBox_Player->Location = System::Drawing::Point(799, 126);
+			this->pictureBox_Player->Name = L"pictureBox_Player";
+			this->pictureBox_Player->Size = System::Drawing::Size(200, 200);
+			this->pictureBox_Player->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->pictureBox_Player->TabIndex = 13;
+			this->pictureBox_Player->TabStop = false;
 			// 
-			// btn_play
+			// label2
 			// 
-			this->btn_play->Location = System::Drawing::Point(543, 57);
-			this->btn_play->Name = L"btn_play";
-			this->btn_play->Size = System::Drawing::Size(75, 23);
-			this->btn_play->TabIndex = 3;
-			this->btn_play->Text = L"Jugar";
-			this->btn_play->UseVisualStyleBackColor = true;
-			this->btn_play->Click += gcnew System::EventHandler(this, &Map::button1_Click);
+			this->label2->AutoSize = true;
+			this->label2->Location = System::Drawing::Point(799, 66);
+			this->label2->Name = L"label2";
+			this->label2->Size = System::Drawing::Size(54, 13);
+			this->label2->TabIndex = 12;
+			this->label2->Text = L"Personaje";
 			// 
-			// textBox1
+			// comboBox_Player
 			// 
-			this->textBox1->Location = System::Drawing::Point(44, 6);
-			this->textBox1->Multiline = true;
-			this->textBox1->Name = L"textBox1";
-			this->textBox1->ReadOnly = true;
-			this->textBox1->Size = System::Drawing::Size(75, 92);
-			this->textBox1->TabIndex = 4;
+			this->comboBox_Player->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->comboBox_Player->FormattingEnabled = true;
+			this->comboBox_Player->Location = System::Drawing::Point(799, 85);
+			this->comboBox_Player->Name = L"comboBox_Player";
+			this->comboBox_Player->Size = System::Drawing::Size(121, 21);
+			this->comboBox_Player->TabIndex = 11;
+			this->comboBox_Player->SelectedIndexChanged += gcnew System::EventHandler(this, &Map::comboBox_Player_SelectedIndexChanged);
 			// 
-			// txtPrueba2
+			// button_ResetGrounds
 			// 
-			this->txtPrueba2->Location = System::Drawing::Point(388, 23);
-			this->txtPrueba2->Name = L"txtPrueba2";
-			this->txtPrueba2->Size = System::Drawing::Size(183, 20);
-			this->txtPrueba2->TabIndex = 5;
+			this->button_ResetGrounds->Location = System::Drawing::Point(799, 376);
+			this->button_ResetGrounds->Name = L"button_ResetGrounds";
+			this->button_ResetGrounds->Size = System::Drawing::Size(84, 23);
+			this->button_ResetGrounds->TabIndex = 10;
+			this->button_ResetGrounds->Text = L"Reestablecer";
+			this->button_ResetGrounds->UseVisualStyleBackColor = true;
 			// 
-			// tabControl1
+			// button_SaveGrounds
 			// 
-			this->tabControl1->Controls->Add(this->tabPage1);
-			this->tabControl1->Controls->Add(this->tabPage2);
-			this->tabControl1->Location = System::Drawing::Point(-1, 0);
-			this->tabControl1->Name = L"tabControl1";
-			this->tabControl1->SelectedIndex = 0;
-			this->tabControl1->Size = System::Drawing::Size(777, 890);
-			this->tabControl1->TabIndex = 6;
-			// 
-			// tabPage1
-			// 
-			this->tabPage1->Controls->Add(this->comboBox1);
-			this->tabPage1->Controls->Add(this->button_EstadoFinal);
-			this->tabPage1->Controls->Add(this->button_EstadoInicial);
-			this->tabPage1->Controls->Add(this->textBox1);
-			this->tabPage1->Controls->Add(this->txtPrueba2);
-			this->tabPage1->Controls->Add(this->panelMap);
-			this->tabPage1->Controls->Add(this->btn_play);
-			this->tabPage1->Location = System::Drawing::Point(4, 22);
-			this->tabPage1->Name = L"tabPage1";
-			this->tabPage1->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage1->Size = System::Drawing::Size(769, 864);
-			this->tabPage1->TabIndex = 0;
-			this->tabPage1->Text = L"tabPage1";
-			this->tabPage1->UseVisualStyleBackColor = true;
-			// 
-			// panel1
-			// 
-			this->panel1->BackColor = System::Drawing::Color::Transparent;
-			this->panel1->Controls->Add(this->pictureBox_Start);
-			this->panel1->Location = System::Drawing::Point(25, 30);
-			this->panel1->Name = L"panel1";
-			this->panel1->Size = System::Drawing::Size(750, 750);
-			this->panel1->TabIndex = 12;
+			this->button_SaveGrounds->Location = System::Drawing::Point(799, 347);
+			this->button_SaveGrounds->Name = L"button_SaveGrounds";
+			this->button_SaveGrounds->Size = System::Drawing::Size(84, 23);
+			this->button_SaveGrounds->TabIndex = 9;
+			this->button_SaveGrounds->Text = L"Guardar";
+			this->button_SaveGrounds->UseVisualStyleBackColor = true;
 			// 
 			// pictureBox_Start
 			// 
 			this->pictureBox_Start->Cursor = System::Windows::Forms::Cursors::SizeAll;
-			this->pictureBox_Start->Location = System::Drawing::Point(53, 10);
+			this->pictureBox_Start->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox_Start.Image")));
+			this->pictureBox_Start->Location = System::Drawing::Point(26, 42);
 			this->pictureBox_Start->Name = L"pictureBox_Start";
 			this->pictureBox_Start->Size = System::Drawing::Size(50, 50);
 			this->pictureBox_Start->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
-			this->pictureBox_Start->TabIndex = 11;
+			this->pictureBox_Start->TabIndex = 21;
 			this->pictureBox_Start->TabStop = false;
 			this->pictureBox_Start->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &Map::pictureBox_Start_MouseDown);
 			this->pictureBox_Start->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &Map::pictureBox_Start_MouseMove);
@@ -261,125 +238,76 @@ namespace AImap {
 			// comboBox1
 			// 
 			this->comboBox1->FormattingEnabled = true;
-			this->comboBox1->Location = System::Drawing::Point(388, 59);
+			this->comboBox1->Location = System::Drawing::Point(267, 56);
 			this->comboBox1->Name = L"comboBox1";
 			this->comboBox1->Size = System::Drawing::Size(121, 21);
-			this->comboBox1->TabIndex = 10;
+			this->comboBox1->TabIndex = 20;
 			// 
-			// button_EstadoFinal
+			// textBox1
 			// 
-			this->button_EstadoFinal->Location = System::Drawing::Point(143, 52);
-			this->button_EstadoFinal->Name = L"button_EstadoFinal";
-			this->button_EstadoFinal->Size = System::Drawing::Size(81, 23);
-			this->button_EstadoFinal->TabIndex = 7;
-			this->button_EstadoFinal->Text = L"Estado Final";
-			this->button_EstadoFinal->UseVisualStyleBackColor = true;
+			this->textBox1->Location = System::Drawing::Point(553, 12);
+			this->textBox1->Multiline = true;
+			this->textBox1->Name = L"textBox1";
+			this->textBox1->ReadOnly = true;
+			this->textBox1->Size = System::Drawing::Size(75, 92);
+			this->textBox1->TabIndex = 16;
 			// 
-			// button_EstadoInicial
+			// txtPrueba2
 			// 
-			this->button_EstadoInicial->Location = System::Drawing::Point(143, 23);
-			this->button_EstadoInicial->Name = L"button_EstadoInicial";
-			this->button_EstadoInicial->Size = System::Drawing::Size(81, 23);
-			this->button_EstadoInicial->TabIndex = 6;
-			this->button_EstadoInicial->Text = L"Estado Inicial";
-			this->button_EstadoInicial->UseVisualStyleBackColor = true;
+			this->txtPrueba2->Location = System::Drawing::Point(267, 20);
+			this->txtPrueba2->Name = L"txtPrueba2";
+			this->txtPrueba2->Size = System::Drawing::Size(183, 20);
+			this->txtPrueba2->TabIndex = 17;
 			// 
-			// tabPage2
+			// panelMap
 			// 
-			this->tabPage2->Controls->Add(this->pictureBox_Player);
-			this->tabPage2->Controls->Add(this->label2);
-			this->tabPage2->Controls->Add(this->comboBox_Player);
-			this->tabPage2->Controls->Add(this->button_ResetGrounds);
-			this->tabPage2->Controls->Add(this->button_SaveGrounds);
-			this->tabPage2->Controls->Add(this->button_SetColor);
-			this->tabPage2->Controls->Add(this->button_AddColor);
-			this->tabPage2->Controls->Add(this->textBox_GroundName);
-			this->tabPage2->Location = System::Drawing::Point(4, 22);
-			this->tabPage2->Name = L"tabPage2";
-			this->tabPage2->Padding = System::Windows::Forms::Padding(3);
-			this->tabPage2->Size = System::Drawing::Size(769, 864);
-			this->tabPage2->TabIndex = 1;
-			this->tabPage2->Text = L"tabPage2";
-			this->tabPage2->UseVisualStyleBackColor = true;
+			this->panelMap->AllowDrop = true;
+			this->panelMap->AutoSize = true;
+			this->panelMap->BackColor = System::Drawing::Color::Transparent;
+			this->panelMap->Location = System::Drawing::Point(12, 113);
+			this->panelMap->Name = L"panelMap";
+			this->panelMap->Size = System::Drawing::Size(750, 750);
+			this->panelMap->TabIndex = 14;
+			this->panelMap->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Map::panelMap_Paint_1);
 			// 
-			// pictureBox_Player
+			// btn_play
 			// 
-			this->pictureBox_Player->Location = System::Drawing::Point(385, 87);
-			this->pictureBox_Player->Name = L"pictureBox_Player";
-			this->pictureBox_Player->Size = System::Drawing::Size(200, 200);
-			this->pictureBox_Player->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
-			this->pictureBox_Player->TabIndex = 8;
-			this->pictureBox_Player->TabStop = false;
+			this->btn_play->Location = System::Drawing::Point(422, 54);
+			this->btn_play->Name = L"btn_play";
+			this->btn_play->Size = System::Drawing::Size(75, 23);
+			this->btn_play->TabIndex = 15;
+			this->btn_play->Text = L"Jugar";
+			this->btn_play->UseVisualStyleBackColor = true;
+			this->btn_play->Click += gcnew System::EventHandler(this, &Map::btn_play_Click);
 			// 
-			// label2
+			// pictureBox_Goal
 			// 
-			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(385, 27);
-			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(54, 13);
-			this->label2->TabIndex = 7;
-			this->label2->Text = L"Personaje";
+			this->pictureBox_Goal->Cursor = System::Windows::Forms::Cursors::SizeAll;
+			this->pictureBox_Goal->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox_Goal.Image")));
+			this->pictureBox_Goal->Location = System::Drawing::Point(101, 42);
+			this->pictureBox_Goal->Name = L"pictureBox_Goal";
+			this->pictureBox_Goal->Size = System::Drawing::Size(50, 50);
+			this->pictureBox_Goal->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->pictureBox_Goal->TabIndex = 22;
+			this->pictureBox_Goal->TabStop = false;
 			// 
-			// comboBox_Player
+			// label1
 			// 
-			this->comboBox_Player->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
-			this->comboBox_Player->FormattingEnabled = true;
-			this->comboBox_Player->Location = System::Drawing::Point(385, 46);
-			this->comboBox_Player->Name = L"comboBox_Player";
-			this->comboBox_Player->Size = System::Drawing::Size(121, 21);
-			this->comboBox_Player->TabIndex = 6;
-			this->comboBox_Player->SelectedIndexChanged += gcnew System::EventHandler(this, &Map::comboBox_Player_SelectedIndexChanged);
+			this->label1->AutoSize = true;
+			this->label1->Location = System::Drawing::Point(23, 26);
+			this->label1->Name = L"label1";
+			this->label1->Size = System::Drawing::Size(32, 13);
+			this->label1->TabIndex = 23;
+			this->label1->Text = L"Inicio";
 			// 
-			// button_ResetGrounds
+			// label3
 			// 
-			this->button_ResetGrounds->Location = System::Drawing::Point(385, 337);
-			this->button_ResetGrounds->Name = L"button_ResetGrounds";
-			this->button_ResetGrounds->Size = System::Drawing::Size(84, 23);
-			this->button_ResetGrounds->TabIndex = 5;
-			this->button_ResetGrounds->Text = L"Reestablecer";
-			this->button_ResetGrounds->UseVisualStyleBackColor = true;
-			// 
-			// button_SaveGrounds
-			// 
-			this->button_SaveGrounds->Location = System::Drawing::Point(385, 308);
-			this->button_SaveGrounds->Name = L"button_SaveGrounds";
-			this->button_SaveGrounds->Size = System::Drawing::Size(84, 23);
-			this->button_SaveGrounds->TabIndex = 4;
-			this->button_SaveGrounds->Text = L"Guardar";
-			this->button_SaveGrounds->UseVisualStyleBackColor = true;
-			// 
-			// button_SetColor
-			// 
-			this->button_SetColor->Location = System::Drawing::Point(9, 673);
-			this->button_SetColor->Name = L"button_SetColor";
-			this->button_SetColor->Size = System::Drawing::Size(75, 23);
-			this->button_SetColor->TabIndex = 2;
-			this->button_SetColor->Text = L"Color";
-			this->button_SetColor->UseVisualStyleBackColor = true;
-			this->button_SetColor->Click += gcnew System::EventHandler(this, &Map::button_SetColor_Click);
-			// 
-			// button_AddColor
-			// 
-			this->button_AddColor->Location = System::Drawing::Point(9, 702);
-			this->button_AddColor->Name = L"button_AddColor";
-			this->button_AddColor->Size = System::Drawing::Size(75, 23);
-			this->button_AddColor->TabIndex = 1;
-			this->button_AddColor->Text = L"Añadir";
-			this->button_AddColor->UseVisualStyleBackColor = true;
-			this->button_AddColor->Click += gcnew System::EventHandler(this, &Map::button_AddColor_Click);
-			// 
-			// textBox_GroundName
-			// 
-			this->textBox_GroundName->Location = System::Drawing::Point(9, 647);
-			this->textBox_GroundName->Name = L"textBox_GroundName";
-			this->textBox_GroundName->Size = System::Drawing::Size(100, 20);
-			this->textBox_GroundName->TabIndex = 0;
-			// 
-			// imageList_Player
-			// 
-			this->imageList_Player->ImageStream = (cli::safe_cast<System::Windows::Forms::ImageListStreamer^>(resources->GetObject(L"imageList_Player.ImageStream")));
-			this->imageList_Player->TransparentColor = System::Drawing::Color::Transparent;
-			this->imageList_Player->Images->SetKeyName(0, L"Fish.gif");
+			this->label3->AutoSize = true;
+			this->label3->Location = System::Drawing::Point(98, 26);
+			this->label3->Name = L"label3";
+			this->label3->Size = System::Drawing::Size(31, 13);
+			this->label3->TabIndex = 24;
+			this->label3->Text = L"Meta";
 			// 
 			// Map
 			// 
@@ -387,8 +315,21 @@ namespace AImap {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->AutoSize = true;
 			this->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
-			this->ClientSize = System::Drawing::Size(775, 894);
-			this->Controls->Add(this->tabControl1);
+			this->ClientSize = System::Drawing::Size(1571, 909);
+			this->Controls->Add(this->label3);
+			this->Controls->Add(this->label1);
+			this->Controls->Add(this->pictureBox_Goal);
+			this->Controls->Add(this->pictureBox_Start);
+			this->Controls->Add(this->comboBox1);
+			this->Controls->Add(this->textBox1);
+			this->Controls->Add(this->txtPrueba2);
+			this->Controls->Add(this->panelMap);
+			this->Controls->Add(this->btn_play);
+			this->Controls->Add(this->pictureBox_Player);
+			this->Controls->Add(this->label2);
+			this->Controls->Add(this->comboBox_Player);
+			this->Controls->Add(this->button_ResetGrounds);
+			this->Controls->Add(this->button_SaveGrounds);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedDialog;
 			this->HelpButton = true;
 			this->Location = System::Drawing::Point(30, 30);
@@ -396,20 +337,15 @@ namespace AImap {
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"Map";
 			this->Shown += gcnew System::EventHandler(this, &Map::Map_Shown);
-			this->panelMap->ResumeLayout(false);
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Play))->EndInit();
-			this->tabControl1->ResumeLayout(false);
-			this->tabPage1->ResumeLayout(false);
-			this->tabPage1->PerformLayout();
-			this->panel1->ResumeLayout(false);
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->EndInit();
-			this->tabPage2->ResumeLayout(false);
-			this->tabPage2->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Player))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->EndInit();
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
+		
 
 		void chargeMap(String ^fileNameMap) {
 			Cell cell;
@@ -446,8 +382,8 @@ namespace AImap {
 								if (row <= 14 && column <= 14) {
 									cell.setId(counter++);
 									cell.setIdGround(atoi(str.c_str()));
-									cell.setPositionX(row);
-									cell.setPositionY(column);
+									cell.setPositionX(column);
+									cell.setPositionY(row);
 									listCell->insertData(cell);
 									if (!listGround->findId(cell.getIdGround())) {
 										ground.setId(cell.getIdGround());
@@ -460,8 +396,8 @@ namespace AImap {
 								else if(column >= 15){
 									cell.setId(-1);
 									cell.setIdGround(-1);
-									cell.setPositionX(row);
-									cell.setPositionY(column);
+									cell.setPositionX(column);
+									cell.setPositionY(row);
 									listCell->insertData(cell);
 								}
 								//txtPrueba->Text += cell.getId().ToString();
@@ -486,8 +422,8 @@ namespace AImap {
 								if (row <= 14 && column <= 14) {
 									cell.setId(counter++);
 									cell.setIdGround(atoi(str.c_str()));
-									cell.setPositionX(row);
-									cell.setPositionY(column);
+									cell.setPositionX(column);
+									cell.setPositionY(row);
 									listCell->insertData(cell);
 									if (!listGround->findId(cell.getIdGround())) {
 										ground.setId(cell.getIdGround());
@@ -500,8 +436,8 @@ namespace AImap {
 								else if(row >= 15){
 									cell.setId(-1);
 									cell.setIdGround(-1);
-									cell.setPositionX(row);
-									cell.setPositionY(column);
+									cell.setPositionX(column);
+									cell.setPositionY(row);
 
 									listCell->insertData(cell);
 									
@@ -555,24 +491,26 @@ namespace AImap {
 				//Estableciendo propiedades de botones dinámicos de colores
 				systemStr = BUTTON_NAME_COLOR + idStr;
 				btn->Name = systemStr;
-				btn->Text = "Seleccionar color";
-				btn->Location = Point(10,i * 25);
-				btn->Size = System::Drawing::Size(115, 23);
+				btn->Text = "Color";
+				//btn->Location = Point(10,i * 25);
+				btn->Location = Point(800, i * 25 + 420);
+				btn->Size = System::Drawing::Size(70, 23);
 				btn->BackColor = Color::Gray;
 				//Creando los eventos del botón dinámico
 				btn->Click += gcnew System::EventHandler(this, &Map::btn_color_click);
 
 				systemStr = COMBOBOX_NAME_COLOR + idStr;
 				comboBox->Name = systemStr;
-				comboBox->Location = Point(135, i * 25);
-				comboBox->Size = System::Drawing::Size(115, 23);
+				//comboBox->Location = Point(135, i * 25);
+				comboBox->Location = Point(800+ 90, i * 25 + 420);
+				comboBox->Size = System::Drawing::Size(70, 23);
 				comboBox->DropDownStyle = ComboBoxStyle::DropDownList;
 				comboBox->Items->AddRange(nameGround);
 				comboBox->Text = "Escoga un terreno";
 				comboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &Map::comboBox_Color_Name);
 				arrayComboBox[i] = comboBox;
 				
-				
+				 
 				/*systemStr = "textBox_Color" + i.ToString();
 				textBox->Name = systemStr;
 				textBox->Location = Point(260, i * 25);
@@ -582,14 +520,15 @@ namespace AImap {
 				
 				textBox->Name = TEXTBOX_NAME_COLOR + idStr;
 				//systemStr = "numericUpDown_Color" + idStr;
-				textBox->Location = Point(260, i * 25);
+				//textBox->Location = Point(260, i * 25);
+				textBox->Location = Point(800 + 180, i * 25 + 420);
 				textBox->Size = System::Drawing::Size(60, 23);
 				textBox->Leave += gcnew System::EventHandler(this, &Map::textBox_Color_Float);
 				
 
-				tabPage2->Controls->Add(comboBox);
-				tabPage2->Controls->Add(btn);
-				tabPage2->Controls->Add(textBox);
+				this->Controls->Add(comboBox);
+				this->Controls->Add(btn);
+				this->Controls->Add(textBox);
 				//tabPage2->Controls->Add(textBox);
 			}
 			
@@ -604,6 +543,7 @@ namespace AImap {
 			String^ algo;
 			int i = 0;
 
+			//System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(Map::typeid));
 			auto execAssem = System::Reflection::Assembly::GetExecutingAssembly();
 			auto resourceName = execAssem->GetName()->Name + ".Custom";
 			auto resourceManager = gcnew Resources::ResourceManager(resourceName, execAssem);
@@ -671,8 +611,8 @@ namespace AImap {
 
 			for (int i = 0; i <= publicSizeMax; i++) {
 				for (int j = 0; j <= publicSizeMax; j++) {
-					cell.setPositionX(j);
-					cell.setPositionY(i);
+					cell.setPositionX(i);
+					cell.setPositionY(j);
 
 					if (listCell->findPositionXY(cell) != nullptr) {
 						cell = listCell->findPositionXY(cell)->getData();
@@ -695,7 +635,6 @@ namespace AImap {
 				}
 			}
 			//MessageBox::Show();
-			pictureBox_Play->Image = pictureBox_Player->Image;
 		}
 
 		void validateBeforePlay() {
@@ -771,7 +710,7 @@ namespace AImap {
 				}
 			}
 			if (!repeated) {
-				for each(Object^ var in tabPage2->Controls) {
+				for each(Object^ var in this->Controls) {
 					if (var->GetType() == button->GetType()) {
 						button = cli::safe_cast<Button^>(var);
 						//MessageBox::Show("Changing1: " + button->Name);
@@ -849,10 +788,6 @@ namespace AImap {
 			}
 		}
 	}
-	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-		drawMap();
-	
-}
 	private: System::Void Map_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
 		Application::Exit();
 	}
@@ -874,9 +809,9 @@ namespace AImap {
 		String ^systemStr = "";
 		string str;
 
-		if (textBox_GroundName->Text == "") {
+		/*if (textBox_GroundName->Text == "") {
 			systemStr += "Ingrese un nombre para el terreno\n";
-		}
+		}*/
 		if (colorAux->getColor(0) == -1) {
 			systemStr += "Debe establecer un color primero";
 		}
@@ -885,7 +820,7 @@ namespace AImap {
 		}
 		else {
 			
-			marshalString(textBox_GroundName->Text, str);
+			//marshalString(textBox_GroundName->Text, str);
 			colorAux->setName(str);
 			colorAux->setId(listGround->getLast()->getData().getId() + 1);
 
@@ -930,24 +865,92 @@ namespace AImap {
 	// Eventos para Drag & drop de estado inicial y final
 	Point ^coordenadas = gcnew Point;
 	private: System::Void pictureBox_Start_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+		
+		//pictureBox_Start->DoDragDrop(pictureBox_Start, DragDropEffects::Move);
+
+		pictureBox_Start->Height = 30;
+		pictureBox_Start->Width = 30;
+
 		coordenadas->Y = MousePosition.Y - pictureBox_Start->Top;
 		coordenadas->X = MousePosition.X - pictureBox_Start->Left;
-		//pictureBox_Start->DoDragDrop()
+		
+		//pictureBox_Start->Location = Point(coordenadas->X, coordenadas->Y);
 	}
 	private: System::Void pictureBox_Start_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 		if (e->Button == Windows::Forms::MouseButtons::Left) {
 			pictureBox_Start->Top = MousePosition.Y - coordenadas->Y;
 			pictureBox_Start->Left = MousePosition.X - coordenadas->X;
+			panelMap->SendToBack();
+			//
+
 		}
 	}
 	private: System::Void pictureBox_Start_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-	
+		Cell cell;
+		int locationX;
+		int locationY;
+		pictureBox_Start->Height = 40;
+		pictureBox_Start->Width = 40;
+
+		Point point = panelMap->PointToClient(Cursor->Position);
+		locationX = (int)(point.X / CELL_MAX_SIZE);
+		locationY = (int)(point.Y/ CELL_MAX_SIZE);
+
+		cell.setPositionX(locationX);
+		cell.setPositionY(locationY);
+		
+		MessageBox::Show(point.ToString() + " location: " + locationX.ToString() + ", "+locationY.ToString());
+		if (point.X < 0 || point.Y < 0 || point.X > 750 || point.Y > 750) {
+			pictureBox_Start->Location = pictureBoxStarPoint;
+		}
+		else {
+			if (listCell->findPositionXY(cell) != nullptr) {
+				String^ start = listCell->findPositionXY(cell)->getData().getId().ToString();
+				MessageBox::Show(start);
+				pictureBox_Start->Location = Point(panelMap->Location.X + (locationX * CELL_MAX_SIZE) +
+					5,panelMap->Location.Y + (locationY * CELL_MAX_SIZE) + 5);
+			}
+			else {
+				pictureBox_Start->Location = pictureBoxStarPoint;
+			}
+		}
+		
 	}
 	private: System::Void panelMap_DragEnter(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e) {
 		e->Effect = DragDropEffects::Move;
 	}
 	private: System::Void panelMap_DragDrop(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e) {
 		panelMap->Controls->Add(pictureBox_Start);
+		Button ^btn;
+		ColorClass *color = new ColorClass();
+		int id, r, g, b;
+
+		btn = safe_cast<Button^>(sender);
+		MessageBox::Show("Entry");
+	}
+	private: System::Void panelMap_Paint_1(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
+		Graphics ^g = panelMap->CreateGraphics();
+		SolidBrush ^sb = gcnew SolidBrush(Color::Red);
+		Pen ^p = gcnew Pen(Color::Blue);
+		Ground ground, groundTwo;
+		Cell cell;
+		string str;
+		
+		for (int i = 0; i <= 10; i++) {
+			for (int j = 0; j <= 10; j++) {
+				cell.setPositionX(j);
+				cell.setPositionY(i);
+
+				g->DrawRectangle(p, i * CELL_MAX_SIZE, j * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
+				sb = gcnew SolidBrush(Color::Red);
+				g->FillRectangle(sb, i * CELL_MAX_SIZE + 1, j * CELL_MAX_SIZE + 1, CELL_MAX_SIZE - 1, CELL_MAX_SIZE - 1);
+				//txtPrueba2->Text = arrayData->getSize().ToString();
+			}
+		}
+		panelMap->Enabled = false;
+	}
+	private: System::Void btn_play_Click(System::Object^  sender, System::EventArgs^  e) {
+		drawMap();
 	}
 };
 }

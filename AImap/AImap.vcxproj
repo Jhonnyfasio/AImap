@@ -172,7 +172,9 @@
     <Text Include="Recursos\Default_Player.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Recursos\Goal.gif" />
     <Image Include="Recursos\NyanCat.gif" />
+    <Image Include="Recursos\QuestionMark.gif" />
     <Image Include="Recursos\Start.gif" />
     <Image Include="Recursos\Virus.gif" />
   </ItemGroup>

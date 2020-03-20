@@ -91,5 +91,11 @@
     <Image Include="Recursos\Start.gif">
       <Filter>Archivos de recursos</Filter>
     </Image>
+    <Image Include="Recursos\QuestionMark.gif">
+      <Filter>Archivos de recursos</Filter>
+    </Image>
+    <Image Include="Recursos\Goal.gif">
+      <Filter>Archivos de recursos</Filter>
+    </Image>
   </ItemGroup>
 </Project>
