@@ -40,43 +40,10 @@ namespace AImap {
 	/// </summary>
 	public ref class Map : public System::Windows::Forms::Form
 	{
-	private:;
-
-
-
-
 	private: System::ComponentModel::IContainer^  components;
-
-
-
 	private: System::Windows::Forms::ColorDialog^  colorDialog1;
-
-
-
-
-
-
-
-
-
 	private: System::Windows::Forms::ImageList^  imageList_Player;
 
-
-
-
-
-
-	Collection<Cell> *listCell;
-	Collection<Ground> *listGround;
-	Collection<Player> *listPlayer;
-	Collection<Ground> *listColorInUse;
-	Collection<ColorClass> *listColor;
-	cli::array<ComboBox^>^ arrayComboBox;
-	cli::array<Button^>^ arrayButton;
-	String ^fileNameMapGlobal;
-	Point pictureBoxStarPoint;
-	int goal;
-	int start;
 	private: System::Windows::Forms::PictureBox^  pictureBox_Player;
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::ComboBox^  comboBox_Player;
@@ -97,6 +64,18 @@ namespace AImap {
 
 
 			 //Collection<Button> *listButton;
+	Collection<Cell> *listCell;
+	Collection<Ground> *listGround;
+	Collection<Player> *listPlayer;
+	Collection<Ground> *listColorInUse;
+	Collection<ColorClass> *listColor;
+	cli::array<ComboBox^>^ arrayComboBox;
+	cli::array<Button^>^ arrayButton;
+	String ^fileNameMapGlobal;
+	Point pictureBoxStarPoint, pictureBoxGoalPoint;
+
+	int pointGoal = -1;
+	int pointStart = -1;
 	int publicSizeMax;
 			 
 	
@@ -117,6 +96,7 @@ namespace AImap {
 			fileNameMapGlobal = fileNameMap;
 			//listButton = new Collection<Button>;
 			pictureBoxStarPoint = pictureBox_Start->Location;
+			pictureBoxGoalPoint = pictureBox_Goal->Location;
 			//arrayData = new ArrayClass<int>;
 		}
 	
@@ -290,6 +270,8 @@ namespace AImap {
 			this->pictureBox_Goal->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
 			this->pictureBox_Goal->TabIndex = 22;
 			this->pictureBox_Goal->TabStop = false;
+			this->pictureBox_Goal->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &Map::pictureBox_Start_MouseDown);
+			this->pictureBox_Goal->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &Map::pictureBox_Start_MouseMove);
 			// 
 			// label1
 			// 
@@ -865,21 +847,25 @@ namespace AImap {
 	// Eventos para Drag & drop de estado inicial y final
 	Point ^coordenadas = gcnew Point;
 	private: System::Void pictureBox_Start_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-		
+		PictureBox ^pictureBox;
 		//pictureBox_Start->DoDragDrop(pictureBox_Start, DragDropEffects::Move);
+		pictureBox = safe_cast<PictureBox^>(sender);
 
-		pictureBox_Start->Height = 30;
-		pictureBox_Start->Width = 30;
+		pictureBox->Height = 30;
+		pictureBox->Width = 30;
 
-		coordenadas->Y = MousePosition.Y - pictureBox_Start->Top;
-		coordenadas->X = MousePosition.X - pictureBox_Start->Left;
+		coordenadas->Y = MousePosition.Y - pictureBox->Top;
+		coordenadas->X = MousePosition.X - pictureBox->Left;
 		
 		//pictureBox_Start->Location = Point(coordenadas->X, coordenadas->Y);
 	}
 	private: System::Void pictureBox_Start_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+		PictureBox ^pictureBox;
+
 		if (e->Button == Windows::Forms::MouseButtons::Left) {
-			pictureBox_Start->Top = MousePosition.Y - coordenadas->Y;
-			pictureBox_Start->Left = MousePosition.X - coordenadas->X;
+			pictureBox = safe_cast<PictureBox^>(sender);
+			pictureBox->Top = MousePosition.Y - coordenadas->Y;
+			pictureBox->Left = MousePosition.X - coordenadas->X;
 			panelMap->SendToBack();
 			//
 
@@ -887,27 +873,34 @@ namespace AImap {
 	}
 	private: System::Void pictureBox_Start_MouseUp(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 		Cell cell;
+		PictureBox ^pictureBox;
+		pictureBox = safe_cast<PictureBox^>(sender);
 		int locationX;
 		int locationY;
-		pictureBox_Start->Height = 40;
-		pictureBox_Start->Width = 40;
+		pictureBox->Height = 40;
+		pictureBox->Width = 40;
 
 		Point point = panelMap->PointToClient(Cursor->Position);
 		locationX = (int)(point.X / CELL_MAX_SIZE);
-		locationY = (int)(point.Y/ CELL_MAX_SIZE);
+		locationY = (int)(point.Y / CELL_MAX_SIZE);
 
 		cell.setPositionX(locationX);
 		cell.setPositionY(locationY);
 		
 		MessageBox::Show(point.ToString() + " location: " + locationX.ToString() + ", "+locationY.ToString());
 		if (point.X < 0 || point.Y < 0 || point.X > 750 || point.Y > 750) {
-			pictureBox_Start->Location = pictureBoxStarPoint;
-		}
+			if (pictureBox_Start->Name == pictureBox->Name) {
+				pictureBox->Location = pictureBoxStarPoint;
+				}
+			else {
+				pictureBox->Location = pictureBoxGoalPoint;
+				}
+			}
 		else {
 			if (listCell->findPositionXY(cell) != nullptr) {
 				String^ start = listCell->findPositionXY(cell)->getData().getId().ToString();
 				MessageBox::Show(start);
-				pictureBox_Start->Location = Point(panelMap->Location.X + (locationX * CELL_MAX_SIZE) +
+				pictureBox->Location = Point(panelMap->Location.X + (locationX * CELL_MAX_SIZE) +
 					5,panelMap->Location.Y + (locationY * CELL_MAX_SIZE) + 5);
 			}
 			else {
