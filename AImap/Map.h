@@ -43,8 +43,9 @@ namespace AImap {
 	private: System::ComponentModel::IContainer^  components;
 	private: System::Windows::Forms::ColorDialog^  colorDialog1;
 	private: System::Windows::Forms::ImageList^  imageList_Player;
+	private: System::Windows::Forms::PictureBox^  pictureBox_PlayerIcon;
 
-	private: System::Windows::Forms::PictureBox^  pictureBox_Player;
+
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::ComboBox^  comboBox_Player;
 	private: System::Windows::Forms::Button^  button_ResetGrounds;
@@ -60,6 +61,7 @@ namespace AImap {
 	private: System::Windows::Forms::PictureBox^  pictureBox_Goal;
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Label^  label3;
+	private: BufferedGraphics ^graphicsBuffer;
 
 
 
@@ -76,7 +78,10 @@ namespace AImap {
 
 	int pointGoal = -1;
 	int pointStart = -1;
-	int publicSizeMax;
+	private: System::Windows::Forms::PictureBox^  pictureBox_Player;
+
+			 int publicSizeHeightMax;
+			 int publicSizeWidthMax;
 			 
 	
 	public:
@@ -89,15 +94,19 @@ namespace AImap {
 
 		Map(String ^fileNameMap) {
 			InitializeComponent();
+			
 			listCell = new Collection<Cell>;
 			listGround = new Collection<Ground>;
 			listPlayer = new Collection<Player>;
 			listColor = new Collection<ColorClass>;
+			chargeMap(fileNameMap);
 			fileNameMapGlobal = fileNameMap;
 			//listButton = new Collection<Button>;
 			pictureBoxStarPoint = pictureBox_Start->Location;
 			pictureBoxGoalPoint = pictureBox_Goal->Location;
 			//arrayData = new ArrayClass<int>;
+			//this->DoubleBuffered = true;
+			UpdateGraphicsBuffer();
 		}
 	
 	protected:
@@ -129,7 +138,7 @@ namespace AImap {
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(Map::typeid));
 			this->imageList_Player = (gcnew System::Windows::Forms::ImageList(this->components));
 			this->colorDialog1 = (gcnew System::Windows::Forms::ColorDialog());
-			this->pictureBox_Player = (gcnew System::Windows::Forms::PictureBox());
+			this->pictureBox_PlayerIcon = (gcnew System::Windows::Forms::PictureBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->comboBox_Player = (gcnew System::Windows::Forms::ComboBox());
 			this->button_ResetGrounds = (gcnew System::Windows::Forms::Button());
@@ -143,9 +152,11 @@ namespace AImap {
 			this->pictureBox_Goal = (gcnew System::Windows::Forms::PictureBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label3 = (gcnew System::Windows::Forms::Label());
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Player))->BeginInit();
+			this->pictureBox_Player = (gcnew System::Windows::Forms::PictureBox());
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_PlayerIcon))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Player))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// imageList_Player
@@ -154,15 +165,15 @@ namespace AImap {
 			this->imageList_Player->TransparentColor = System::Drawing::Color::Transparent;
 			this->imageList_Player->Images->SetKeyName(0, L"Fish.gif");
 			// 
-			// pictureBox_Player
+			// pictureBox_PlayerIcon
 			// 
-			this->pictureBox_Player->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox_Player.Image")));
-			this->pictureBox_Player->Location = System::Drawing::Point(799, 126);
-			this->pictureBox_Player->Name = L"pictureBox_Player";
-			this->pictureBox_Player->Size = System::Drawing::Size(200, 200);
-			this->pictureBox_Player->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
-			this->pictureBox_Player->TabIndex = 13;
-			this->pictureBox_Player->TabStop = false;
+			this->pictureBox_PlayerIcon->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox_PlayerIcon.Image")));
+			this->pictureBox_PlayerIcon->Location = System::Drawing::Point(799, 126);
+			this->pictureBox_PlayerIcon->Name = L"pictureBox_PlayerIcon";
+			this->pictureBox_PlayerIcon->Size = System::Drawing::Size(200, 200);
+			this->pictureBox_PlayerIcon->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->pictureBox_PlayerIcon->TabIndex = 13;
+			this->pictureBox_PlayerIcon->TabStop = false;
 			// 
 			// label2
 			// 
@@ -231,6 +242,7 @@ namespace AImap {
 			this->textBox1->ReadOnly = true;
 			this->textBox1->Size = System::Drawing::Size(75, 92);
 			this->textBox1->TabIndex = 16;
+			this->textBox1->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
 			// 
 			// txtPrueba2
 			// 
@@ -272,6 +284,7 @@ namespace AImap {
 			this->pictureBox_Goal->TabStop = false;
 			this->pictureBox_Goal->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &Map::pictureBox_Start_MouseDown);
 			this->pictureBox_Goal->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &Map::pictureBox_Start_MouseMove);
+			this->pictureBox_Goal->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &Map::pictureBox_Start_MouseUp);
 			// 
 			// label1
 			// 
@@ -291,6 +304,16 @@ namespace AImap {
 			this->label3->TabIndex = 24;
 			this->label3->Text = L"Meta";
 			// 
+			// pictureBox_Player
+			// 
+			this->pictureBox_Player->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox_Player.Image")));
+			this->pictureBox_Player->Location = System::Drawing::Point(799, 12);
+			this->pictureBox_Player->Name = L"pictureBox_Player";
+			this->pictureBox_Player->Size = System::Drawing::Size(45, 45);
+			this->pictureBox_Player->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
+			this->pictureBox_Player->TabIndex = 25;
+			this->pictureBox_Player->TabStop = false;
+			// 
 			// Map
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -298,6 +321,7 @@ namespace AImap {
 			this->AutoSize = true;
 			this->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->ClientSize = System::Drawing::Size(1571, 909);
+			this->Controls->Add(this->pictureBox_Player);
 			this->Controls->Add(this->label3);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->pictureBox_Goal);
@@ -307,7 +331,7 @@ namespace AImap {
 			this->Controls->Add(this->txtPrueba2);
 			this->Controls->Add(this->panelMap);
 			this->Controls->Add(this->btn_play);
-			this->Controls->Add(this->pictureBox_Player);
+			this->Controls->Add(this->pictureBox_PlayerIcon);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->comboBox_Player);
 			this->Controls->Add(this->button_ResetGrounds);
@@ -319,15 +343,20 @@ namespace AImap {
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"Map";
 			this->Shown += gcnew System::EventHandler(this, &Map::Map_Shown);
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Player))->EndInit();
+			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_PlayerIcon))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Player))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
 		}
 #pragma endregion
-		
+		void UpdateGraphicsBuffer() {
+			BufferedGraphicsContext ^bufferContext = BufferedGraphicsManager::Current;
+			graphicsBuffer = bufferContext->Allocate(panelMap->CreateGraphics(), this->DisplayRectangle);
+		}
 
 		void chargeMap(String ^fileNameMap) {
 			Cell cell;
@@ -388,7 +417,8 @@ namespace AImap {
 							// Retorno de carro (agrega la fila)
 							else if (character == 10 || character == 13 || character == 3) {
 								if (row == 0) {
-									publicSizeMax = sizeMax = column;
+									sizeMax = column;
+									publicSizeWidthMax = column - 1;
 									panelMap->Size.Height = CELL_MAX_SIZE * (sizeMax + 1);
 									//MessageBox::Show(publicSizeMax.ToString());
 									
@@ -412,6 +442,7 @@ namespace AImap {
 										listGround->insertData(ground);
 									}
 
+									publicSizeHeightMax = row-1;
 									row++;
 									column = 0;
 								}
@@ -439,9 +470,10 @@ namespace AImap {
 						}
 					}
 				}
-				panelMap->Size.Width = CELL_MAX_SIZE * (sizeMax + 1);
+				//panelMap->Size.Width = CELL_MAX_SIZE * (sizeMax + 1);
 			}
 			readerFile.close();
+			
 		}
 
 		void chargeColor() {
@@ -588,11 +620,11 @@ namespace AImap {
 			Cell cell;
 			string str;
 			
-			panelMap->Size.Width = publicSizeMax * CELL_MAX_SIZE;
-			panelMap->Size.Height = publicSizeMax * CELL_MAX_SIZE;
+			panelMap->Size.Width = publicSizeWidthMax * CELL_MAX_SIZE;
+			panelMap->Size.Height = publicSizeHeightMax * CELL_MAX_SIZE;
 
-			for (int i = 0; i <= publicSizeMax; i++) {
-				for (int j = 0; j <= publicSizeMax; j++) {
+			for (int i = 0; i <= publicSizeHeightMax; i++) {
+				for (int j = 0; j <= publicSizeWidthMax; j++) {
 					cell.setPositionX(i);
 					cell.setPositionY(j);
 
@@ -605,13 +637,19 @@ namespace AImap {
 						//color = listColor[123];
 						
 						g->DrawRectangle(p, i * CELL_MAX_SIZE, j * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
-						g->DrawString(cell.getIdGround().ToString(), this->Font, sb, PointF(i * CELL_MAX_SIZE + 10, j * CELL_MAX_SIZE + 10));
+						
 						//MessageBox::Show(color.getColor(0).ToString() + "-" + color.getColor(1).ToString() + "-" + color.getColor(2).ToString());
-						sb = gcnew SolidBrush(Color::FromArgb(ground.getColor(0), ground.getColor(1), ground.getColor(2)));
-						g->FillRectangle(sb, i * CELL_MAX_SIZE + 1, j * CELL_MAX_SIZE + 1, CELL_MAX_SIZE-1, CELL_MAX_SIZE-1);
+						if (ground.getColor(0) == -1 || ground.getColor(1) == -1 || ground.getColor(2) == -1) {
+							sb = gcnew SolidBrush(Color::LightGray);
+						}
+						else{
+							sb = gcnew SolidBrush(Color::FromArgb(ground.getColor(0), ground.getColor(1), ground.getColor(2)));
+							g->FillRectangle(sb, i * CELL_MAX_SIZE + 1, j * CELL_MAX_SIZE + 1, CELL_MAX_SIZE - 1, CELL_MAX_SIZE - 1);
+						}
+						g->DrawString(cell.getIdGround().ToString(), this->Font,gcnew SolidBrush(Color::Red), PointF(i * CELL_MAX_SIZE + 10, j * CELL_MAX_SIZE + 10));
 					}
 					else {
-						MessageBox::Show("not found at " + i.ToString() + "-" + j.ToString());
+						//MessageBox::Show("not found at " + i.ToString() + "-" + j.ToString());
 					}
 					//txtPrueba2->Text = arrayData->getSize().ToString();
 				}
@@ -622,8 +660,6 @@ namespace AImap {
 		void validateBeforePlay() {
 			
 		}
-		
-		//void 
 
 		// //////////////////////////////////////////////////////// HERRAMIENTAS ////////////////////////////////////////////////////////////// //
 
@@ -831,7 +867,6 @@ namespace AImap {
 		//MessageBox::Show("Function");
 	}
 	private: System::Void Map_Shown(System::Object^  sender, System::EventArgs^  e) {
-		chargeMap(fileNameMapGlobal);
 		chargeColorFile();
 		chargeColor();
 		chargePlayerFile();
@@ -881,13 +916,15 @@ namespace AImap {
 		pictureBox->Width = 40;
 
 		Point point = panelMap->PointToClient(Cursor->Position);
+		Point auxPoint;
 		locationX = (int)(point.X / CELL_MAX_SIZE);
 		locationY = (int)(point.Y / CELL_MAX_SIZE);
 
 		cell.setPositionX(locationX);
 		cell.setPositionY(locationY);
 		
-		MessageBox::Show(point.ToString() + " location: " + locationX.ToString() + ", "+locationY.ToString());
+		MessageBox::Show(point.ToString() + " location: " + locationX.ToString() + ", "+locationY.ToString() + "\n" +
+		Cursor->Position.X + ", " + Cursor->Position.Y);
 		if (point.X < 0 || point.Y < 0 || point.X > 750 || point.Y > 750) {
 			if (pictureBox_Start->Name == pictureBox->Name) {
 				pictureBox->Location = pictureBoxStarPoint;
@@ -898,16 +935,27 @@ namespace AImap {
 			}
 		else {
 			if (listCell->findPositionXY(cell) != nullptr) {
-				String^ start = listCell->findPositionXY(cell)->getData().getId().ToString();
-				MessageBox::Show(start);
-				pictureBox->Location = Point(panelMap->Location.X + (locationX * CELL_MAX_SIZE) +
-					5,panelMap->Location.Y + (locationY * CELL_MAX_SIZE) + 5);
+				if (pictureBox->Name == pictureBox_Start->Name) {
+					pointStart = listCell->findPositionXY(cell)->getData().getId();
+					auxPoint = pictureBoxStarPoint;
+				}
+				else {
+					pointGoal = listCell->findPositionXY(cell)->getData().getId();
+					auxPoint = pictureBoxGoalPoint;
+				}
+				//MessageBox::Show(start);
+				if (pointStart == pointGoal) {
+					pictureBox->Location = auxPoint;
+				}
+				else {
+					pictureBox->Location = Point(panelMap->Location.X + (locationX * CELL_MAX_SIZE) +
+						5, panelMap->Location.Y + (locationY * CELL_MAX_SIZE) + 5);
+				}
 			}
 			else {
-				pictureBox_Start->Location = pictureBoxStarPoint;
+				pictureBox->Location = pictureBoxStarPoint;
 			}
 		}
-		
 	}
 	private: System::Void panelMap_DragEnter(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e) {
 		e->Effect = DragDropEffects::Move;
@@ -922,28 +970,85 @@ namespace AImap {
 		MessageBox::Show("Entry");
 	}
 	private: System::Void panelMap_Paint_1(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
-		Graphics ^g = panelMap->CreateGraphics();
-		SolidBrush ^sb = gcnew SolidBrush(Color::Red);
-		Pen ^p = gcnew Pen(Color::Blue);
-		Ground ground, groundTwo;
-		Cell cell;
-		string str;
-		
-		for (int i = 0; i <= 10; i++) {
-			for (int j = 0; j <= 10; j++) {
-				cell.setPositionX(j);
-				cell.setPositionY(i);
-
-				g->DrawRectangle(p, i * CELL_MAX_SIZE, j * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
-				sb = gcnew SolidBrush(Color::Red);
-				g->FillRectangle(sb, i * CELL_MAX_SIZE + 1, j * CELL_MAX_SIZE + 1, CELL_MAX_SIZE - 1, CELL_MAX_SIZE - 1);
-				//txtPrueba2->Text = arrayData->getSize().ToString();
-			}
-		}
-		panelMap->Enabled = false;
+		UpdateGraphicsBuffer();
+		drawMap();
 	}
 	private: System::Void btn_play_Click(System::Object^  sender, System::EventArgs^  e) {
 		drawMap();
+		//pictureBox_Start->SendToBack();
+		panelMap->SendToBack();
+		pictureBox_Player->Location = pictureBox_Start->Location;
+		this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
+		//panelMap->Focus();
+		Map::Focus();
 	}
+	private: System::Void Map_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+		comboBox1->Enabled = false;
+		comboBox_Player->Enabled = false;
+
+		
+		Point point = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
+		
+		int locationX, locationY;
+		/*MessageBox::Show("LocX: " + point.X + " LocY: " + point.Y + " - " +
+			pictureBox_Player->Location.X);*/
+		//Windows::Forms::Keys::Up;
+		//FLECHA IZQUIERDA
+		if (e->KeyValue.ToString() == "37") {
+			/*MessageBox::Show("LocX: " + locationX.ToString() + " LocY: " + locationY.ToString() + " - " +
+				pictureBox_Player->Location.X + " - " + panelMap->MousePosition.X);
+			point.X = point.X - CELL_MAX_SIZE;*/
+			point.X = point.X - CELL_MAX_SIZE;
+			if (isValidPositionPanelMap(point)) {
+				pictureBox_Player->Location = Point(pictureBox_Player->Location.X - CELL_MAX_SIZE,
+					pictureBox_Player->Location.Y);
+			}
+		}
+		//FLECHA ARRIBA
+		else if (e->KeyValue.ToString() == "38") {
+			point.Y = point.Y - CELL_MAX_SIZE;
+			if (isValidPositionPanelMap(point)) {
+				pictureBox_Player->Location = Point(pictureBox_Player->Location.X,
+					pictureBox_Player->Location.Y - CELL_MAX_SIZE);
+			}
+		}
+		//FLECHA ABAJO
+		else if (e->KeyValue.ToString() == "40") {
+			/*MessageBox::Show("LocX: " + locationX.ToString() + " LocY: " + locationY.ToString() + " - " +
+				pictureBox_Player->Location.Y + " - " + panelMap->MousePosition.Y);*/
+			point.Y = point.Y + CELL_MAX_SIZE;
+			if (isValidPositionPanelMap(point)) {
+				pictureBox_Player->Location = Point(pictureBox_Player->Location.X,
+					pictureBox_Player->Location.Y + CELL_MAX_SIZE);
+			}
+		}
+
+		//FLECHA DERECHA
+		else if (e->KeyValue.ToString() == "39") {
+			point.X = point.X + CELL_MAX_SIZE;
+			if (isValidPositionPanelMap(point)) {
+				pictureBox_Player->Location = Point(pictureBox_Player->Location.X + CELL_MAX_SIZE,
+					pictureBox_Player->Location.Y);
+			}
+		}
+		else {
+			// Nothing
+		}
+	}
+	
+	bool isValidPositionPanelMap(Point ^point) {
+		Cell cell;
+		//if (point->X < 0 || point->Y < 0 || point->X > 750 || point->Y > 750) {
+		if (point->X < 0 || point->Y < 0 || point->X > panelMap->Size.Width || point->Y > panelMap->Size.Height) {
+			pictureBox_Player->Location = pictureBox_Player->Location;
+			return false;
+		}
+		else {
+			return true;
+		}
+
+	}
+private: System::Void Map_Click(System::Object^  sender, System::EventArgs^  e) {
+}
 };
 }
