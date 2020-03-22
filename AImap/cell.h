@@ -6,18 +6,20 @@ class Cell {
 	private:
 		int id;
 		int idGround;
-		int visitCounter;
+		int visitCounter[20];
 		int positionX;
 		int positionY;
+		int lastVisitPosition = 0;
 
 	public:
+
 		int getId() {
 			return id;
 		}
 		int getIdGround(){
 			return idGround;
 		}
-		int getVisitCounter(){
+		int* getVisitCounter(){
 			return visitCounter;
 		}
 
@@ -29,6 +31,10 @@ class Cell {
 			return positionY;
 		}
 
+		int getLastVisitPosition() {
+			return lastVisitPosition;
+		}
+
 		void setId(const int& idX) {
 			id = idX;
 		}
@@ -36,7 +42,8 @@ class Cell {
 			idGround = idGroundX;
 		}
 		void setVisitCounter(const int& visitCounderX){
-			visitCounter = visitCounderX;
+			visitCounter[lastVisitPosition] = visitCounderX;
+			lastVisitPosition++;
 		}
 
 		void setPositionX(const int& positionXX) {
@@ -50,7 +57,7 @@ class Cell {
 		Cell& operator =(const Cell& c){
 			id = c.id;
 			idGround = c.idGround;
-			visitCounter = c.visitCounter;
+			*visitCounter = *c.visitCounter;
 			positionX = c.positionX;
 			positionY = c.positionY;
 

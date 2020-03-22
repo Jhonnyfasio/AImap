@@ -44,16 +44,12 @@ namespace AImap {
 	private: System::Windows::Forms::ColorDialog^  colorDialog1;
 	private: System::Windows::Forms::ImageList^  imageList_Player;
 	private: System::Windows::Forms::PictureBox^  pictureBox_PlayerIcon;
-
-
 	private: System::Windows::Forms::Label^  label2;
 	private: System::Windows::Forms::ComboBox^  comboBox_Player;
 	private: System::Windows::Forms::Button^  button_ResetGrounds;
 	private: System::Windows::Forms::Button^  button_SaveGrounds;
 	private: System::Windows::Forms::PictureBox^  pictureBox_Start;
 	private: System::Windows::Forms::ComboBox^  comboBox1;
-
-
 	private: System::Windows::Forms::TextBox^  textBox1;
 	private: System::Windows::Forms::TextBox^  txtPrueba2;
 	private: System::Windows::Forms::Panel^  panelMap;
@@ -61,27 +57,28 @@ namespace AImap {
 	private: System::Windows::Forms::PictureBox^  pictureBox_Goal;
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Label^  label3;
+	private: System::Windows::Forms::PictureBox^  pictureBox_Player;
 	private: BufferedGraphics ^graphicsBuffer;
 
-
-
-			 //Collection<Button> *listButton;
 	Collection<Cell> *listCell;
 	Collection<Ground> *listGround;
 	Collection<Player> *listPlayer;
 	Collection<Ground> *listColorInUse;
 	Collection<ColorClass> *listColor;
 	cli::array<ComboBox^>^ arrayComboBox;
+	cli::array<TextBox^>^ arrayTextBox;
 	cli::array<Button^>^ arrayButton;
 	String ^fileNameMapGlobal;
 	Point pictureBoxStarPoint, pictureBoxGoalPoint;
 
 	int pointGoal = -1;
 	int pointStart = -1;
-	private: System::Windows::Forms::PictureBox^  pictureBox_Player;
+	
 
-			 int publicSizeHeightMax;
-			 int publicSizeWidthMax;
+	int publicSizeHeightMax;
+	int publicSizeWidthMax;
+
+	int visit = 0;
 			 
 	
 	public:
@@ -106,6 +103,9 @@ namespace AImap {
 			pictureBoxGoalPoint = pictureBox_Goal->Location;
 			//arrayData = new ArrayClass<int>;
 			//this->DoubleBuffered = true;
+
+
+
 			UpdateGraphicsBuffer();
 		}
 	
@@ -155,6 +155,7 @@ namespace AImap {
 			this->pictureBox_Player = (gcnew System::Windows::Forms::PictureBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_PlayerIcon))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->BeginInit();
+			this->panelMap->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Player))->BeginInit();
 			this->SuspendLayout();
@@ -229,7 +230,7 @@ namespace AImap {
 			// comboBox1
 			// 
 			this->comboBox1->FormattingEnabled = true;
-			this->comboBox1->Location = System::Drawing::Point(267, 56);
+			this->comboBox1->Location = System::Drawing::Point(258, 63);
 			this->comboBox1->Name = L"comboBox1";
 			this->comboBox1->Size = System::Drawing::Size(121, 21);
 			this->comboBox1->TabIndex = 20;
@@ -256,11 +257,13 @@ namespace AImap {
 			this->panelMap->AllowDrop = true;
 			this->panelMap->AutoSize = true;
 			this->panelMap->BackColor = System::Drawing::Color::Transparent;
-			this->panelMap->Location = System::Drawing::Point(12, 113);
+			this->panelMap->Controls->Add(this->comboBox1);
+			this->panelMap->Location = System::Drawing::Point(26, 110);
 			this->panelMap->Name = L"panelMap";
 			this->panelMap->Size = System::Drawing::Size(750, 750);
 			this->panelMap->TabIndex = 14;
 			this->panelMap->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Map::panelMap_Paint_1);
+			this->panelMap->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &Map::panelMap_MouseDown);
 			// 
 			// btn_play
 			// 
@@ -313,6 +316,7 @@ namespace AImap {
 			this->pictureBox_Player->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
 			this->pictureBox_Player->TabIndex = 25;
 			this->pictureBox_Player->TabStop = false;
+			this->pictureBox_Player->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &Map::pictureBox_Player_MouseDown);
 			// 
 			// Map
 			// 
@@ -320,13 +324,12 @@ namespace AImap {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->AutoSize = true;
 			this->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
-			this->ClientSize = System::Drawing::Size(1571, 909);
+			this->ClientSize = System::Drawing::Size(1042, 909);
 			this->Controls->Add(this->pictureBox_Player);
 			this->Controls->Add(this->label3);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->pictureBox_Goal);
 			this->Controls->Add(this->pictureBox_Start);
-			this->Controls->Add(this->comboBox1);
 			this->Controls->Add(this->textBox1);
 			this->Controls->Add(this->txtPrueba2);
 			this->Controls->Add(this->panelMap);
@@ -346,6 +349,7 @@ namespace AImap {
 			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_PlayerIcon))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->EndInit();
+			this->panelMap->ResumeLayout(false);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Player))->EndInit();
 			this->ResumeLayout(false);
@@ -358,6 +362,7 @@ namespace AImap {
 			graphicsBuffer = bufferContext->Allocate(panelMap->CreateGraphics(), this->DisplayRectangle);
 		}
 
+		// Carga el mapa al sistema
 		void chargeMap(String ^fileNameMap) {
 			Cell cell;
 			Ground ground;
@@ -418,7 +423,7 @@ namespace AImap {
 							else if (character == 10 || character == 13 || character == 3) {
 								if (row == 0) {
 									sizeMax = column;
-									publicSizeWidthMax = column - 1;
+									publicSizeWidthMax = column + 1;
 									panelMap->Size.Height = CELL_MAX_SIZE * (sizeMax + 1);
 									//MessageBox::Show(publicSizeMax.ToString());
 									
@@ -442,8 +447,7 @@ namespace AImap {
 										listGround->insertData(ground);
 									}
 
-									publicSizeHeightMax = row-1;
-									row++;
+									 publicSizeHeightMax = ++row;
 									column = 0;
 								}
 								else if(row >= 15){
@@ -473,9 +477,14 @@ namespace AImap {
 				//panelMap->Size.Width = CELL_MAX_SIZE * (sizeMax + 1);
 			}
 			readerFile.close();
-			
+			panelMap->Size = System::Drawing::Size(publicSizeWidthMax * CELL_MAX_SIZE + 1, 
+				publicSizeHeightMax * CELL_MAX_SIZE +1);
+
+			MessageBox::Show("Width: " + publicSizeWidthMax.ToString() + " Height: " + publicSizeHeightMax.ToString() +
+			panelMap->Size.Width.ToString() + " - "+panelMap->Size.Height);
 		}
 
+		// Crea botones, textbos y combobox dinámicos para los colores
 		void chargeColor() {
 			Button ^btn;
 			ComboBox ^comboBox;
@@ -486,6 +495,7 @@ namespace AImap {
 			cli::array <String^>^ nameGround = gcnew cli::array<String^>(sizeListGround);
 			arrayComboBox = gcnew cli::array<ComboBox^>(size);
 			arrayButton = gcnew cli::array<Button^>(size);
+			arrayTextBox = gcnew cli::array<TextBox^>(size);
 
 			for (int i = 0; i < sizeListGround; i++) {
 				//nameColor[i] = listColor->getDataByPosition(i).getGroundName();
@@ -538,6 +548,7 @@ namespace AImap {
 				textBox->Location = Point(800 + 180, i * 25 + 420);
 				textBox->Size = System::Drawing::Size(60, 23);
 				textBox->Leave += gcnew System::EventHandler(this, &Map::textBox_Color_Float);
+				arrayTextBox[i] = textBox;
 				
 
 				this->Controls->Add(comboBox);
@@ -548,6 +559,7 @@ namespace AImap {
 			
 		}	
 
+		// Carga los colores
 		void chargeColorFile() {
 			Cell cell;
 			ColorClass color;
@@ -583,6 +595,7 @@ namespace AImap {
 			}
 		}
 
+		// Carga los jugadores predeterminados
 		void chargePlayerFile() {
 			Player player;
 			String ^systemStr;
@@ -612,16 +625,18 @@ namespace AImap {
 
 		}
 
-		void drawMap() {
+		// Dibuja el mapa
+		void drawMap(const bool drawId) {
 			Graphics ^g = panelMap->CreateGraphics();
 			SolidBrush ^sb = gcnew SolidBrush(Color::Red);
 			Pen ^p = gcnew Pen(Color::Blue);
+			System::String ^string = "";
+			System::Drawing::Font ^myFont;
 			Ground ground, groundTwo;
 			Cell cell;
-			string str;
-			
-			panelMap->Size.Width = publicSizeWidthMax * CELL_MAX_SIZE;
-			panelMap->Size.Height = publicSizeHeightMax * CELL_MAX_SIZE;
+			std::string str;
+
+			myFont = gcnew System::Drawing::Font("Arial", 7);
 
 			for (int i = 0; i <= publicSizeHeightMax; i++) {
 				for (int j = 0; j <= publicSizeWidthMax; j++) {
@@ -643,11 +658,21 @@ namespace AImap {
 							sb = gcnew SolidBrush(Color::LightGray);
 						}
 						else{
+							string = "";
+							for (int i = 0; i < cell.getLastVisitPosition(); i++) {
+								string = cell.getVisitCounter()[i].ToString() + ", ";
+							}
+							if (string != "") {
+								MessageBox::Show(string);
+							}
 							sb = gcnew SolidBrush(Color::FromArgb(ground.getColor(0), ground.getColor(1), ground.getColor(2)));
 							g->FillRectangle(sb, i * CELL_MAX_SIZE + 1, j * CELL_MAX_SIZE + 1, CELL_MAX_SIZE - 1, CELL_MAX_SIZE - 1);
+							g->DrawString(string, myFont, gcnew SolidBrush(Color::Black), PointF(i * CELL_MAX_SIZE + 10, j * CELL_MAX_SIZE + 41));
 						}
-						g->DrawString(cell.getIdGround().ToString(), this->Font,gcnew SolidBrush(Color::Red), PointF(i * CELL_MAX_SIZE + 10, j * CELL_MAX_SIZE + 10));
-					}
+						if (drawId) {
+							g->DrawString(cell.getIdGround().ToString(), this->Font, gcnew SolidBrush(Color::DarkBlue), PointF(i * CELL_MAX_SIZE + 10, j * CELL_MAX_SIZE + 10));
+						}
+						}
 					else {
 						//MessageBox::Show("not found at " + i.ToString() + "-" + j.ToString());
 					}
@@ -657,14 +682,60 @@ namespace AImap {
 			//MessageBox::Show();
 		}
 
-		void validateBeforePlay() {
+		//Valida si todo está listo para jugar
+		bool isReadyToPlay() {
+			String ^messageError;
+			int errorCounter = 0;
+			int counterArray = 0;
+
 			
+
+			if (pictureBox_Start->Location == pictureBoxStarPoint) {
+				messageError += ++errorCounter + ".- Seleccione un punto de inicio\n";
+			}
+			if (pictureBox_Goal->Location == pictureBoxGoalPoint) {
+				messageError += ++errorCounter + ".- Seleccione un punto de llegada\n";
+			}
+			if (comboBox_Player->Text == "") {
+				messageError += ++errorCounter + ".- Seleccione un personaje a jugar\n";
+			}
+
+			for each (ComboBox^ var in arrayComboBox)
+			{
+				if (var->Text == "") {
+					messageError += ++errorCounter + ".- Elija un terreno para el ID: " +
+						Int32::Parse(var->Name->Substring(14)) + "'\n";
+				}
+				counterArray++;
+			}
+			counterArray = 0;
+			for each (TextBox^ var in arrayTextBox)
+			{
+				if (var->Text == "") {
+					messageError += ++errorCounter + ".- Elija un coste para el terreno '" +
+						arrayComboBox[counterArray]->Text + "'\n";
+				}
+				counterArray++;
+			}
+			
+			if (errorCounter) {
+				messageError = "Errores encontrados: " + errorCounter + "\n" +
+					"Resuelva los siguientes errores antes de comenzar a jugar\n" + messageError;
+				MessageBox::Show(messageError);
+				return false;
+			}
+			else {
+				comboBox1->Enabled = false;
+				comboBox_Player->Enabled = false;
+				return true;
+			}
 		}
 
 		// //////////////////////////////////////////////////////// HERRAMIENTAS ////////////////////////////////////////////////////////////// //
 
 		Ground *colorAux = new Ground();
 
+		//Convierte de System::String a std::string
 		void marshalString(String ^ s, std::string& os) {
 			using namespace Runtime::InteropServices;
 			const char* chars = (const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
@@ -672,11 +743,13 @@ namespace AImap {
 			Marshal::FreeHGlobal(IntPtr((void*)chars));
 		}
 
+		//  Manda mensajes de error con un std::str
 		void messageError(string str) {
 			String ^systemStr = gcnew String(str.c_str());
 			MessageBox::Show("Error: " + systemStr);
 		}
 	
+		// Valida el click en el botón dinámico del color
 		void btn_color_click(Object^ sender, EventArgs^ e) {
 			Button ^btn;
 			ColorClass *color = new ColorClass();
@@ -694,13 +767,15 @@ namespace AImap {
 					b = colorDialog1->Color.B;
 					listGround->getDataByPosition(id).setColor(r, g, b);
 					//listColor->findId(id)->getData().setColor(r,g,b);
-					
+					btn->BackColor = Color::FromArgb(r, g, b);
 					MessageBox::Show("color establecido como: " + listGround->getDataByPosition(id).getColor(0) + " - ");
+					drawMap(true);
 				}
 			}
 
 		}
 
+		// Valida el cambio de nombre en el combobox dinámico del color
 		void comboBox_Color_Name(Object^ sender, EventArgs^ e) {
 			ComboBox ^comboBox;
 			Button ^button = gcnew Button;
@@ -725,6 +800,11 @@ namespace AImap {
 					comboBox->SelectedIndex = -1;
 					repeated = true;
 					newColor = Color::Gray;
+					if (listGround->findData(ground) != nullptr) {
+						//MessageBox::Show("asdf: " + button->Name);
+						listGround->findData(ground)->getData().setColor(newColor.Gray.R, newColor.Gray.G, newColor.Gray.B);
+						drawMap(true);
+					}
 				}
 			}
 			if (!repeated) {
@@ -745,7 +825,12 @@ namespace AImap {
 								if (listGround->findData(ground) != nullptr) {
 									//MessageBox::Show("asdf: " + button->Name);
 									listGround->findData(ground)->getData().setColor(color.getColor(0), color.getColor(1), color.getColor(2));
+									marshalString(comboBox->Text, str);
+									listGround->findData(ground)->getData().setName(str);
+									
+									drawMap(true);
 								}
+								
 								
 							}
 							
@@ -781,8 +866,11 @@ namespace AImap {
 			
 			}
 
+		// Valida el cambio de valor en el combobox dinámico del color
 		void textBox_Color_Float(Object^ sender, EventArgs^ e) {
 			TextBox ^txt = safe_cast<TextBox^>(sender);
+			Ground ground;
+			int id;
 			
 			if (txt->Text == "") {
 
@@ -790,14 +878,19 @@ namespace AImap {
 			else if (System::Text::RegularExpressions::Regex::IsMatch(txt->Text, "^[-]?[0-9]*[.]?[0-9]+$") || 
 				System::Text::RegularExpressions::Regex::IsMatch(txt->Text, "^[-]?[0-9]+[.]$")) {
 				// ((.[0-9]+)|[0-9]+)  
-				
+				id = Int32::Parse(txt->Name->Substring(13));
+				ground.setId(id);
+				if (listGround->findData(ground) != nullptr) {
+					listGround->findData(ground)->getData().setValue(Convert::ToDouble(txt->Text));
+				}
 			}
 			else {
 				MessageBox::Show("Ingrese un valor numérico correcto");
+				txt->Text = "";
 			}
 		}
 
-	private: System::Void panelMap_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
+	/*private: System::Void panelMap_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
 		Graphics ^g = panelMap->CreateGraphics();
 		Pen ^p = gcnew Pen(Color::Black);
 		for (int i = 0; i < 2; i++) {
@@ -805,7 +898,9 @@ namespace AImap {
 				g->DrawRectangle(p, 2 * CELL_MAX_SIZE, i * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
 			}
 		}
-	}
+	}*/
+
+	// Cerrar completamente el programa
 	private: System::Void Map_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
 		Application::Exit();
 	}
@@ -863,6 +958,7 @@ namespace AImap {
 		auto resourceManager = gcnew Resources::ResourceManager(resourceName, execAssem);
 		auto bitMap = cli::safe_cast<Bitmap^>(resourceManager->GetObject(systemStr));
 		pictureBox_Player->Image = bitMap;
+		pictureBox_PlayerIcon->Image = bitMap;
 		
 		//MessageBox::Show("Function");
 	}
@@ -879,15 +975,17 @@ namespace AImap {
 
 		pictureBox_Start->Image = reader;
 		}
-	// Eventos para Drag & drop de estado inicial y final
+	
+			 
+			 /////////////////////// Eventos para Drag & drop de estado inicial y final //////////////////////////////77
 	Point ^coordenadas = gcnew Point;
 	private: System::Void pictureBox_Start_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 		PictureBox ^pictureBox;
 		//pictureBox_Start->DoDragDrop(pictureBox_Start, DragDropEffects::Move);
 		pictureBox = safe_cast<PictureBox^>(sender);
 
-		pictureBox->Height = 30;
-		pictureBox->Width = 30;
+		pictureBox->Height = 40;
+		pictureBox->Width = 40;
 
 		coordenadas->Y = MousePosition.Y - pictureBox->Top;
 		coordenadas->X = MousePosition.X - pictureBox->Left;
@@ -923,14 +1021,18 @@ namespace AImap {
 		cell.setPositionX(locationX);
 		cell.setPositionY(locationY);
 		
-		MessageBox::Show(point.ToString() + " location: " + locationX.ToString() + ", "+locationY.ToString() + "\n" +
-		Cursor->Position.X + ", " + Cursor->Position.Y);
+		/*MessageBox::Show(point.ToString() + " location: " + locationX.ToString() + ", "+locationY.ToString() + "\n" +
+		Cursor->Position.X + ", " + Cursor->Position.Y);*/
 		if (point.X < 0 || point.Y < 0 || point.X > 750 || point.Y > 750) {
 			if (pictureBox_Start->Name == pictureBox->Name) {
 				pictureBox->Location = pictureBoxStarPoint;
+				pictureBox->Height = 50;
+				pictureBox->Width = 50;
 				}
 			else {
 				pictureBox->Location = pictureBoxGoalPoint;
+				pictureBox->Height = 50;
+				pictureBox->Width = 50;
 				}
 			}
 		else {
@@ -946,10 +1048,15 @@ namespace AImap {
 				//MessageBox::Show(start);
 				if (pointStart == pointGoal) {
 					pictureBox->Location = auxPoint;
+					pictureBox->Height = 50;
+					pictureBox->Width = 50;
+					
 				}
 				else {
 					pictureBox->Location = Point(panelMap->Location.X + (locationX * CELL_MAX_SIZE) +
 						5, panelMap->Location.Y + (locationY * CELL_MAX_SIZE) + 5);
+					pictureBox->Height = 30;
+					pictureBox->Width = 30;
 				}
 			}
 			else {
@@ -957,9 +1064,13 @@ namespace AImap {
 			}
 		}
 	}
+	
+	// Permitir un Drag&Drop en el panel con movimiento
 	private: System::Void panelMap_DragEnter(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e) {
 		e->Effect = DragDropEffects::Move;
 	}
+	
+	// Permitir un Drag&Drop en el panel
 	private: System::Void panelMap_DragDrop(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e) {
 		panelMap->Controls->Add(pictureBox_Start);
 		Button ^btn;
@@ -969,39 +1080,43 @@ namespace AImap {
 		btn = safe_cast<Button^>(sender);
 		MessageBox::Show("Entry");
 	}
+	
+	// Pinta el panel
 	private: System::Void panelMap_Paint_1(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
 		UpdateGraphicsBuffer();
-		drawMap();
+		drawMap(true);
 	}
+	
+	// Evento click para iniciar el juego
 	private: System::Void btn_play_Click(System::Object^  sender, System::EventArgs^  e) {
-		drawMap();
+		
 		//pictureBox_Start->SendToBack();
 		panelMap->SendToBack();
-		pictureBox_Player->Location = pictureBox_Start->Location;
-		this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
+		if (isReadyToPlay()) {
+			drawMap(false);
+			pictureBox_Player->Location = pictureBox_Start->Location;
+			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
+			Map::Focus();
+		}
 		//panelMap->Focus();
-		Map::Focus();
+		
 	}
+	
+	// Detectar el click de las teclas para mover el jugador
 	private: System::Void Map_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
-		comboBox1->Enabled = false;
-		comboBox_Player->Enabled = false;
-
-		
 		Point point = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
-		
-		int locationX, locationY;
-		/*MessageBox::Show("LocX: " + point.X + " LocY: " + point.Y + " - " +
-			pictureBox_Player->Location.X);*/
-		//Windows::Forms::Keys::Up;
+		Point auxPoint = point;
+		Cell cell;
+		int locationX, locationY, intAux;
+		bool moved = false;
+
 		//FLECHA IZQUIERDA
 		if (e->KeyValue.ToString() == "37") {
-			/*MessageBox::Show("LocX: " + locationX.ToString() + " LocY: " + locationY.ToString() + " - " +
-				pictureBox_Player->Location.X + " - " + panelMap->MousePosition.X);
-			point.X = point.X - CELL_MAX_SIZE;*/
 			point.X = point.X - CELL_MAX_SIZE;
 			if (isValidPositionPanelMap(point)) {
 				pictureBox_Player->Location = Point(pictureBox_Player->Location.X - CELL_MAX_SIZE,
 					pictureBox_Player->Location.Y);
+				moved = true;
 			}
 		}
 		//FLECHA ARRIBA
@@ -1010,6 +1125,7 @@ namespace AImap {
 			if (isValidPositionPanelMap(point)) {
 				pictureBox_Player->Location = Point(pictureBox_Player->Location.X,
 					pictureBox_Player->Location.Y - CELL_MAX_SIZE);
+				moved = true;
 			}
 		}
 		//FLECHA ABAJO
@@ -1020,6 +1136,7 @@ namespace AImap {
 			if (isValidPositionPanelMap(point)) {
 				pictureBox_Player->Location = Point(pictureBox_Player->Location.X,
 					pictureBox_Player->Location.Y + CELL_MAX_SIZE);
+				moved = true;
 			}
 		}
 
@@ -1029,13 +1146,28 @@ namespace AImap {
 			if (isValidPositionPanelMap(point)) {
 				pictureBox_Player->Location = Point(pictureBox_Player->Location.X + CELL_MAX_SIZE,
 					pictureBox_Player->Location.Y);
+				moved = true;
 			}
 		}
 		else {
 			// Nothing
 		}
+		if (moved) {
+			locationX = (int)(auxPoint.X / CELL_MAX_SIZE);
+			locationY = (int)(auxPoint.Y / CELL_MAX_SIZE);
+
+			cell.setPositionX(locationX);
+			cell.setPositionY(locationY);
+
+			if(listCell->findPositionXY(cell) != nullptr){
+				intAux = ++visit;
+				listCell->findPositionXY(cell)->getData().setVisitCounter(intAux);
+				MessageBox::Show(listCell->findPositionXY(cell)->getData().getVisitCounter()[0].ToString());
+			}
+		}
 	}
 	
+	// Valida que el jugador no se salga del mapa de juego
 	bool isValidPositionPanelMap(Point ^point) {
 		Cell cell;
 		//if (point->X < 0 || point->Y < 0 || point->X > 750 || point->Y > 750) {
@@ -1048,7 +1180,96 @@ namespace AImap {
 		}
 
 	}
-private: System::Void Map_Click(System::Object^  sender, System::EventArgs^  e) {
+
+
+	private: System::Void panelMap_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+		if (e->Button == Windows::Forms::MouseButtons::Left) {
+			ToolTip ^tt = gcnew ToolTip();
+			IWin32Window ^win = this;
+			Point point = panelMap->PointToClient(MousePosition);
+
+			System::String^ informacion = toolTipMensaje(point);
+
+			tt->Show(informacion, win, PointToClient(MousePosition).X + 10, PointToClient(MousePosition).Y+30, 2000);
+			//tt->Show(informacion, win, PointToClient(MousePosition), 2000);
+		}
+	}
+
+	System::String^ toolTipMensaje(Point point) {
+		System::String^ informacion;
+		System::String^ coordenadaX;
+		int coordenadaY;
+		Cell cell;
+		Cell cellAux;
+		char letra = 'A';
+
+
+		//Coordenada
+		int locationX;
+		int locationY;
+
+		locationX = (int)(point.X / CELL_MAX_SIZE);
+		locationY = (int)(point.Y / CELL_MAX_SIZE);
+
+		cell.setPositionX(locationX);
+		cell.setPositionY(locationY);
+
+		if (listCell->findPositionXY(cell) != nullptr) {
+			cellAux = listCell->getData(listCell->findPositionXY(cell));
+
+			for (int i = 0; i < cellAux.getPositionX(); i++) {
+				letra += 1;
+			}
+			coordenadaX = System::Char::ToString(letra);
+			coordenadaY = cellAux.getPositionY() + 1;
+
+			informacion = "Coordenada: " + coordenadaX + "-" + coordenadaY.ToString() + "\n";
+
+			Ground groundAux;
+			groundAux.setId(cellAux.getIdGround());
+
+			//DESCOMENTAR NOMBRE (Sig 2 lineas)
+			if (listGround->findData(groundAux) != nullptr) {
+				groundAux = listGround->findData(groundAux)->getData();
+			}
+			else {
+				MessageBox::Show("Not found " + groundAux.getId().ToString());
+			}
+			informacion = informacion + "Terreno: " + gcnew String(groundAux.getName().c_str()) + "\n";
+
+			//Costo
+			informacion = informacion + "Costo: " + groundAux.getValue().ToString() + "\n";
+
+			//Inicial
+			if (pointStart == cellAux.getId()) {
+				informacion = informacion + "Inicial: Sí \n";
+			}
+			else {
+				informacion = informacion + "Inicial: No \n";
+			}
+
+			//Final
+			if (pointGoal == cellAux.getId()) {
+				informacion = informacion + "Final: Sí \n";
+			}
+			else {
+				informacion = informacion + "Final: No \n";
+			}
+		}
+		return informacion;
+	}
+	
+	private: System::Void pictureBox_Player_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+	if (e->Button == Windows::Forms::MouseButtons::Left) {
+		ToolTip ^tt = gcnew ToolTip();
+		IWin32Window ^win = this;
+		Point point = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
+
+		System::String^ informacion = toolTipMensaje(point);
+
+		tt->Show(informacion, win, PointToClient(MousePosition).X + 10, PointToClient(MousePosition).Y + 30, 2000);
+		//tt->Show(informacion, win, PointToClient(MousePosition), 2000);
+	}
 }
 };
 }
