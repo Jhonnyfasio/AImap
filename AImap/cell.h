@@ -19,8 +19,8 @@ class Cell {
 		int getIdGround(){
 			return idGround;
 		}
-		int* getVisitCounter(){
-			return visitCounter;
+		int getVisitCounter(const int& position){
+			return visitCounter[position];
 		}
 
 		int getPositionX() {
@@ -41,9 +41,11 @@ class Cell {
 		void setIdGround(const int& idGroundX){
 			idGround = idGroundX;
 		}
-		void setVisitCounter(const int& visitCounderX){
-			visitCounter[lastVisitPosition] = visitCounderX;
-			lastVisitPosition++;
+		void setVisitCounter(const int& visitCounterX){
+			
+			visitCounter[lastVisitPosition] = visitCounterX;
+			System::Windows::Forms::MessageBox::Show("setting: " + visitCounter[lastVisitPosition].ToString());
+			++lastVisitPosition;
 		}
 
 		void setPositionX(const int& positionXX) {
@@ -60,6 +62,7 @@ class Cell {
 			*visitCounter = *c.visitCounter;
 			positionX = c.positionX;
 			positionY = c.positionY;
+			lastVisitPosition = c.lastVisitPosition;
 
 			return *this;
 		}

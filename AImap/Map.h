@@ -49,7 +49,7 @@ namespace AImap {
 	private: System::Windows::Forms::Button^  button_ResetGrounds;
 	private: System::Windows::Forms::Button^  button_SaveGrounds;
 	private: System::Windows::Forms::PictureBox^  pictureBox_Start;
-	private: System::Windows::Forms::ComboBox^  comboBox1;
+
 	private: System::Windows::Forms::TextBox^  textBox1;
 	private: System::Windows::Forms::TextBox^  txtPrueba2;
 	private: System::Windows::Forms::Panel^  panelMap;
@@ -79,7 +79,7 @@ namespace AImap {
 	int publicSizeWidthMax;
 
 	int visit = 0;
-			 
+	bool isPlaying = false;
 	
 	public:
 			
@@ -144,7 +144,6 @@ namespace AImap {
 			this->button_ResetGrounds = (gcnew System::Windows::Forms::Button());
 			this->button_SaveGrounds = (gcnew System::Windows::Forms::Button());
 			this->pictureBox_Start = (gcnew System::Windows::Forms::PictureBox());
-			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->txtPrueba2 = (gcnew System::Windows::Forms::TextBox());
 			this->panelMap = (gcnew System::Windows::Forms::Panel());
@@ -155,7 +154,6 @@ namespace AImap {
 			this->pictureBox_Player = (gcnew System::Windows::Forms::PictureBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_PlayerIcon))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->BeginInit();
-			this->panelMap->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Player))->BeginInit();
 			this->SuspendLayout();
@@ -227,14 +225,6 @@ namespace AImap {
 			this->pictureBox_Start->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &Map::pictureBox_Start_MouseMove);
 			this->pictureBox_Start->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &Map::pictureBox_Start_MouseUp);
 			// 
-			// comboBox1
-			// 
-			this->comboBox1->FormattingEnabled = true;
-			this->comboBox1->Location = System::Drawing::Point(258, 63);
-			this->comboBox1->Name = L"comboBox1";
-			this->comboBox1->Size = System::Drawing::Size(121, 21);
-			this->comboBox1->TabIndex = 20;
-			// 
 			// textBox1
 			// 
 			this->textBox1->Location = System::Drawing::Point(553, 12);
@@ -257,7 +247,6 @@ namespace AImap {
 			this->panelMap->AllowDrop = true;
 			this->panelMap->AutoSize = true;
 			this->panelMap->BackColor = System::Drawing::Color::Transparent;
-			this->panelMap->Controls->Add(this->comboBox1);
 			this->panelMap->Location = System::Drawing::Point(26, 110);
 			this->panelMap->Name = L"panelMap";
 			this->panelMap->Size = System::Drawing::Size(750, 750);
@@ -349,7 +338,6 @@ namespace AImap {
 			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_PlayerIcon))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->EndInit();
-			this->panelMap->ResumeLayout(false);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Player))->EndInit();
 			this->ResumeLayout(false);
@@ -375,7 +363,7 @@ namespace AImap {
 			readerFile.open(str, ios::in);
 			//MessageBox::Show(gcnew String(str.c_str()));
 			
-			cell.setVisitCounter(0);
+			//cell.setVisitCounter(0);
 
 			if (!readerFile.is_open()) {
 				messageError("Error, archivo'" + str + "'de lectura no disponible");
@@ -659,15 +647,20 @@ namespace AImap {
 						}
 						else{
 							string = "";
-							for (int i = 0; i < cell.getLastVisitPosition(); i++) {
-								string = cell.getVisitCounter()[i].ToString() + ", ";
-							}
-							if (string != "") {
-								MessageBox::Show(string);
-							}
+							//
+							
 							sb = gcnew SolidBrush(Color::FromArgb(ground.getColor(0), ground.getColor(1), ground.getColor(2)));
 							g->FillRectangle(sb, i * CELL_MAX_SIZE + 1, j * CELL_MAX_SIZE + 1, CELL_MAX_SIZE - 1, CELL_MAX_SIZE - 1);
-							g->DrawString(string, myFont, gcnew SolidBrush(Color::Black), PointF(i * CELL_MAX_SIZE + 10, j * CELL_MAX_SIZE + 41));
+							
+							for (int i = 0; i < cell.getLastVisitPosition(); i++) {
+								string += cell.getVisitCounter(i).ToString() + ", ";
+								MessageBox::Show(cell.getId().ToString() + " - "+ cell.getLastVisitPosition().ToString() + " - Pos:"+i.ToString() + cell.getVisitCounter(i).ToString());
+							}
+							if (string != "") {
+								//MessageBox::Show(cell.getLastVisitPosition().ToString() + "-"+string);
+								g->DrawString(string, myFont, gcnew SolidBrush(Color::Black), PointF(i * CELL_MAX_SIZE + 10, j * CELL_MAX_SIZE + 41));
+							}
+							
 						}
 						if (drawId) {
 							g->DrawString(cell.getIdGround().ToString(), this->Font, gcnew SolidBrush(Color::DarkBlue), PointF(i * CELL_MAX_SIZE + 10, j * CELL_MAX_SIZE + 10));
@@ -725,7 +718,6 @@ namespace AImap {
 				return false;
 			}
 			else {
-				comboBox1->Enabled = false;
 				comboBox_Player->Enabled = false;
 				return true;
 			}
@@ -1084,7 +1076,13 @@ namespace AImap {
 	// Pinta el panel
 	private: System::Void panelMap_Paint_1(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
 		UpdateGraphicsBuffer();
-		drawMap(true);
+		if (isPlaying) {
+			drawMap(false);
+		}
+		else {
+			drawMap(true);
+		}
+		
 	}
 	
 	// Evento click para iniciar el juego
@@ -1092,12 +1090,13 @@ namespace AImap {
 		
 		//pictureBox_Start->SendToBack();
 		panelMap->SendToBack();
-		if (isReadyToPlay()) {
+		//if (isReadyToPlay()) {
+		isPlaying = true;
 			drawMap(false);
 			pictureBox_Player->Location = pictureBox_Start->Location;
 			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
 			Map::Focus();
-		}
+		//}
 		//panelMap->Focus();
 		
 	}
@@ -1161,8 +1160,12 @@ namespace AImap {
 
 			if(listCell->findPositionXY(cell) != nullptr){
 				intAux = ++visit;
+				
 				listCell->findPositionXY(cell)->getData().setVisitCounter(intAux);
-				MessageBox::Show(listCell->findPositionXY(cell)->getData().getVisitCounter()[0].ToString());
+				cell = listCell->findPositionXY(cell)->getData();
+				//MessageBox::Show("Here " + cell.getLastVisitPosition().ToString());
+				//MessageBox::Show(intAux.ToString()+", "+listCell->findPositionXY(cell)->getData().getVisitCounter(cell.getLastVisitPosition()-1).ToString());
+				drawMap(false);
 			}
 		}
 	}
