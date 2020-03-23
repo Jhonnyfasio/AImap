@@ -573,8 +573,8 @@ namespace AImap {
 									textBox1->Text += listCell->getLast()->getData().getPositionY().ToString() + "//";
 									column++;
 								}
-								if (str == "") {
-									messageError("No se amdmiten valores nulos (dobles comas)");
+								if (str == "" && !readerFile.eof()) {
+									messageError("No se admiten valores nulos (dobles comas)");
 									isCorruptFile = true;
 								}
 								//txtPrueba->Text += cell.getId().ToString();
@@ -614,8 +614,8 @@ namespace AImap {
 									publicSizeHeightMax = ++row;
 									column = 0;
 								}
-								if (str == "") {
-									messageError("No se amdmiten valores nulos (dobles comas)");
+								if (str == "" && !readerFile.eof()) {
+									messageError("No se admiten valores nulos (dobles comas).");
 									isCorruptFile = true;
 								}
 								//txtPrueba->Text += cell.getId().ToString() + "\r\n";
@@ -1255,7 +1255,7 @@ namespace AImap {
 		//MessageBox::Show("Function");
 	}
 	private: System::Void Map_Shown(System::Object^  sender, System::EventArgs^  e) {
-		this->Hide();
+		//this->Hide();
 		chargeMap(fileNameMapGlobal);
 		chargeColorFile();
 		chargeColor();
@@ -1268,8 +1268,8 @@ namespace AImap {
 		auto reader = cli::safe_cast<Bitmap^>(resourceManager->GetObject("Start"));
 
 		pictureBox_Start->Image = reader;
-		if (!isCorruptFile) {
-			this->Show();
+		if (isCorruptFile) {
+			this->Close();
 		}
 		}
 	
