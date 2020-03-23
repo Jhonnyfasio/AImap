@@ -6,7 +6,8 @@ class Cell {
 	private:
 		int id;
 		int idGround;
-		int visitCounter[20];
+		// int visitCounter[20];
+		std::string visitCounter = "";
 		int positionX;
 		int positionY;
 		int lastVisitPosition = 0;
@@ -19,8 +20,8 @@ class Cell {
 		int getIdGround(){
 			return idGround;
 		}
-		int getVisitCounter(const int& position){
-			return visitCounter[position];
+		std::string getVisitCounter(){
+			return visitCounter;
 		}
 
 		int getPositionX() {
@@ -41,11 +42,14 @@ class Cell {
 		void setIdGround(const int& idGroundX){
 			idGround = idGroundX;
 		}
-		void setVisitCounter(const int& visitCounterX){
+		/*void setVisitCounter(const int& visitCounterX){
 			
 			visitCounter[lastVisitPosition] = visitCounterX;
 			System::Windows::Forms::MessageBox::Show("setting: " + visitCounter[lastVisitPosition].ToString());
 			++lastVisitPosition;
+		}*/
+		void setVisitCounter(const std::string& visitCounterX) {
+			visitCounter += "," + visitCounterX;
 		}
 
 		void setPositionX(const int& positionXX) {
@@ -59,7 +63,8 @@ class Cell {
 		Cell& operator =(const Cell& c){
 			id = c.id;
 			idGround = c.idGround;
-			*visitCounter = *c.visitCounter;
+			//*visitCounter = *c.visitCounter;
+			visitCounter = c.visitCounter;
 			positionX = c.positionX;
 			positionY = c.positionY;
 			lastVisitPosition = c.lastVisitPosition;

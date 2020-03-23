@@ -21,6 +21,7 @@
 // Para crear botones dinámicos
 #define BUTTON_NAME_COLOR "btn_Color"
 #define TEXTBOX_NAME_COLOR "textBox_Color"
+#define CHECKBOX_NAME_COLOR "checkBox_Color"
 #define COMBOBOX_NAME_COLOR "comboBox_Color"
 
 namespace AImap {
@@ -68,6 +69,7 @@ namespace AImap {
 	cli::array<ComboBox^>^ arrayComboBox;
 	cli::array<TextBox^>^ arrayTextBox;
 	cli::array<Button^>^ arrayButton;
+	cli::array<CheckBox^>^ arrayCheckBox;
 	String ^fileNameMapGlobal;
 	Point pictureBoxStarPoint, pictureBoxGoalPoint;
 
@@ -79,7 +81,9 @@ namespace AImap {
 	int publicSizeWidthMax;
 
 	int visit = 0;
-	bool isPlaying = false;
+	private: System::Windows::Forms::Label^  label4;
+
+			 bool isPlaying = false;
 	
 	public:
 			
@@ -152,6 +156,7 @@ namespace AImap {
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->pictureBox_Player = (gcnew System::Windows::Forms::PictureBox());
+			this->label4 = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_PlayerIcon))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->BeginInit();
@@ -182,6 +187,7 @@ namespace AImap {
 			this->label2->Size = System::Drawing::Size(54, 13);
 			this->label2->TabIndex = 12;
 			this->label2->Text = L"Personaje";
+			this->label2->TextAlign = System::Drawing::ContentAlignment::TopRight;
 			// 
 			// comboBox_Player
 			// 
@@ -215,7 +221,7 @@ namespace AImap {
 			// 
 			this->pictureBox_Start->Cursor = System::Windows::Forms::Cursors::SizeAll;
 			this->pictureBox_Start->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox_Start.Image")));
-			this->pictureBox_Start->Location = System::Drawing::Point(26, 42);
+			this->pictureBox_Start->Location = System::Drawing::Point(25, 29);
 			this->pictureBox_Start->Name = L"pictureBox_Start";
 			this->pictureBox_Start->Size = System::Drawing::Size(50, 50);
 			this->pictureBox_Start->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
@@ -231,13 +237,13 @@ namespace AImap {
 			this->textBox1->Multiline = true;
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->ReadOnly = true;
-			this->textBox1->Size = System::Drawing::Size(75, 92);
+			this->textBox1->Size = System::Drawing::Size(75, 67);
 			this->textBox1->TabIndex = 16;
 			this->textBox1->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
 			// 
 			// txtPrueba2
 			// 
-			this->txtPrueba2->Location = System::Drawing::Point(267, 20);
+			this->txtPrueba2->Location = System::Drawing::Point(195, 45);
 			this->txtPrueba2->Name = L"txtPrueba2";
 			this->txtPrueba2->Size = System::Drawing::Size(183, 20);
 			this->txtPrueba2->TabIndex = 17;
@@ -256,9 +262,9 @@ namespace AImap {
 			// 
 			// btn_play
 			// 
-			this->btn_play->Location = System::Drawing::Point(422, 54);
+			this->btn_play->Location = System::Drawing::Point(406, 29);
 			this->btn_play->Name = L"btn_play";
-			this->btn_play->Size = System::Drawing::Size(75, 23);
+			this->btn_play->Size = System::Drawing::Size(120, 50);
 			this->btn_play->TabIndex = 15;
 			this->btn_play->Text = L"Jugar";
 			this->btn_play->UseVisualStyleBackColor = true;
@@ -268,7 +274,7 @@ namespace AImap {
 			// 
 			this->pictureBox_Goal->Cursor = System::Windows::Forms::Cursors::SizeAll;
 			this->pictureBox_Goal->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox_Goal.Image")));
-			this->pictureBox_Goal->Location = System::Drawing::Point(101, 42);
+			this->pictureBox_Goal->Location = System::Drawing::Point(100, 29);
 			this->pictureBox_Goal->Name = L"pictureBox_Goal";
 			this->pictureBox_Goal->Size = System::Drawing::Size(50, 50);
 			this->pictureBox_Goal->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
@@ -281,7 +287,7 @@ namespace AImap {
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(23, 26);
+			this->label1->Location = System::Drawing::Point(22, 13);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(32, 13);
 			this->label1->TabIndex = 23;
@@ -290,7 +296,7 @@ namespace AImap {
 			// label3
 			// 
 			this->label3->AutoSize = true;
-			this->label3->Location = System::Drawing::Point(98, 26);
+			this->label3->Location = System::Drawing::Point(97, 13);
 			this->label3->Name = L"label3";
 			this->label3->Size = System::Drawing::Size(31, 13);
 			this->label3->TabIndex = 24;
@@ -307,6 +313,15 @@ namespace AImap {
 			this->pictureBox_Player->TabStop = false;
 			this->pictureBox_Player->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &Map::pictureBox_Player_MouseDown);
 			// 
+			// label4
+			// 
+			this->label4->AutoSize = true;
+			this->label4->Location = System::Drawing::Point(802, 406);
+			this->label4->Name = L"label4";
+			this->label4->Size = System::Drawing::Size(218, 13);
+			this->label4->TabIndex = 26;
+			this->label4->Text = L"Color           Terreno            Alcance     Coste";
+			// 
 			// Map
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -314,6 +329,8 @@ namespace AImap {
 			this->AutoSize = true;
 			this->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->ClientSize = System::Drawing::Size(1042, 909);
+			this->Controls->Add(this->btn_play);
+			this->Controls->Add(this->label4);
 			this->Controls->Add(this->pictureBox_Player);
 			this->Controls->Add(this->label3);
 			this->Controls->Add(this->label1);
@@ -322,7 +339,6 @@ namespace AImap {
 			this->Controls->Add(this->textBox1);
 			this->Controls->Add(this->txtPrueba2);
 			this->Controls->Add(this->panelMap);
-			this->Controls->Add(this->btn_play);
 			this->Controls->Add(this->pictureBox_PlayerIcon);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->comboBox_Player);
@@ -361,14 +377,16 @@ namespace AImap {
 			fstream readerFile;
 			marshalString(fileNameMap, str);
 			readerFile.open(str, ios::in);
+			char letra = 'A';
 			//MessageBox::Show(gcnew String(str.c_str()));
-			
+
 			//cell.setVisitCounter(0);
 
 			if (!readerFile.is_open()) {
 				messageError("Error, archivo'" + str + "'de lectura no disponible");
 			}
 			else {
+				str = "";
 				while (!readerFile.eof()) {
 					if (readerFile.beg == -1 || readerFile.beg == readerFile.end) {
 						messageError("Error, archivo de lectura no disponible 2");
@@ -377,12 +395,12 @@ namespace AImap {
 					else if (!readerFile.eof()) {
 						readerFile.get(character);
 						txtPrueba2->Text += character;
-						if (!readerFile.eof()) {
-							if (isdigit(character)) {
+						//if (!readerFile.eof()) {
+							if (!readerFile.eof() && isdigit(character)) {
 								str += character;
 							}
 							// Valida cada columna
-							else if (character == ',') {
+							else if (!readerFile.eof() && character == ',') {
 								if (row <= 14 && column <= 14) {
 									cell.setId(counter++);
 									cell.setIdGround(atoi(str.c_str()));
@@ -391,13 +409,14 @@ namespace AImap {
 									listCell->insertData(cell);
 									if (!listGround->findId(cell.getIdGround())) {
 										ground.setId(cell.getIdGround());
+										ground.setIsValid(true);
 										listGround->insertData(ground);
 									}
 									textBox1->Text += listCell->getLast()->getData().getPositionX().ToString() + ",";
 									textBox1->Text += listCell->getLast()->getData().getPositionY().ToString() + "//";
 									column++;
 								}
-								else if(column >= 15){
+								else if (column >= 15) {
 									cell.setId(-1);
 									cell.setIdGround(-1);
 									cell.setPositionX(column);
@@ -408,19 +427,19 @@ namespace AImap {
 								str = "";
 							}
 							// Retorno de carro (agrega la fila)
-							else if (character == 10 || character == 13 || character == 3) {
+							else if (character == 10 || character == 13 || character == 3 || readerFile.eof()) {
 								if (row == 0) {
 									sizeMax = column;
 									publicSizeWidthMax = column + 1;
 									panelMap->Size.Height = CELL_MAX_SIZE * (sizeMax + 1);
 									//MessageBox::Show(publicSizeMax.ToString());
-									
+
 								}
 								//MessageBox::Show("Column: " + sizeMax.ToString());
 								if (counter < sizeMax) {
 									marshalString(row.ToString(), str);
 									marshalString(counter.ToString(), str2);
-									messageError("Error, el mapa tiene lados irregulares (Linea: " + str + ", Columna: " + str2 );
+									messageError("Error, el mapa tiene lados irregulares (Linea: " + str + ", Columna: " + str2);
 									readerFile.close();
 									break;
 								}
@@ -432,51 +451,72 @@ namespace AImap {
 									listCell->insertData(cell);
 									if (!listGround->findId(cell.getIdGround())) {
 										ground.setId(cell.getIdGround());
+										ground.setIsValid(true);
 										listGround->insertData(ground);
 									}
 
-									 publicSizeHeightMax = ++row;
+									publicSizeHeightMax = ++row;
 									column = 0;
 								}
-								else if(row >= 15){
+								else if (row >= 15) {
 									cell.setId(-1);
 									cell.setIdGround(-1);
 									cell.setPositionX(column);
 									cell.setPositionY(row);
 
 									listCell->insertData(cell);
-									
-									}
+
+								}
 								//txtPrueba->Text += cell.getId().ToString() + "\r\n";
 								str = "";
 							}
 							// Valida caracter inválido
 							else {
 								marshalString(fileNameMap, str);
-								/*MessageBox::Show("No se puede leer el archivo '" + fileNameMap + "', archivo corrupto en fila: " + 
-									(row + 1).ToString() + " columna: " + (column + 1).ToString() + ".");*/
+								MessageBox::Show("No se puede leer el archivo '" + fileNameMap + "', archivo corrupto en fila: " +
+									(row + 1).ToString() + " columna: " + (column + 1).ToString() + ".");
 								readerFile.close();
-								//this->Close();
+								this->Close();
 								break;
 							}
-						}
+						//}
 					}
 				}
 				//panelMap->Size.Width = CELL_MAX_SIZE * (sizeMax + 1);
 			}
 			readerFile.close();
-			panelMap->Size = System::Drawing::Size(publicSizeWidthMax * CELL_MAX_SIZE + 1, 
-				publicSizeHeightMax * CELL_MAX_SIZE +1);
+			panelMap->Size = System::Drawing::Size(publicSizeWidthMax * CELL_MAX_SIZE + 1,
+				publicSizeHeightMax * CELL_MAX_SIZE + 1);
 
-			MessageBox::Show("Width: " + publicSizeWidthMax.ToString() + " Height: " + publicSizeHeightMax.ToString() +
-			panelMap->Size.Width.ToString() + " - "+panelMap->Size.Height);
+			/*MessageBox::Show("Width: " + publicSizeWidthMax.ToString() + " Height: " + publicSizeHeightMax.ToString() +
+			panelMap->Size.Width.ToString() + " - "+panelMap->Size.Height);*/
+			Label ^label;
+			for (int i = 0; i < publicSizeWidthMax; i++) {
+				label = gcnew Label;
+				label->Size = System::Drawing::Size(20, 20);
+				
+				label->Text = System::Char::ToString(letra++);
+				label->Location = Point(43 + (i * CELL_MAX_SIZE), 86);
+				this->Controls->Add(label);
+			}
+			for (int j = 0; j < publicSizeHeightMax; j++) {
+				label = gcnew Label;
+				label->Size = System::Drawing::Size(20, 20);
+				label->TextAlign = System::Drawing::ContentAlignment::TopRight;
+				label->Text = (j+1).ToString();
+				label->Location = Point(3 , 125 + (j * CELL_MAX_SIZE));
+				this->Controls->Add(label);
+			}
+
 		}
 
 		// Crea botones, textbos y combobox dinámicos para los colores
 		void chargeColor() {
 			Button ^btn;
 			ComboBox ^comboBox;
+			CheckBox ^checkBox;
 			TextBox ^textBox;
+			//Label ^label;
 			String ^systemStr, ^idStr;
 			Ground ground;
 			int size = listGround->getItemCounter(), id, sizeListGround = listColor->getItemCounter();
@@ -484,6 +524,7 @@ namespace AImap {
 			arrayComboBox = gcnew cli::array<ComboBox^>(size);
 			arrayButton = gcnew cli::array<Button^>(size);
 			arrayTextBox = gcnew cli::array<TextBox^>(size);
+			arrayCheckBox = gcnew cli::array<CheckBox^>(size);
 
 			for (int i = 0; i < sizeListGround; i++) {
 				//nameColor[i] = listColor->getDataByPosition(i).getGroundName();
@@ -497,16 +538,22 @@ namespace AImap {
 				btn = gcnew Button;
 				comboBox = gcnew ComboBox;
 				textBox = gcnew TextBox;
+				checkBox = gcnew CheckBox;
+				//label = gcnew Label;
 				ground = listGround->getDataByPosition(i);
 				idStr = ground.getId().ToString();
+
+				//Estableciendo las etiquetas con los ID
+				//label->Location = Point(790, i * 25 + 420);
+				//label->Text = gcnew String(idStr);
 
 				//Estableciendo propiedades de botones dinámicos de colores
 				systemStr = BUTTON_NAME_COLOR + idStr;
 				btn->Name = systemStr;
-				btn->Text = "Color";
+				btn->Text = idStr + " - Color";
 				//btn->Location = Point(10,i * 25);
 				btn->Location = Point(800, i * 25 + 420);
-				btn->Size = System::Drawing::Size(70, 23);
+				btn->Size = System::Drawing::Size(55, 23);
 				btn->BackColor = Color::Gray;
 				//Creando los eventos del botón dinámico
 				btn->Click += gcnew System::EventHandler(this, &Map::btn_color_click);
@@ -514,7 +561,7 @@ namespace AImap {
 				systemStr = COMBOBOX_NAME_COLOR + idStr;
 				comboBox->Name = systemStr;
 				//comboBox->Location = Point(135, i * 25);
-				comboBox->Location = Point(800+ 90, i * 25 + 420);
+				comboBox->Location = Point(800+ 60, i * 25 + 420);
 				comboBox->Size = System::Drawing::Size(70, 23);
 				comboBox->DropDownStyle = ComboBoxStyle::DropDownList;
 				comboBox->Items->AddRange(nameGround);
@@ -529,18 +576,24 @@ namespace AImap {
 				textBox->Size = System::Drawing::Size(115, 23);
 				textBox->Visible = true;*/
 
+				checkBox->Name = CHECKBOX_NAME_COLOR + idStr;
+				checkBox->Location = Point(800 + 135, i * 25 + 420);
+				checkBox->Size = System::Drawing::Size(46, 17);
+				checkBox->Text = "N/A";
+				checkBox->CheckedChanged += gcnew System::EventHandler(this, &Map::checkBox_Color_IsValid);
 				
 				textBox->Name = TEXTBOX_NAME_COLOR + idStr;
 				//systemStr = "numericUpDown_Color" + idStr;
 				//textBox->Location = Point(260, i * 25);
-				textBox->Location = Point(800 + 180, i * 25 + 420);
+				textBox->Location = Point(800 + 185, i * 25 + 420);
 				textBox->Size = System::Drawing::Size(60, 23);
 				textBox->Leave += gcnew System::EventHandler(this, &Map::textBox_Color_Float);
 				arrayTextBox[i] = textBox;
 				
-
+				//this->Controls->Add(label);
 				this->Controls->Add(comboBox);
 				this->Controls->Add(btn);
+				this->Controls->Add(checkBox);
 				this->Controls->Add(textBox);
 				//tabPage2->Controls->Add(textBox);
 			}
@@ -652,10 +705,11 @@ namespace AImap {
 							sb = gcnew SolidBrush(Color::FromArgb(ground.getColor(0), ground.getColor(1), ground.getColor(2)));
 							g->FillRectangle(sb, i * CELL_MAX_SIZE + 1, j * CELL_MAX_SIZE + 1, CELL_MAX_SIZE - 1, CELL_MAX_SIZE - 1);
 							
-							for (int i = 0; i < cell.getLastVisitPosition(); i++) {
+							/*for (int i = 0; i < cell.getLastVisitPosition(); i++) {
 								string += cell.getVisitCounter(i).ToString() + ", ";
 								MessageBox::Show(cell.getId().ToString() + " - "+ cell.getLastVisitPosition().ToString() + " - Pos:"+i.ToString() + cell.getVisitCounter(i).ToString());
-							}
+							}*/
+							string = gcnew String(cell.getVisitCounter().c_str());
 							if (string != "") {
 								//MessageBox::Show(cell.getLastVisitPosition().ToString() + "-"+string);
 								g->DrawString(string, myFont, gcnew SolidBrush(Color::Black), PointF(i * CELL_MAX_SIZE + 10, j * CELL_MAX_SIZE + 41));
@@ -677,6 +731,9 @@ namespace AImap {
 
 		//Valida si todo está listo para jugar
 		bool isReadyToPlay() {
+			Point pointStart = panelMap->PointToClient(PointToScreen(pictureBox_Start->Location));
+			Point pointGoal = panelMap->PointToClient(PointToScreen(pictureBox_Goal->Location));
+			System::Windows::Forms::DialogResult ^confirm;
 			String ^messageError;
 			int errorCounter = 0;
 			int counterArray = 0;
@@ -691,6 +748,13 @@ namespace AImap {
 			}
 			if (comboBox_Player->Text == "") {
 				messageError += ++errorCounter + ".- Seleccione un personaje a jugar\n";
+			}
+
+			if (!isValidGround(pointStart)) {
+				messageError += ++errorCounter + ".- Seleccione un celda de inicio válida\n";
+			}
+			if (!isValidGround(pointGoal)) {
+				messageError += ++errorCounter + ".- Seleccione un celda de llegada válida\n";
 			}
 
 			for each (ComboBox^ var in arrayComboBox)
@@ -723,6 +787,29 @@ namespace AImap {
 			}
 		}
 
+		void disableObject() {
+			for each (Button^ var in arrayButton)
+			{
+				var->Enabled = false;
+			}
+			for each (CheckBox^ var in arrayCheckBox)
+			{
+				var->Enabled = false;
+			}
+			for each (ComboBox^ var in arrayComboBox)
+			{
+				var->Enabled = false;
+			}
+			for each (TextBox^ var in arrayTextBox)
+			{
+				var->Enabled = false;
+			}
+			comboBox_Player->Enabled = false;
+			pictureBox_Start->Enabled = false;
+			pictureBox_Goal->Enabled = false;
+			btn_play->Enabled = false;
+		}
+
 		// //////////////////////////////////////////////////////// HERRAMIENTAS ////////////////////////////////////////////////////////////// //
 
 		Ground *colorAux = new Ground();
@@ -745,22 +832,23 @@ namespace AImap {
 		void btn_color_click(Object^ sender, EventArgs^ e) {
 			Button ^btn;
 			ColorClass *color = new ColorClass();
+			Ground ground;
 			int id, r, g, b;
 
 			btn = safe_cast<Button^>(sender);
 			id = Int32::Parse(btn->Name->Substring(9));
 			
 			MessageBox::Show(id.ToString());
-			
-			if (listGround->getPointerDataByPosition(id) != nullptr) {
+			ground.setId(id);
+			if (listGround->findData(ground) != nullptr) {
 				if (colorDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
 					r = colorDialog1->Color.R;
 					g= colorDialog1->Color.G;
 					b = colorDialog1->Color.B;
-					listGround->getDataByPosition(id).setColor(r, g, b);
+					listGround->findData(ground)->getData().setColor(r, g, b);
 					//listColor->findId(id)->getData().setColor(r,g,b);
 					btn->BackColor = Color::FromArgb(r, g, b);
-					MessageBox::Show("color establecido como: " + listGround->getDataByPosition(id).getColor(0) + " - ");
+					//MessageBox::Show("color establecido como: " + listGround->findData(ground)->getData().getColor(0) + " - ");
 					drawMap(true);
 				}
 			}
@@ -858,22 +946,61 @@ namespace AImap {
 			
 			}
 
+		//Valida el cambio de si es válido el terreno para el juego
+		void checkBox_Color_IsValid(Object^ sender, EventArgs^ e) {
+			
+			CheckBox ^checkBox;
+			String ^string;
+			Ground ground;
+			int id;
+			checkBox = safe_cast<CheckBox^>(sender);
+			id = Int32::Parse(checkBox->Name->Substring(14));
+			
+			
+
+			if (checkBox->Checked) {
+				string = TEXTBOX_NAME_COLOR + id.ToString();
+				for each (TextBox^ var in arrayTextBox) {
+					if (var->Name == string) {
+						var->Enabled = false;
+						ground.setId(id);
+						if (listGround->findData(ground) != nullptr) {
+							listGround->findData(ground)->getData().setIsValid(false);
+						}
+					}
+				}
+			}
+			if (!checkBox->Checked) {
+				string = TEXTBOX_NAME_COLOR + id.ToString();
+				for each (TextBox^ var in arrayTextBox) {
+					if (var->Name == string) {
+						var->Enabled = true;
+						ground.setId(id);
+						if (listGround->findData(ground) != nullptr) {
+							listGround->findData(ground)->getData().setIsValid(true);
+						}
+					}
+				}
+			}
+		}
+
 		// Valida el cambio de valor en el combobox dinámico del color
 		void textBox_Color_Float(Object^ sender, EventArgs^ e) {
 			TextBox ^txt = safe_cast<TextBox^>(sender);
 			Ground ground;
 			int id;
-			
+
 			if (txt->Text == "") {
 
 			}
-			else if (System::Text::RegularExpressions::Regex::IsMatch(txt->Text, "^[-]?[0-9]*[.]?[0-9]+$") || 
-				System::Text::RegularExpressions::Regex::IsMatch(txt->Text, "^[-]?[0-9]+[.]$")) {
+			else if (System::Text::RegularExpressions::Regex::IsMatch(txt->Text, "^[0-9]*[.]?[0-9]+$") ||
+				System::Text::RegularExpressions::Regex::IsMatch(txt->Text, "^[0-9]+[.]$")) {
 				// ((.[0-9]+)|[0-9]+)  
 				id = Int32::Parse(txt->Name->Substring(13));
 				ground.setId(id);
 				if (listGround->findData(ground) != nullptr) {
-					listGround->findData(ground)->getData().setValue(Convert::ToDouble(txt->Text));
+					listGround->findData(ground)->getData().setValue(System::Math::Truncate((Convert::ToDouble(txt->Text) * 100)) / 100);
+					txt->Text = (System::Math::Truncate((Convert::ToDouble(txt->Text) * 100)) / 100).ToString();
 				}
 			}
 			else {
@@ -1015,7 +1142,8 @@ namespace AImap {
 		
 		/*MessageBox::Show(point.ToString() + " location: " + locationX.ToString() + ", "+locationY.ToString() + "\n" +
 		Cursor->Position.X + ", " + Cursor->Position.Y);*/
-		if (point.X < 0 || point.Y < 0 || point.X > 750 || point.Y > 750) {
+		//if (point.X < 0 || point.Y < 0 || point.X > 750 || point.Y > 750) {
+		if (!isValidPositionPanelMap(point) || !isValidGround(point)) {
 			if (pictureBox_Start->Name == pictureBox->Name) {
 				pictureBox->Location = pictureBoxStarPoint;
 				pictureBox->Height = 50;
@@ -1090,6 +1218,7 @@ namespace AImap {
 		
 		//pictureBox_Start->SendToBack();
 		panelMap->SendToBack();
+		disableObject();
 		//if (isReadyToPlay()) {
 		isPlaying = true;
 			drawMap(false);
@@ -1106,67 +1235,78 @@ namespace AImap {
 		Point point = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
 		Point auxPoint = point;
 		Cell cell;
+		stringstream toStr;
 		int locationX, locationY, intAux;
 		bool moved = false;
+		if (pictureBox_Player->Location != pictureBox_Goal->Location) {
+			//FLECHA IZQUIERDA
+			if (e->KeyValue.ToString() == "37") {
+				point.X = point.X - CELL_MAX_SIZE;
+				auxPoint= Point(point.X, auxPoint.Y);
+				if (isValidGround(auxPoint) && isValidPositionPanelMap(point)) {
+					pictureBox_Player->Location = Point(pictureBox_Player->Location.X - CELL_MAX_SIZE,
+						pictureBox_Player->Location.Y);
+					moved = true;
+				}
+			}
+			//FLECHA ARRIBA
+			else if (e->KeyValue.ToString() == "38") {
+				point.Y = point.Y - CELL_MAX_SIZE;
+				auxPoint = Point(auxPoint.X, point.Y);
+				if (isValidGround(auxPoint) && isValidPositionPanelMap(point)) {
+					pictureBox_Player->Location = Point(pictureBox_Player->Location.X,
+						pictureBox_Player->Location.Y - CELL_MAX_SIZE);
+					moved = true;
+				}
+			}
+			//FLECHA ABAJO
+			else if (e->KeyValue.ToString() == "40") {
+				/*MessageBox::Show("LocX: " + locationX.ToString() + " LocY: " + locationY.ToString() + " - " +
+					pictureBox_Player->Location.Y + " - " + panelMap->MousePosition.Y);*/
+				point.Y = point.Y + CELL_MAX_SIZE;
+				auxPoint = Point(auxPoint.X, point.Y);
+				if (isValidGround(auxPoint) && isValidPositionPanelMap(point)) {
+					pictureBox_Player->Location = Point(pictureBox_Player->Location.X,
+						pictureBox_Player->Location.Y + CELL_MAX_SIZE);
+					moved = true;
+				}
+			}
 
-		//FLECHA IZQUIERDA
-		if (e->KeyValue.ToString() == "37") {
-			point.X = point.X - CELL_MAX_SIZE;
-			if (isValidPositionPanelMap(point)) {
-				pictureBox_Player->Location = Point(pictureBox_Player->Location.X - CELL_MAX_SIZE,
-					pictureBox_Player->Location.Y);
-				moved = true;
+			//FLECHA DERECHA
+			else if (e->KeyValue.ToString() == "39") {
+				point.X = point.X + CELL_MAX_SIZE;
+				auxPoint = Point(point.X, auxPoint.Y);
+				if (isValidGround(auxPoint) && isValidPositionPanelMap(point)) {
+					pictureBox_Player->Location = Point(pictureBox_Player->Location.X + CELL_MAX_SIZE,
+						pictureBox_Player->Location.Y);
+					moved = true;
+				}
 			}
-		}
-		//FLECHA ARRIBA
-		else if (e->KeyValue.ToString() == "38") {
-			point.Y = point.Y - CELL_MAX_SIZE;
-			if (isValidPositionPanelMap(point)) {
-				pictureBox_Player->Location = Point(pictureBox_Player->Location.X,
-					pictureBox_Player->Location.Y - CELL_MAX_SIZE);
-				moved = true;
+			else {
+				// Nothing
 			}
-		}
-		//FLECHA ABAJO
-		else if (e->KeyValue.ToString() == "40") {
-			/*MessageBox::Show("LocX: " + locationX.ToString() + " LocY: " + locationY.ToString() + " - " +
-				pictureBox_Player->Location.Y + " - " + panelMap->MousePosition.Y);*/
-			point.Y = point.Y + CELL_MAX_SIZE;
-			if (isValidPositionPanelMap(point)) {
-				pictureBox_Player->Location = Point(pictureBox_Player->Location.X,
-					pictureBox_Player->Location.Y + CELL_MAX_SIZE);
-				moved = true;
-			}
-		}
+			if (moved) {
+				locationX = (int)(auxPoint.X / CELL_MAX_SIZE);
+				locationY = (int)(auxPoint.Y / CELL_MAX_SIZE);
 
-		//FLECHA DERECHA
-		else if (e->KeyValue.ToString() == "39") {
-			point.X = point.X + CELL_MAX_SIZE;
-			if (isValidPositionPanelMap(point)) {
-				pictureBox_Player->Location = Point(pictureBox_Player->Location.X + CELL_MAX_SIZE,
-					pictureBox_Player->Location.Y);
-				moved = true;
+				cell.setPositionX(locationX);
+				cell.setPositionY(locationY);
+
+				if (listCell->findPositionXY(cell) != nullptr) {
+					intAux = ++visit;
+					toStr.str("");
+					toStr << intAux;
+					listCell->findPositionXY(cell)->getData().setVisitCounter(toStr.str());
+					cell = listCell->findPositionXY(cell)->getData();
+					//MessageBox::Show("Here " + cell.getLastVisitPosition().ToString());
+					//MessageBox::Show(intAux.ToString()+", "+listCell->findPositionXY(cell)->getData().getVisitCounter(cell.getLastVisitPosition()-1).ToString());
+					drawMap(false);
+				}
 			}
 		}
-		else {
-			// Nothing
-		}
-		if (moved) {
-			locationX = (int)(auxPoint.X / CELL_MAX_SIZE);
-			locationY = (int)(auxPoint.Y / CELL_MAX_SIZE);
-
-			cell.setPositionX(locationX);
-			cell.setPositionY(locationY);
-
-			if(listCell->findPositionXY(cell) != nullptr){
-				intAux = ++visit;
-				
-				listCell->findPositionXY(cell)->getData().setVisitCounter(intAux);
-				cell = listCell->findPositionXY(cell)->getData();
-				//MessageBox::Show("Here " + cell.getLastVisitPosition().ToString());
-				//MessageBox::Show(intAux.ToString()+", "+listCell->findPositionXY(cell)->getData().getVisitCounter(cell.getLastVisitPosition()-1).ToString());
-				drawMap(false);
-			}
+		if (pictureBox_Player->Location == pictureBox_Goal->Location) {
+			MessageBox::Show("Has llegado a la meta \n");
+			pictureBox_Player->Location = pictureBox_Start->Location;
 		}
 	}
 	
@@ -1175,13 +1315,37 @@ namespace AImap {
 		Cell cell;
 		//if (point->X < 0 || point->Y < 0 || point->X > 750 || point->Y > 750) {
 		if (point->X < 0 || point->Y < 0 || point->X > panelMap->Size.Width || point->Y > panelMap->Size.Height) {
-			pictureBox_Player->Location = pictureBox_Player->Location;
+			//pictureBox_Player->Location = pictureBox_Player->Location;
 			return false;
 		}
 		else {
 			return true;
 		}
 
+	}
+	bool isValidGround(Point auxPoint) {
+		Cell cell;
+		Ground ground;
+		int locationX, locationY, intAux;
+
+		locationX = (int)(auxPoint.X / CELL_MAX_SIZE);
+		locationY = (int)(auxPoint.Y / CELL_MAX_SIZE);
+
+		cell.setPositionX(locationX);
+		cell.setPositionY(locationY);
+
+		if (listCell->findPositionXY(cell) != nullptr) {
+			ground.setId(listCell->findPositionXY(cell)->getData().getIdGround());
+			if (listGround->findData(ground) != nullptr) {
+				if (listGround->findData(ground)->getData().getIsValid()) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+		}
+		return false;
 	}
 
 

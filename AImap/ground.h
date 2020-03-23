@@ -8,6 +8,7 @@ class Ground {
 		int color[3];
 		float value;
 		std::string name;
+		bool isValid;
 
 
 	public:
@@ -30,9 +31,11 @@ class Ground {
 		float getValue() {
 			return value;
 		}
-
 		std::string getName() {
 			return name;
+		}
+		bool getIsValid() {
+			return isValid;
 		}
 
 		void setId(const int& idX) {
@@ -47,9 +50,11 @@ class Ground {
 		void setValue(const float& valueX) {
 			value = valueX;
 		}
-
 		void setName(const std::string& nameX) {
 			name = nameX;
+		}
+		void setIsValid(const bool isValidX) {
+			isValid = isValidX;
 		}
 
 		Ground& operator = (const Ground& c) {
@@ -59,6 +64,7 @@ class Ground {
 			color[2] = c.color[2];
 			value = c.value;
 			name = c.name;
+			isValid = c.isValid;
 			return *this;
 		}
 		
