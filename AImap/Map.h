@@ -76,7 +76,7 @@ namespace AImap {
 	int pointGoal = -1;
 	int pointStart = -1;
 	
-
+	
 	int publicSizeHeightMax;
 	int publicSizeWidthMax;
 
@@ -95,7 +95,7 @@ namespace AImap {
 
 		Map(String ^fileNameMap) {
 			InitializeComponent();
-			
+			//mainMenu = menuMap;
 			listCell = new Collection<Cell>;
 			listGround = new Collection<Ground>;
 			listPlayer = new Collection<Player>;
@@ -109,7 +109,7 @@ namespace AImap {
 			//this->DoubleBuffered = true;
 
 
-
+			
 			UpdateGraphicsBuffer();
 		}
 	
@@ -123,7 +123,8 @@ namespace AImap {
 			{
 				delete components;
 			}
-			Application::Exit();
+			//Application::Exit();
+			//this->Close();
 		}
 		
 		/// <summary>
@@ -367,6 +368,155 @@ namespace AImap {
 		}
 
 		// Carga el mapa al sistema
+		/*void chargeMap(String ^fileNameMap) {
+			Cell cell;
+			Ground ground;
+			std::string str, str2;
+			std::stringstream toStr;
+			char character;
+			int column = 0, row = 0, counter = 0, value = 0, sizeMax = 15;
+			fstream readerFile;
+			marshalString(fileNameMap, str);
+			readerFile.open(str, ios::in);
+			char letra = 'A';
+			//MessageBox::Show(gcnew String(str.c_str()));
+
+			//cell.setVisitCounter(0);
+
+			if (!readerFile.is_open()) {
+				messageError("Error, archivo'" + str + "'de lectura no disponible");
+			}
+			else {
+				str = "";
+				if (readerFile.beg == -1 || readerFile.beg == readerFile.end) {
+					messageError("Error, archivo de lectura no disponible 2");
+					this->Close();
+				}
+				while (!readerFile.eof()) {
+					
+					if (!readerFile.eof()) {
+						readerFile.get(character);
+						txtPrueba2->Text += character;
+						//if (!readerFile.eof()) {
+							if (!readerFile.eof() && isdigit(character)) {
+								str += character;
+							}
+							// Valida cada columna
+							else if (!readerFile.eof() && character == ',') {
+								if (str == "") {
+									marshalString((row + 1).ToString(), str);
+									marshalString((column + 1).ToString(), str2);
+									messageError("Error, no puede haber dos ',' juntas (Linea: " + str + ", Columna: " + str2);
+									//Application::Exit();
+									this->Close();
+								}
+								if (row <= 15 && column <= 15) {
+									//MessageBox::Show("Insertado con id: " + counter.ToString());
+									cell.setId(counter++);
+									cell.setIdGround(atoi(str.c_str()));
+									cell.setPositionX(column);
+									cell.setPositionY(row);
+									listCell->insertData(cell);
+									if (!listGround->findId(cell.getIdGround())) {
+										ground.setId(cell.getIdGround());
+										ground.setIsValid(true);
+										listGround->insertData(ground);
+									}
+									textBox1->Text += listCell->getLast()->getData().getPositionX().ToString() + ",";
+									textBox1->Text += listCell->getLast()->getData().getPositionY().ToString() + "//";
+									column++;
+								}
+								//txtPrueba->Text += cell.getId().ToString();
+								str = "";
+							}
+							// Retorno de carro (agrega la fila)
+							else if (character == 10 || character == 13 || character == 3 || readerFile.eof()) {
+								++column;
+								if (row == 0) {
+									sizeMax = column;
+									publicSizeWidthMax = column;
+									MessageBox::Show(publicSizeWidthMax.ToString());
+
+								}
+								MessageBox::Show("SizeMax: " + sizeMax.ToString() + " - " + column.ToString());
+								if (column != sizeMax && str != "") {
+									marshalString((row+1).ToString(), str);
+									marshalString((column+1).ToString(), str2);
+									messageError("Error, el mapa tiene lados irregulares (Linea: " + str + ", Columna: " + str2);
+									//Application::Exit();
+									this->Close(),
+									readerFile.close();
+									break;
+								}
+								if (row <= 15 && column <= 15 && str != "") {
+									MessageBox::Show("Insertado con id: " + counter.ToString());
+									cell.setId(counter++);
+									cell.setIdGround(atoi(str.c_str()));
+									cell.setPositionX(column);
+									cell.setPositionY(row);
+									listCell->insertData(cell);
+									if (!listGround->findId(cell.getIdGround())) {
+										ground.setId(cell.getIdGround());
+										ground.setIsValid(true);
+										listGround->insertData(ground);
+									}
+
+									textBox1->Text += listCell->getLast()->getData().getPositionX().ToString() + ",";
+									textBox1->Text += listCell->getLast()->getData().getPositionY().ToString() + "//";
+
+									publicSizeHeightMax = ++row;
+									column = 0;
+								}
+								else if (str == "" && !readerFile.eof()) {
+									marshalString((row + 1).ToString(), str);
+									marshalString((column + 1).ToString(), str2);
+									messageError("Error, el mapa no tiene la codificación correcta 'NUMERO,NUMERO' (Linea: " + str + ", Columna: " + str2 + ")");
+									this->Close();
+								}
+								//txtPrueba->Text += cell.getId().ToString() + "\r\n";
+								str = "";
+							}
+							// Valida caracter inválido
+							else {
+								marshalString(fileNameMap, str);
+								MessageBox::Show("No se puede leer el archivo '" + fileNameMap + "', archivo corrupto en:\n"+
+									"Fila: " +(row + 1).ToString() + "\nColumna: " + (column + 1).ToString() + ".\n"+
+								"Favor de elegir un nuevo archivo");
+								readerFile.close();
+								//Application::Exit();
+								this->Close();
+								break;
+							}
+						//}
+					}
+				}
+				//panelMap->Size.Width = CELL_MAX_SIZE * (sizeMax + 1);
+			}
+			readerFile.close();
+			panelMap->Size = System::Drawing::Size((publicSizeWidthMax+1) * CELL_MAX_SIZE + 1,
+				publicSizeHeightMax * CELL_MAX_SIZE + 1);
+
+			MessageBox::Show("Width: " + publicSizeWidthMax.ToString() + " Height: " + publicSizeHeightMax.ToString());
+			Label ^label;
+			for (int i = 0; i < publicSizeWidthMax; i++) {
+				label = gcnew Label;
+				label->Size = System::Drawing::Size(20, 20);
+				
+				label->Text = System::Char::ToString(letra++);
+				label->Location = Point(43 + (i * CELL_MAX_SIZE), 86);
+				this->Controls->Add(label);
+			}
+			for (int j = 0; j < publicSizeHeightMax; j++) {
+				label = gcnew Label;
+				label->Size = System::Drawing::Size(20, 20);
+				label->TextAlign = System::Drawing::ContentAlignment::TopRight;
+				label->Text = (j+1).ToString();
+				label->Location = Point(3 , 125 + (j * CELL_MAX_SIZE));
+				this->Controls->Add(label);
+			}
+
+		}*/
+
 		void chargeMap(String ^fileNameMap) {
 			Cell cell;
 			Ground ground;
@@ -387,12 +537,13 @@ namespace AImap {
 			}
 			else {
 				str = "";
+				if (readerFile.beg == -1 || readerFile.beg == readerFile.end) {
+					messageError("Error, archivo de lectura no disponible 2");
+					this->Close();
+				}
 				while (!readerFile.eof()) {
-					if (readerFile.beg == -1 || readerFile.beg == readerFile.end) {
-						messageError("Error, archivo de lectura no disponible 2");
-						break;
-					}
-					else if (!readerFile.eof()) {
+					
+					if (!readerFile.eof()) {
 						readerFile.get(character);
 						txtPrueba2->Text += character;
 						//if (!readerFile.eof()) {
@@ -416,13 +567,6 @@ namespace AImap {
 									textBox1->Text += listCell->getLast()->getData().getPositionY().ToString() + "//";
 									column++;
 								}
-								else if (column >= 15) {
-									cell.setId(-1);
-									cell.setIdGround(-1);
-									cell.setPositionX(column);
-									cell.setPositionY(row);
-									listCell->insertData(cell);
-								}
 								//txtPrueba->Text += cell.getId().ToString();
 								str = "";
 							}
@@ -431,19 +575,20 @@ namespace AImap {
 								if (row == 0) {
 									sizeMax = column;
 									publicSizeWidthMax = column + 1;
-									panelMap->Size.Height = CELL_MAX_SIZE * (sizeMax + 1);
+									//panelMap->Size.Height = CELL_MAX_SIZE * (sizeMax + 1);
 									//MessageBox::Show(publicSizeMax.ToString());
 
 								}
-								//MessageBox::Show("Column: " + sizeMax.ToString());
-								if (counter < sizeMax) {
-									marshalString(row.ToString(), str);
-									marshalString(counter.ToString(), str2);
+								//MessageBox::Show("Column: " + column.ToString() + " - " + sizeMax.ToString());
+								if (column != sizeMax && !readerFile.eof()) {
+									marshalString((row+1).ToString(), str);
+									marshalString((counter+1).ToString(), str2);
 									messageError("Error, el mapa tiene lados irregulares (Linea: " + str + ", Columna: " + str2);
+									this->Close();
 									readerFile.close();
 									break;
 								}
-								if (row <= 14 && column <= 14) {
+								if (row <= 14 && column <= 14 && str != "") {
 									cell.setId(counter++);
 									cell.setIdGround(atoi(str.c_str()));
 									cell.setPositionX(column);
@@ -458,15 +603,6 @@ namespace AImap {
 									publicSizeHeightMax = ++row;
 									column = 0;
 								}
-								else if (row >= 15) {
-									cell.setId(-1);
-									cell.setIdGround(-1);
-									cell.setPositionX(column);
-									cell.setPositionY(row);
-
-									listCell->insertData(cell);
-
-								}
 								//txtPrueba->Text += cell.getId().ToString() + "\r\n";
 								str = "";
 							}
@@ -477,7 +613,8 @@ namespace AImap {
 									"Fila: " +(row + 1).ToString() + "\nColumna: " + (column + 1).ToString() + ".\n"+
 								"Favor de elegir un nuevo archivo");
 								readerFile.close();
-								Application::Exit();
+								//Application::Exit();
+								this->Close();
 								break;
 							}
 						//}
@@ -510,6 +647,7 @@ namespace AImap {
 			}
 
 		}
+
 
 		// Crea botones, textbos y combobox dinámicos para los colores
 		void chargeColor() {
@@ -1017,7 +1155,7 @@ namespace AImap {
 
 	// Cerrar completamente el programa
 	private: System::Void Map_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
-		Application::Exit();
+		//Application::Exit();
 	}
 	private: System::Void button_SetColor_Click(System::Object^  sender, System::EventArgs^  e) {
 		Button ^btn;

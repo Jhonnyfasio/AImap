@@ -130,7 +130,8 @@ namespace AImap {
 	private: System::Void button_ChargeMap_Click(System::Object^  sender, System::EventArgs^  e) {
 		Map ^map;
 		map = gcnew Map(aux);
-		this->Hide();
+		//this->Hide();
+		this->CenterToScreen();
 		map->Show();
 	}
 };
