@@ -14,6 +14,7 @@
 #include "cell.h"
 #include "ground.h"
 #include "player.h"
+#include "costoJugador.h"
 
 #define MAX_SIZE 15
 #define CELL_MAX_SIZE 50
@@ -61,37 +62,45 @@ namespace AImap {
 	private: System::Windows::Forms::PictureBox^  pictureBox_Player;
 	private: BufferedGraphics ^graphicsBuffer;
 
-	Collection<Cell> *listCell;
-	Collection<Ground> *listGround;
-	Collection<Player> *listPlayer;
-	Collection<Ground> *listColorInUse;
-	Collection<ColorClass> *listColor;
-	cli::array<ComboBox^>^ arrayComboBox;
-	cli::array<TextBox^>^ arrayTextBox;
-	cli::array<Button^>^ arrayButton;
-	cli::array<CheckBox^>^ arrayCheckBox;
-	String ^fileNameMapGlobal;
-	Point pictureBoxStarPoint, pictureBoxGoalPoint;
+			 Collection<Cell> *listCell;
+			 Collection<Ground> *listGround;
+			 Collection<Player> *listPlayer;
+			 Collection<Ground> *listColorInUse;
+			 Collection<ColorClass> *listColor;
+			 Collection<CostoJugador> *listCostoJugador;
+			 cli::array<ComboBox^>^ arrayComboBox;
+			 cli::array<TextBox^>^ arrayTextBox;
+			 cli::array<Button^>^ arrayButton;
+			 cli::array<CheckBox^>^ arrayCheckBox;
+			 String ^fileNameMapGlobal;
+			 Point pictureBoxStarPoint, pictureBoxGoalPoint, pictureBoxPlayerPoint;
 
-	int pointGoal = -1;
-	int pointStart = -1;
-	
-	
-	int publicSizeHeightMax;
-	int publicSizeWidthMax;
+			 int pointGoal = -1;
+			 int pointStart = -1;
 
-	int visit = 0;
+
+			 int publicSizeHeightMax;
+			 int publicSizeWidthMax;
+
+			 int visit = 0;
 	private: System::Windows::Forms::Label^  label4;
 
 			 bool isPlaying = false;
+	private: System::Windows::Forms::TextBox^  textBox2;
+	private: System::Windows::Forms::Button^  button1;
+	private: System::Windows::Forms::Label^  label5;
+	private: System::Windows::Forms::Label^  label6;
+	private: System::Windows::Forms::TextBox^  textBox3;
+	private: System::Windows::Forms::CheckBox^  checkBox1;
+	private: System::Windows::Forms::Label^  label7;
 			 bool isCorruptFile = false;
-	
+
 	public:
-			
+
 		Map(void)
 		{
 			InitializeComponent();
-			
+
 		}
 
 		Map(String ^fileNameMap) {
@@ -101,19 +110,21 @@ namespace AImap {
 			listGround = new Collection<Ground>;
 			listPlayer = new Collection<Player>;
 			listColor = new Collection<ColorClass>;
+			listCostoJugador = new Collection<CostoJugador>;
 			//chargeMap(fileNameMap);
 			fileNameMapGlobal = fileNameMap;
 			//listButton = new Collection<Button>;
 			pictureBoxStarPoint = pictureBox_Start->Location;
 			pictureBoxGoalPoint = pictureBox_Goal->Location;
+			pictureBoxPlayerPoint = pictureBox_Player->Location;
 			//arrayData = new ArrayClass<int>;
 			//this->DoubleBuffered = true;
 
 
-			
+
 			UpdateGraphicsBuffer();
 		}
-	
+
 	protected:
 		/// <summary>
 		/// Limpiar los recursos que se estén usando.
@@ -127,11 +138,11 @@ namespace AImap {
 			//Application::Exit();
 			//this->Close();
 		}
-		
+
 		/// <summary>
 		/// Variable del diseñador necesaria.
 		/// </summary>
-		
+
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -159,6 +170,13 @@ namespace AImap {
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->pictureBox_Player = (gcnew System::Windows::Forms::PictureBox());
 			this->label4 = (gcnew System::Windows::Forms::Label());
+			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
+			this->button1 = (gcnew System::Windows::Forms::Button());
+			this->label5 = (gcnew System::Windows::Forms::Label());
+			this->label6 = (gcnew System::Windows::Forms::Label());
+			this->textBox3 = (gcnew System::Windows::Forms::TextBox());
+			this->checkBox1 = (gcnew System::Windows::Forms::CheckBox());
+			this->label7 = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_PlayerIcon))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->BeginInit();
@@ -174,7 +192,7 @@ namespace AImap {
 			// pictureBox_PlayerIcon
 			// 
 			this->pictureBox_PlayerIcon->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox_PlayerIcon.Image")));
-			this->pictureBox_PlayerIcon->Location = System::Drawing::Point(799, 126);
+			this->pictureBox_PlayerIcon->Location = System::Drawing::Point(805, 127);
 			this->pictureBox_PlayerIcon->Name = L"pictureBox_PlayerIcon";
 			this->pictureBox_PlayerIcon->Size = System::Drawing::Size(200, 200);
 			this->pictureBox_PlayerIcon->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
@@ -184,7 +202,7 @@ namespace AImap {
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(799, 66);
+			this->label2->Location = System::Drawing::Point(801, 66);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(54, 13);
 			this->label2->TabIndex = 12;
@@ -195,7 +213,7 @@ namespace AImap {
 			// 
 			this->comboBox_Player->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
 			this->comboBox_Player->FormattingEnabled = true;
-			this->comboBox_Player->Location = System::Drawing::Point(799, 85);
+			this->comboBox_Player->Location = System::Drawing::Point(805, 82);
 			this->comboBox_Player->Name = L"comboBox_Player";
 			this->comboBox_Player->Size = System::Drawing::Size(121, 21);
 			this->comboBox_Player->TabIndex = 11;
@@ -203,7 +221,7 @@ namespace AImap {
 			// 
 			// button_ResetGrounds
 			// 
-			this->button_ResetGrounds->Location = System::Drawing::Point(799, 376);
+			this->button_ResetGrounds->Location = System::Drawing::Point(946, 13);
 			this->button_ResetGrounds->Name = L"button_ResetGrounds";
 			this->button_ResetGrounds->Size = System::Drawing::Size(84, 23);
 			this->button_ResetGrounds->TabIndex = 10;
@@ -212,9 +230,10 @@ namespace AImap {
 			// 
 			// button_SaveGrounds
 			// 
-			this->button_SaveGrounds->Location = System::Drawing::Point(799, 347);
+			this->button_SaveGrounds->Enabled = false;
+			this->button_SaveGrounds->Location = System::Drawing::Point(875, 424);
 			this->button_SaveGrounds->Name = L"button_SaveGrounds";
-			this->button_SaveGrounds->Size = System::Drawing::Size(84, 23);
+			this->button_SaveGrounds->Size = System::Drawing::Size(63, 23);
 			this->button_SaveGrounds->TabIndex = 9;
 			this->button_SaveGrounds->Text = L"Guardar";
 			this->button_SaveGrounds->UseVisualStyleBackColor = true;
@@ -311,7 +330,7 @@ namespace AImap {
 			// pictureBox_Player
 			// 
 			this->pictureBox_Player->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"pictureBox_Player.Image")));
-			this->pictureBox_Player->Location = System::Drawing::Point(799, 12);
+			this->pictureBox_Player->Location = System::Drawing::Point(804, 12);
 			this->pictureBox_Player->Name = L"pictureBox_Player";
 			this->pictureBox_Player->Size = System::Drawing::Size(45, 45);
 			this->pictureBox_Player->SizeMode = System::Windows::Forms::PictureBoxSizeMode::StretchImage;
@@ -322,11 +341,81 @@ namespace AImap {
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(802, 406);
+			this->label4->Location = System::Drawing::Point(802, 506);
 			this->label4->Name = L"label4";
 			this->label4->Size = System::Drawing::Size(218, 13);
 			this->label4->TabIndex = 26;
 			this->label4->Text = L"Color           Terreno            Alcance     Coste";
+			// 
+			// textBox2
+			// 
+			this->textBox2->Enabled = false;
+			this->textBox2->Location = System::Drawing::Point(864, 386);
+			this->textBox2->Name = L"textBox2";
+			this->textBox2->Size = System::Drawing::Size(51, 20);
+			this->textBox2->TabIndex = 27;
+			// 
+			// button1
+			// 
+			this->button1->Enabled = false;
+			this->button1->Location = System::Drawing::Point(804, 385);
+			this->button1->Name = L"button1";
+			this->button1->Size = System::Drawing::Size(54, 23);
+			this->button1->TabIndex = 28;
+			this->button1->Text = L"button1";
+			this->button1->UseVisualStyleBackColor = true;
+			// 
+			// label5
+			// 
+			this->label5->AutoSize = true;
+			this->label5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Underline, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->label5->Location = System::Drawing::Point(790, 341);
+			this->label5->Name = L"label5";
+			this->label5->Size = System::Drawing::Size(241, 18);
+			this->label5->TabIndex = 29;
+			this->label5->Text = L"                 Añadir Terreno                 ";
+			// 
+			// label6
+			// 
+			this->label6->AutoSize = true;
+			this->label6->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 11.25F, System::Drawing::FontStyle::Underline, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->label6->Location = System::Drawing::Point(790, 473);
+			this->label6->Name = L"label6";
+			this->label6->Size = System::Drawing::Size(242, 18);
+			this->label6->TabIndex = 30;
+			this->label6->Text = L"            Establecer Terrenos             ";
+			// 
+			// textBox3
+			// 
+			this->textBox3->Enabled = false;
+			this->textBox3->Location = System::Drawing::Point(973, 386);
+			this->textBox3->Name = L"textBox3";
+			this->textBox3->Size = System::Drawing::Size(50, 20);
+			this->textBox3->TabIndex = 31;
+			// 
+			// checkBox1
+			// 
+			this->checkBox1->AutoSize = true;
+			this->checkBox1->Enabled = false;
+			this->checkBox1->Location = System::Drawing::Point(921, 389);
+			this->checkBox1->Name = L"checkBox1";
+			this->checkBox1->Size = System::Drawing::Size(46, 17);
+			this->checkBox1->TabIndex = 32;
+			this->checkBox1->Text = L"N/A";
+			this->checkBox1->UseVisualStyleBackColor = true;
+			// 
+			// label7
+			// 
+			this->label7->AutoSize = true;
+			this->label7->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 26.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->label7->Location = System::Drawing::Point(815, 389);
+			this->label7->Name = L"label7";
+			this->label7->Size = System::Drawing::Size(205, 39);
+			this->label7->TabIndex = 33;
+			this->label7->Text = L"En progreso";
 			// 
 			// Map
 			// 
@@ -335,6 +424,13 @@ namespace AImap {
 			this->AutoSize = true;
 			this->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->ClientSize = System::Drawing::Size(1042, 909);
+			this->Controls->Add(this->label7);
+			this->Controls->Add(this->checkBox1);
+			this->Controls->Add(this->textBox3);
+			this->Controls->Add(this->label6);
+			this->Controls->Add(this->label5);
+			this->Controls->Add(this->button1);
+			this->Controls->Add(this->textBox2);
 			this->Controls->Add(this->btn_play);
 			this->Controls->Add(this->label4);
 			this->Controls->Add(this->pictureBox_Player);
@@ -398,7 +494,7 @@ namespace AImap {
 					this->Close();
 				}
 				while (!readerFile.eof()) {
-					
+
 					if (!readerFile.eof()) {
 						readerFile.get(character);
 						txtPrueba2->Text += character;
@@ -506,7 +602,7 @@ namespace AImap {
 			for (int i = 0; i < publicSizeWidthMax; i++) {
 				label = gcnew Label;
 				label->Size = System::Drawing::Size(20, 20);
-				
+
 				label->Text = System::Char::ToString(letra++);
 				label->Location = Point(43 + (i * CELL_MAX_SIZE), 86);
 				this->Controls->Add(label);
@@ -548,91 +644,91 @@ namespace AImap {
 					isCorruptFile = true;
 				}
 				while (!readerFile.eof()) {
-					
+
 					if (!readerFile.eof()) {
 						readerFile.get(character);
 						txtPrueba2->Text += character;
 						//if (!readerFile.eof()) {
-							if (!readerFile.eof() && isdigit(character)) {
-								str += character;
-							}
-							// Valida cada columna
-							else if (!readerFile.eof() && character == ',') {
-								if (row <= 14 && column <= 14 && str != "") {
-									cell.setId(counter++);
-									cell.setIdGround(atoi(str.c_str()));
-									cell.setPositionX(column);
-									cell.setPositionY(row);
-									listCell->insertData(cell);
-									if (!listGround->findId(cell.getIdGround())) {
-										ground.setId(cell.getIdGround());
-										ground.setIsValid(true);
-										listGround->insertData(ground);
-									}
-									textBox1->Text += listCell->getLast()->getData().getPositionX().ToString() + ",";
-									textBox1->Text += listCell->getLast()->getData().getPositionY().ToString() + "//";
-									column++;
+						if (!readerFile.eof() && isdigit(character)) {
+							str += character;
+						}
+						// Valida cada columna
+						else if (!readerFile.eof() && character == ',') {
+							if (row <= 14 && column <= 14 && str != "") {
+								cell.setId(counter++);
+								cell.setIdGround(atoi(str.c_str()));
+								cell.setPositionX(column);
+								cell.setPositionY(row);
+								listCell->insertData(cell);
+								if (!listGround->findId(cell.getIdGround())) {
+									ground.setId(cell.getIdGround());
+									ground.setIsValid(true);
+									listGround->insertData(ground);
 								}
-								if (str == "" && !readerFile.eof()) {
-									messageError("No se admiten valores nulos (dobles comas)");
-									isCorruptFile = true;
-								}
-								//txtPrueba->Text += cell.getId().ToString();
-								str = "";
+								textBox1->Text += listCell->getLast()->getData().getPositionX().ToString() + ",";
+								textBox1->Text += listCell->getLast()->getData().getPositionY().ToString() + "//";
+								column++;
 							}
-							// Retorno de carro (agrega la fila)
-							else if (character == 10 || character == 13 || character == 3 || readerFile.eof()) {
-								if (row == 0) {
-									sizeMax = column;
-									publicSizeWidthMax = column + 1;
-									//panelMap->Size.Height = CELL_MAX_SIZE * (sizeMax + 1);
-									//MessageBox::Show(publicSizeMax.ToString());
+							if (str == "" && !readerFile.eof()) {
+								messageError("No se admiten valores nulos (dobles comas)");
+								isCorruptFile = true;
+							}
+							//txtPrueba->Text += cell.getId().ToString();
+							str = "";
+						}
+						// Retorno de carro (agrega la fila)
+						else if (character == 10 || character == 13 || character == 3 || readerFile.eof()) {
+							if (row == 0) {
+								sizeMax = column;
+								publicSizeWidthMax = column + 1;
+								//panelMap->Size.Height = CELL_MAX_SIZE * (sizeMax + 1);
+								//MessageBox::Show(publicSizeMax.ToString());
 
-								}
-								//MessageBox::Show("Column: " + column.ToString() + " - " + sizeMax.ToString());
-								if (column != sizeMax && !readerFile.eof()) {
-									marshalString((row+1).ToString(), str);
-									marshalString((counter+1).ToString(), str2);
-									messageError("Error, el mapa tiene lados irregulares (Linea: " + str + ", Columna: " + str2);
-									//this->Close();
-									isCorruptFile = true;
-									readerFile.close();
-									break;
-								}
-								if (row <= 14 && column <= 14 && str != "") {
-									cell.setId(counter++);
-									cell.setIdGround(atoi(str.c_str()));
-									cell.setPositionX(column);
-									cell.setPositionY(row);
-									listCell->insertData(cell);
-									if (!listGround->findId(cell.getIdGround())) {
-										ground.setId(cell.getIdGround());
-										ground.setIsValid(true);
-										listGround->insertData(ground);
-									}
-
-									publicSizeHeightMax = ++row;
-									column = 0;
-								}
-								if (str == "" && !readerFile.eof()) {
-									messageError("No se admiten valores nulos (dobles comas).");
-									isCorruptFile = true;
-								}
-								//txtPrueba->Text += cell.getId().ToString() + "\r\n";
-								str = "";
 							}
-							// Valida caracter inválido
-							else {
-								marshalString(fileNameMap, str);
-								MessageBox::Show("No se puede leer el archivo '" + fileNameMap + "', archivo corrupto en:\n"+
-									"Fila: " +(row + 1).ToString() + "\nColumna: " + (column + 1).ToString() + ".\n"+
-								"Favor de elegir un nuevo archivo");
-								readerFile.close();
-								//Application::Exit();
+							//MessageBox::Show("Column: " + column.ToString() + " - " + sizeMax.ToString());
+							if (column != sizeMax && !readerFile.eof()) {
+								marshalString((row + 1).ToString(), str);
+								marshalString((counter + 1).ToString(), str2);
+								messageError("Error, el mapa tiene lados irregulares (Linea: " + str + ", Columna: " + str2);
 								//this->Close();
 								isCorruptFile = true;
+								readerFile.close();
 								break;
 							}
+							if (row <= 14 && column <= 14 && str != "") {
+								cell.setId(counter++);
+								cell.setIdGround(atoi(str.c_str()));
+								cell.setPositionX(column);
+								cell.setPositionY(row);
+								listCell->insertData(cell);
+								if (!listGround->findId(cell.getIdGround())) {
+									ground.setId(cell.getIdGround());
+									ground.setIsValid(true);
+									listGround->insertData(ground);
+								}
+
+								publicSizeHeightMax = ++row;
+								column = 0;
+							}
+							if (str == "" && !readerFile.eof()) {
+								messageError("No se admiten valores nulos (dobles comas).");
+								isCorruptFile = true;
+							}
+							//txtPrueba->Text += cell.getId().ToString() + "\r\n";
+							str = "";
+						}
+						// Valida caracter inválido
+						else {
+							marshalString(fileNameMap, str);
+							MessageBox::Show("No se puede leer el archivo '" + fileNameMap + "', archivo corrupto en:\n" +
+								"Fila: " + (row + 1).ToString() + "\nColumna: " + (column + 1).ToString() + ".\n" +
+								"Favor de elegir un nuevo archivo");
+							readerFile.close();
+							//Application::Exit();
+							//this->Close();
+							isCorruptFile = true;
+							break;
+						}
 						//}
 					}
 				}
@@ -648,7 +744,7 @@ namespace AImap {
 			for (int i = 0; i < publicSizeWidthMax; i++) {
 				label = gcnew Label;
 				label->Size = System::Drawing::Size(20, 20);
-				
+
 				label->Text = System::Char::ToString(letra++);
 				label->Location = Point(43 + (i * CELL_MAX_SIZE), 86);
 				this->Controls->Add(label);
@@ -657,13 +753,12 @@ namespace AImap {
 				label = gcnew Label;
 				label->Size = System::Drawing::Size(20, 20);
 				label->TextAlign = System::Drawing::ContentAlignment::TopRight;
-				label->Text = (j+1).ToString();
-				label->Location = Point(3 , 125 + (j * CELL_MAX_SIZE));
+				label->Text = (j + 1).ToString();
+				label->Location = Point(3, 125 + (j * CELL_MAX_SIZE));
 				this->Controls->Add(label);
 			}
 
 		}
-
 
 		// Crea botones, textbos y combobox dinámicos para los colores
 		void chargeColor() {
@@ -684,7 +779,7 @@ namespace AImap {
 			for (int i = 0; i < sizeListGround; i++) {
 				//nameColor[i] = listColor->getDataByPosition(i).getGroundName();
 				//listColorInUse[i] = listColor[i];
-				
+
 				nameGround[i] = gcnew String(listColor->getDataByPosition(i).getName().c_str());
 				//MessageBox::Show(nameColor[i]);
 			}
@@ -707,7 +802,7 @@ namespace AImap {
 				btn->Name = systemStr;
 				btn->Text = idStr + " - Color";
 				//btn->Location = Point(10,i * 25);
-				btn->Location = Point(800, i * 25 + 420);
+				btn->Location = Point(800, i * 25 + 520);
 				btn->Size = System::Drawing::Size(55, 23);
 				btn->BackColor = Color::Gray;
 				//Creando los eventos del botón dinámico
@@ -717,15 +812,15 @@ namespace AImap {
 				systemStr = COMBOBOX_NAME_COLOR + idStr;
 				comboBox->Name = systemStr;
 				//comboBox->Location = Point(135, i * 25);
-				comboBox->Location = Point(800+ 60, i * 25 + 420);
+				comboBox->Location = Point(800 + 60, i * 25 + 520);
 				comboBox->Size = System::Drawing::Size(70, 23);
 				comboBox->DropDownStyle = ComboBoxStyle::DropDownList;
 				comboBox->Items->AddRange(nameGround);
 				comboBox->Text = "Escoga un terreno";
 				comboBox->SelectedIndexChanged += gcnew System::EventHandler(this, &Map::comboBox_Color_Name);
 				arrayComboBox[i] = comboBox;
-				
-				 
+
+
 				/*systemStr = "textBox_Color" + i.ToString();
 				textBox->Name = systemStr;
 				textBox->Location = Point(260, i * 25);
@@ -733,21 +828,22 @@ namespace AImap {
 				textBox->Visible = true;*/
 
 				checkBox->Name = CHECKBOX_NAME_COLOR + idStr;
-				checkBox->Location = Point(800 + 135, i * 25 + 420);
+				checkBox->Location = Point(800 + 135, i * 25 + 520);
 				checkBox->Size = System::Drawing::Size(46, 17);
 				checkBox->Text = "N/A";
 				checkBox->CheckedChanged += gcnew System::EventHandler(this, &Map::checkBox_Color_IsValid);
 				arrayCheckBox[i] = checkBox;
-				
+
 				textBox->Name = TEXTBOX_NAME_COLOR + idStr;
 				//systemStr = "numericUpDown_Color" + idStr;
 				//textBox->Location = Point(260, i * 25);
-				textBox->Location = Point(800 + 185, i * 25 + 420);
+				textBox->Location = Point(800 + 185, i * 25 + 520);
 				textBox->Size = System::Drawing::Size(60, 23);
 				textBox->Text = "0";
+				//textBox->Leave += gcnew System::EventHandler(this, &Map::textBox_Color_Float);
 				textBox->Leave += gcnew System::EventHandler(this, &Map::textBox_Color_Float);
 				arrayTextBox[i] = textBox;
-				
+
 				//this->Controls->Add(label);
 				this->Controls->Add(comboBox);
 				this->Controls->Add(btn);
@@ -755,8 +851,8 @@ namespace AImap {
 				this->Controls->Add(textBox);
 				//tabPage2->Controls->Add(textBox);
 			}
-			
-		}	
+
+		}
 
 		// Carga los colores
 		void chargeColorFile() {
@@ -773,10 +869,11 @@ namespace AImap {
 			auto resourceName = execAssem->GetName()->Name + ".Custom";
 			auto resourceManager = gcnew Resources::ResourceManager(resourceName, execAssem);
 			auto reader = cli::safe_cast<String^>(resourceManager->GetObject("Default_Ground"));
-			
+
 			//algo = reader->ReadToEnd();
 			nameColor = reader->Split('|');
-			for(int i=0;i<nameColor->Length-1; i+=4)
+			//MessageBox::Show("Encontre: " + nameColor[0], " - Lenght: "+ nameColor->Length.ToString() );
+			for (int i = 0; i < nameColor->Length - 1; i += 4)
 			{
 				marshalString(nameColor[i], str);
 				color.setId(i);
@@ -794,13 +891,50 @@ namespace AImap {
 			}
 		}
 
+		// Carga los costos para cada terreno dependiendo el jugador
+		void chargeCostoJugadorFile() {
+			CostoJugador costoJugador;
+			Ground ground;
+			std::string str, str2, str3;
+			cli::array <String^>^ generalString = gcnew cli::array<String^>(200);
+			cli::array <String^>^ costosPorJugador = gcnew cli::array<String^>(5);
+			String^ algo;
+			int i = 0;
+
+			//System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(Map::typeid));
+			auto execAssem = System::Reflection::Assembly::GetExecutingAssembly();
+			auto resourceName = execAssem->GetName()->Name + ".Custom";
+			auto resourceManager = gcnew Resources::ResourceManager(resourceName, execAssem);
+			auto reader = cli::safe_cast<String^>(resourceManager->GetObject("Costos"));
+
+			//algo = reader->ReadToEnd();
+			generalString = reader->Split('|');
+			//MessageBox::Show(reader + " - "+ generalString + " - " + generalString->Length);
+			for (int i = 0; i < generalString->Length - 1; i++)
+			{
+				costosPorJugador = generalString[i]->Split(',');
+
+				marshalString(costosPorJugador[0], str);
+				costoJugador.setName(str);
+
+				marshalString(costosPorJugador[1], str);
+				costoJugador.setGroundName(str);
+
+				costoJugador.setCosto(Int32::Parse(costosPorJugador[2]));
+
+				listCostoJugador->insertData(costoJugador);
+				//MessageBox::Show("Cargando jugadore costo: " + costosPorJugador[0] + " - " + costosPorJugador[1] +
+				//costosPorJugador[2]);
+			}
+		}
+
 		// Carga los jugadores predeterminados
 		void chargePlayerFile() {
 			Player player;
 			String ^systemStr;
 			int i = 0, fileLength;
 			int items;
-			
+
 
 			player.setId(0);
 			player.setName("Fish");
@@ -812,6 +946,14 @@ namespace AImap {
 
 			player.setId(2);
 			player.setName("Virus");
+			listPlayer->insertData(player);
+
+			player.setId(3);
+			player.setName("Ralph");
+			listPlayer->insertData(player);
+
+			player.setId(4);
+			player.setName("Robot");
 			listPlayer->insertData(player);
 
 			items = listPlayer->getItemCounter();
@@ -844,25 +986,25 @@ namespace AImap {
 
 					if (listCell->findPositionXY(cell) != nullptr) {
 						cell = listCell->findPositionXY(cell)->getData();
-						
+
 						groundTwo.setId(cell.getIdGround());
 						//color = listColor->getDataByPosition(cell.getIdGround());
 						ground = listGround->findData(groundTwo)->getData();
 						//color = listColor[123];
-						
+
 						g->DrawRectangle(p, i * CELL_MAX_SIZE, j * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
-						
+
 						//MessageBox::Show(color.getColor(0).ToString() + "-" + color.getColor(1).ToString() + "-" + color.getColor(2).ToString());
 						if (ground.getColor(0) == -1 || ground.getColor(1) == -1 || ground.getColor(2) == -1) {
 							sb = gcnew SolidBrush(Color::LightGray);
 						}
-						else{
+						else {
 							string = "";
 							//
-							
+
 							sb = gcnew SolidBrush(Color::FromArgb(ground.getColor(0), ground.getColor(1), ground.getColor(2)));
 							g->FillRectangle(sb, i * CELL_MAX_SIZE + 1, j * CELL_MAX_SIZE + 1, CELL_MAX_SIZE - 1, CELL_MAX_SIZE - 1);
-							
+
 							/*for (int i = 0; i < cell.getLastVisitPosition(); i++) {
 								string += cell.getVisitCounter(i).ToString() + ", ";
 								MessageBox::Show(cell.getId().ToString() + " - "+ cell.getLastVisitPosition().ToString() + " - Pos:"+i.ToString() + cell.getVisitCounter(i).ToString());
@@ -872,12 +1014,12 @@ namespace AImap {
 								//MessageBox::Show(cell.getLastVisitPosition().ToString() + "-"+string);
 								g->DrawString(string, myFont, gcnew SolidBrush(Color::Black), PointF(i * CELL_MAX_SIZE + 1, j * CELL_MAX_SIZE + 41));
 							}
-							
+
 						}
 						if (drawId) {
 							g->DrawString(cell.getIdGround().ToString(), this->Font, gcnew SolidBrush(Color::DarkBlue), PointF(i * CELL_MAX_SIZE + 10, j * CELL_MAX_SIZE + 10));
 						}
-						}
+					}
 					else {
 						//MessageBox::Show("not found at " + i.ToString() + "-" + j.ToString());
 					}
@@ -888,6 +1030,117 @@ namespace AImap {
 		}
 
 		//Valida si todo está listo para jugar
+		void setCostosFromGround(ComboBox ^comboBox, Ground ground) {
+			CostoJugador costoJugador;
+			String ^string;
+			std::string str;
+			int id;
+
+			if (comboBox_Player->Text != "") {
+				marshalString(comboBox->Text, str);
+				costoJugador.setGroundName(str);
+				
+				marshalString(comboBox_Player->Text, str);
+				costoJugador.setName(str);
+				//MessageBox::Show("Buscando: "+comboBox->Text + " - "+ comboBox_Player->Text);
+				//MessageBox::Show(gcnew String(listCostoJugador->getFirst()->getData().getName().c_str()));
+				if(listCostoJugador->findData(costoJugador) != nullptr){
+					costoJugador = listCostoJugador->findData(costoJugador)->getData();
+					id = Int32::Parse(comboBox->Name->Substring(14));
+
+					ground.setId(id);
+					if (listGround->findData(ground) != nullptr) {
+						listGround->findData(ground)->getData().setValue(costoJugador.getCosto());
+					}
+
+					string = CHECKBOX_NAME_COLOR + id.ToString();
+					//MessageBox::Show("Finding: " + string +" Changing");
+					if (costoJugador.getCosto() < 0) {
+						for each(CheckBox ^var in arrayCheckBox) {
+							if (var->Name == string) {
+								var->Checked = true;
+							}
+						}
+					}
+					else {
+						for each(CheckBox ^var in arrayCheckBox) {
+							if (var->Name == string) {
+								var->Checked = false;
+							}
+						}
+						string = TEXTBOX_NAME_COLOR + id.ToString();
+						for each (TextBox ^var in arrayTextBox)
+						{
+							if (var->Name == string) {
+								var->Text = costoJugador.getCosto().ToString();
+								//MessageBox::Show("Changing");
+							}
+						}
+					}
+				}
+			}
+		}
+
+		void setCostosFromPlayer() {
+			CostoJugador costoJugador;
+			Ground ground;
+			String ^string;
+			std::string str;
+			int id;
+
+			if (comboBox_Player->Text != "") {
+
+				for each (ComboBox ^var in arrayComboBox)
+				{
+					if (var->Text != "") {
+						marshalString(var->Text, str);
+						costoJugador.setGroundName(str);
+
+						marshalString(comboBox_Player->Text, str);
+						costoJugador.setName(str);
+
+						if (listCostoJugador->findData(costoJugador) != nullptr) {
+							id = Int32::Parse(var->Name->Substring(14));
+							costoJugador = listCostoJugador->findData(costoJugador)->getData();
+
+							ground.setId(id);
+							if (listGround->findData(ground) != nullptr) {
+								listGround->findData(ground)->getData().setValue(costoJugador.getCosto());
+							}
+
+							string = CHECKBOX_NAME_COLOR + id.ToString();
+							//MessageBox::Show("Finding: " + string +" Changing");
+							if (costoJugador.getCosto() < 0) {
+								for each(CheckBox ^var in arrayCheckBox) {
+									if (var->Name == string) {
+										var->Checked = true;
+									}
+								}
+							}
+							else {
+								for each(CheckBox ^var in arrayCheckBox) {
+									if (var->Name == string) {
+										var->Checked = false;
+									}
+								}
+								string = TEXTBOX_NAME_COLOR + id.ToString();
+								for each (TextBox ^var in arrayTextBox)
+								{
+									if (var->Name == string) {
+										var->Text = costoJugador.getCosto().ToString();
+										//MessageBox::Show("Changing");
+									}
+								}
+							}
+						}
+					}
+				}
+				//MessageBox::Show("Buscando: "+comboBox->Text + " - "+ comboBox_Player->Text);
+				//MessageBox::Show(gcnew String(listCostoJugador->getFirst()->getData().getName().c_str()));
+				
+			}
+		}
+
 		bool isReadyToPlay() {
 			Point pointStart = panelMap->PointToClient(PointToScreen(pictureBox_Start->Location));
 			Point pointGoal = panelMap->PointToClient(PointToScreen(pictureBox_Goal->Location));
@@ -1058,7 +1311,6 @@ namespace AImap {
 			//MessageBox::Show("CHANGED");
 			for each (ComboBox^ var in arrayComboBox)
 			{
-				//tabPage2->Controls->Find("btn_color1");
 				if (comboBox->SelectedIndex == var->SelectedIndex && comboBox->Name != var->Name) {
 					comboBox->SelectedIndex = -1;
 					repeated = true;
@@ -1080,6 +1332,9 @@ namespace AImap {
 							marshalString(comboBox->Text, str);
 							color.setName(str);
 							
+							ground.setId(id);
+							setCostosFromGround(comboBox, ground);
+
 							if (listColor->findData(color) != nullptr) {
 								color = listColor->findData(color)->getData();
 								buttonAux = button;
@@ -1091,6 +1346,8 @@ namespace AImap {
 									marshalString(comboBox->Text, str);
 									listGround->findData(ground)->getData().setName(str);
 									
+									
+
 									drawMap(true);
 								}
 								
@@ -1172,7 +1429,7 @@ namespace AImap {
 			TextBox ^txt = safe_cast<TextBox^>(sender);
 			Ground ground;
 			int id;
-
+			MessageBox::Show("Cambió");
 			if (txt->Text == "") {
 				txt->Text == "0";
 			}
@@ -1244,19 +1501,20 @@ namespace AImap {
 		String ^systemStr;
 
 		systemStr = comboBox_Player->SelectedItem->ToString();
-
+		
 		auto execAssem = System::Reflection::Assembly::GetExecutingAssembly();
 		auto resourceName = execAssem->GetName()->Name + ".Custom";
 		auto resourceManager = gcnew Resources::ResourceManager(resourceName, execAssem);
 		auto bitMap = cli::safe_cast<Bitmap^>(resourceManager->GetObject(systemStr));
 		pictureBox_Player->Image = bitMap;
 		pictureBox_PlayerIcon->Image = bitMap;
-		
+		setCostosFromPlayer();
 		//MessageBox::Show("Function");
 	}
 	private: System::Void Map_Shown(System::Object^  sender, System::EventArgs^  e) {
 		//this->Hide();
 		chargeMap(fileNameMapGlobal);
+		chargeCostoJugadorFile();
 		chargeColorFile();
 		chargeColor();
 		chargePlayerFile();
@@ -1491,6 +1749,12 @@ namespace AImap {
 			MessageBox::Show("Has llegado a la meta \n");
 			pictureBox_Player->Location = pictureBox_Start->Location;
 			enableObject();
+			isPlaying = false;
+			pictureBox_Player->Location = pictureBoxPlayerPoint;
+			for (int i = 0; i < listCell->getItemCounter(); i++) {
+				listCell->findId(i)->getData().eraseVisitCounter();
+			}
+			visit = 0;
 		}
 	}
 	

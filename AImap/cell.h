@@ -51,6 +51,9 @@ class Cell {
 		void setVisitCounter(const std::string& visitCounterX) {
 			visitCounter += "," + visitCounterX;
 		}
+		void eraseVisitCounter() {
+			visitCounter = "";
+		}
 
 		void setPositionX(const int& positionXX) {
 			positionX = positionXX;

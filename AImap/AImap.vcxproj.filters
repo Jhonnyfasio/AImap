@@ -56,6 +56,9 @@
     <ClInclude Include="colorclass.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="costoJugador.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Map.resx">
@@ -80,6 +83,9 @@
     <Text Include="Recursos\Default_Player.txt">
       <Filter>Archivos de recursos</Filter>
     </Text>
+    <Text Include="Recursos\Costos.txt">
+      <Filter>Archivos de recursos</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Recursos\NyanCat.gif">
@@ -95,6 +101,12 @@
       <Filter>Archivos de recursos</Filter>
     </Image>
     <Image Include="Recursos\Goal.gif">
+      <Filter>Archivos de recursos</Filter>
+    </Image>
+    <Image Include="Recursos\Robot.gif">
+      <Filter>Archivos de recursos</Filter>
+    </Image>
+    <Image Include="Recursos\Ralph.gif">
       <Filter>Archivos de recursos</Filter>
     </Image>
   </ItemGroup>

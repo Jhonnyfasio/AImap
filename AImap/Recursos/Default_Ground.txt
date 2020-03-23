@@ -1,1 +1,1 @@
-﻿Agua|33|145|167|Arena|198|166|100|Bosque|49|116|48|Camino|148|106|64|Lava|231|0|12|Montaña|124|124|124|Tundra|208|227|237|Pantano|106|155|62|Nieve|248|252|252|Tierra|115|79|0|
+﻿Agua|33|145|167|Arena|198|166|100|Bosque|49|116|48|Camino|248|222|207|Lava|207|16|32|Montaña|124|124|124|Tundra|208|227|237|Pantano|106|155|62|Nieve|248|252|252|Tierra|139|83|49|Pared|232|224|202|Desierto|221|221|98|Espacio|108|112|176|Selva|102|201|116|
