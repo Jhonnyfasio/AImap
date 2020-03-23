@@ -175,6 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Recursos\Goal.gif" />
+    <Image Include="Recursos\Logo.gif" />
     <Image Include="Recursos\NyanCat.gif" />
     <Image Include="Recursos\QuestionMark.gif" />
     <Image Include="Recursos\Ralph.gif" />
