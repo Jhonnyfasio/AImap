@@ -84,6 +84,7 @@ namespace AImap {
 	private: System::Windows::Forms::Label^  label4;
 
 			 bool isPlaying = false;
+			 bool isCorruptFile = false;
 	
 	public:
 			
@@ -100,7 +101,7 @@ namespace AImap {
 			listGround = new Collection<Ground>;
 			listPlayer = new Collection<Player>;
 			listColor = new Collection<ColorClass>;
-			chargeMap(fileNameMap);
+			//chargeMap(fileNameMap);
 			fileNameMapGlobal = fileNameMap;
 			//listButton = new Collection<Button>;
 			pictureBoxStarPoint = pictureBox_Start->Location;
@@ -263,12 +264,16 @@ namespace AImap {
 			// 
 			// btn_play
 			// 
+			this->btn_play->BackColor = System::Drawing::Color::LimeGreen;
+			this->btn_play->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->btn_play->ForeColor = System::Drawing::SystemColors::ButtonHighlight;
 			this->btn_play->Location = System::Drawing::Point(406, 29);
 			this->btn_play->Name = L"btn_play";
 			this->btn_play->Size = System::Drawing::Size(120, 50);
 			this->btn_play->TabIndex = 15;
 			this->btn_play->Text = L"Jugar";
-			this->btn_play->UseVisualStyleBackColor = true;
+			this->btn_play->UseVisualStyleBackColor = false;
 			this->btn_play->Click += gcnew System::EventHandler(this, &Map::btn_play_Click);
 			// 
 			// pictureBox_Goal
@@ -364,7 +369,7 @@ namespace AImap {
 #pragma endregion
 		void UpdateGraphicsBuffer() {
 			BufferedGraphicsContext ^bufferContext = BufferedGraphicsManager::Current;
-			graphicsBuffer = bufferContext->Allocate(panelMap->CreateGraphics(), this->DisplayRectangle);
+			//graphicsBuffer = bufferContext->Allocate(panelMap->CreateGraphics(), this->DisplayRectangle);
 		}
 
 		// Carga el mapa al sistema
@@ -539,7 +544,8 @@ namespace AImap {
 				str = "";
 				if (readerFile.beg == -1 || readerFile.beg == readerFile.end) {
 					messageError("Error, archivo de lectura no disponible 2");
-					this->Close();
+					//this->Close();
+					isCorruptFile = true;
 				}
 				while (!readerFile.eof()) {
 					
@@ -552,7 +558,7 @@ namespace AImap {
 							}
 							// Valida cada columna
 							else if (!readerFile.eof() && character == ',') {
-								if (row <= 14 && column <= 14) {
+								if (row <= 14 && column <= 14 && str != "") {
 									cell.setId(counter++);
 									cell.setIdGround(atoi(str.c_str()));
 									cell.setPositionX(column);
@@ -566,6 +572,10 @@ namespace AImap {
 									textBox1->Text += listCell->getLast()->getData().getPositionX().ToString() + ",";
 									textBox1->Text += listCell->getLast()->getData().getPositionY().ToString() + "//";
 									column++;
+								}
+								if (str == "") {
+									messageError("No se amdmiten valores nulos (dobles comas)");
+									isCorruptFile = true;
 								}
 								//txtPrueba->Text += cell.getId().ToString();
 								str = "";
@@ -584,7 +594,8 @@ namespace AImap {
 									marshalString((row+1).ToString(), str);
 									marshalString((counter+1).ToString(), str2);
 									messageError("Error, el mapa tiene lados irregulares (Linea: " + str + ", Columna: " + str2);
-									this->Close();
+									//this->Close();
+									isCorruptFile = true;
 									readerFile.close();
 									break;
 								}
@@ -603,6 +614,10 @@ namespace AImap {
 									publicSizeHeightMax = ++row;
 									column = 0;
 								}
+								if (str == "") {
+									messageError("No se amdmiten valores nulos (dobles comas)");
+									isCorruptFile = true;
+								}
 								//txtPrueba->Text += cell.getId().ToString() + "\r\n";
 								str = "";
 							}
@@ -614,7 +629,8 @@ namespace AImap {
 								"Favor de elegir un nuevo archivo");
 								readerFile.close();
 								//Application::Exit();
-								this->Close();
+								//this->Close();
+								isCorruptFile = true;
 								break;
 							}
 						//}
@@ -932,8 +948,7 @@ namespace AImap {
 		void disableObject() {
 			for each (Button^ var in arrayButton)
 			{
-				//var->Enabled = false;
-				MessageBox::Show(var->Name);
+				var->Enabled = false;
 			}
 			for each (CheckBox^ var in arrayCheckBox)
 			{
@@ -952,6 +967,30 @@ namespace AImap {
 			pictureBox_Start->Enabled = false;
 			pictureBox_Goal->Enabled = false;
 			btn_play->Enabled = false;
+		}
+
+		void enableObject() {
+			for each (Button^ var in arrayButton)
+			{
+				var->Enabled = true;
+			}
+			for each (CheckBox^ var in arrayCheckBox)
+			{
+				var->Enabled = true;
+			}
+			for each (ComboBox^ var in arrayComboBox)
+			{
+				var->Enabled = true;
+			}
+			for each (TextBox^ var in arrayTextBox)
+			{
+				var->Enabled = true;
+			}
+
+			comboBox_Player->Enabled = true;
+			pictureBox_Start->Enabled = true;
+			pictureBox_Goal->Enabled = true;
+			btn_play->Enabled = true;
 		}
 
 		// //////////////////////////////////////////////////////// HERRAMIENTAS ////////////////////////////////////////////////////////////// //
@@ -1168,7 +1207,7 @@ namespace AImap {
 
 			colorAux->setColor(r, g, b);
 
-			MessageBox::Show("color establecido como: " + colorAux->getColor(0).ToString() + " - ");
+			//MessageBox::Show("color establecido como: " + colorAux->getColor(0).ToString() + " - ");
 		}
 	}
 	private: System::Void button_AddColor_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -1216,6 +1255,8 @@ namespace AImap {
 		//MessageBox::Show("Function");
 	}
 	private: System::Void Map_Shown(System::Object^  sender, System::EventArgs^  e) {
+		this->Hide();
+		chargeMap(fileNameMapGlobal);
 		chargeColorFile();
 		chargeColor();
 		chargePlayerFile();
@@ -1227,6 +1268,9 @@ namespace AImap {
 		auto reader = cli::safe_cast<Bitmap^>(resourceManager->GetObject("Start"));
 
 		pictureBox_Start->Image = reader;
+		if (!isCorruptFile) {
+			this->Show();
+		}
 		}
 	
 			 
@@ -1277,7 +1321,7 @@ namespace AImap {
 		/*MessageBox::Show(point.ToString() + " location: " + locationX.ToString() + ", "+locationY.ToString() + "\n" +
 		Cursor->Position.X + ", " + Cursor->Position.Y);*/
 		//if (point.X < 0 || point.Y < 0 || point.X > 750 || point.Y > 750) {
-		if (!isValidPositionPanelMap(point) || !isValidGround(point)) {
+		if (!isValidPositionPanelMap(point)) {
 			if (pictureBox_Start->Name == pictureBox->Name) {
 				pictureBox->Location = pictureBoxStarPoint;
 				pictureBox->Height = 50;
@@ -1288,8 +1332,10 @@ namespace AImap {
 				pictureBox->Height = 50;
 				pictureBox->Width = 50;
 				}
-			MessageBox::Show("Error, no puede poner el punto de inicio o final en un terreno con la casilla marcada N/A");
 			}
+		else if (!isValidGround(point)) {
+			MessageBox::Show("Error, no puede poner el punto de inicio o final en un terreno con la casilla marcada N/A");
+		}
 		else {
 			if (listCell->findPositionXY(cell) != nullptr) {
 				if (pictureBox->Name == pictureBox_Start->Name) {
@@ -1370,6 +1416,7 @@ namespace AImap {
 	private: System::Void Map_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 		Point point = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
 		Point auxPoint = point;
+		Point auxAuxPoint = auxPoint;
 		Cell cell;
 		stringstream toStr;
 		int locationX, locationY, intAux;
@@ -1422,8 +1469,8 @@ namespace AImap {
 				// Nothing
 			}
 			if (moved) {
-				locationX = (int)(auxPoint.X / CELL_MAX_SIZE);
-				locationY = (int)(auxPoint.Y / CELL_MAX_SIZE);
+				locationX = (int)(auxAuxPoint.X / CELL_MAX_SIZE);
+				locationY = (int)(auxAuxPoint.Y / CELL_MAX_SIZE);
 
 				cell.setPositionX(locationX);
 				cell.setPositionY(locationY);
@@ -1443,6 +1490,7 @@ namespace AImap {
 		if (pictureBox_Player->Location == pictureBox_Goal->Location) {
 			MessageBox::Show("Has llegado a la meta \n");
 			pictureBox_Player->Location = pictureBox_Start->Location;
+			enableObject();
 		}
 	}
 	
@@ -1545,7 +1593,7 @@ namespace AImap {
 				informacion = informacion + "Costo: " + groundAux.getValue().ToString() + "\n";
 			}
 			else {
-				informacion = informacion + "N/A\n";
+				informacion = informacion + "Costo: N/A\n";
 			}
 			//Inicial
 			if (pointStart == cellAux.getId()) {
