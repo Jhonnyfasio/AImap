@@ -473,10 +473,11 @@ namespace AImap {
 							// Valida caracter inválido
 							else {
 								marshalString(fileNameMap, str);
-								MessageBox::Show("No se puede leer el archivo '" + fileNameMap + "', archivo corrupto en fila: " +
-									(row + 1).ToString() + " columna: " + (column + 1).ToString() + ".");
+								MessageBox::Show("No se puede leer el archivo '" + fileNameMap + "', archivo corrupto en:\n"+
+									"Fila: " +(row + 1).ToString() + "\nColumna: " + (column + 1).ToString() + ".\n"+
+								"Favor de elegir un nuevo archivo");
 								readerFile.close();
-								this->Close();
+								Application::Exit();
 								break;
 							}
 						//}
@@ -557,6 +558,7 @@ namespace AImap {
 				btn->BackColor = Color::Gray;
 				//Creando los eventos del botón dinámico
 				btn->Click += gcnew System::EventHandler(this, &Map::btn_color_click);
+				arrayButton[i] = btn;
 
 				systemStr = COMBOBOX_NAME_COLOR + idStr;
 				comboBox->Name = systemStr;
@@ -581,12 +583,14 @@ namespace AImap {
 				checkBox->Size = System::Drawing::Size(46, 17);
 				checkBox->Text = "N/A";
 				checkBox->CheckedChanged += gcnew System::EventHandler(this, &Map::checkBox_Color_IsValid);
+				arrayCheckBox[i] = checkBox;
 				
 				textBox->Name = TEXTBOX_NAME_COLOR + idStr;
 				//systemStr = "numericUpDown_Color" + idStr;
 				//textBox->Location = Point(260, i * 25);
 				textBox->Location = Point(800 + 185, i * 25 + 420);
 				textBox->Size = System::Drawing::Size(60, 23);
+				textBox->Text = "0";
 				textBox->Leave += gcnew System::EventHandler(this, &Map::textBox_Color_Float);
 				arrayTextBox[i] = textBox;
 				
@@ -712,7 +716,7 @@ namespace AImap {
 							string = gcnew String(cell.getVisitCounter().c_str());
 							if (string != "") {
 								//MessageBox::Show(cell.getLastVisitPosition().ToString() + "-"+string);
-								g->DrawString(string, myFont, gcnew SolidBrush(Color::Black), PointF(i * CELL_MAX_SIZE + 10, j * CELL_MAX_SIZE + 41));
+								g->DrawString(string, myFont, gcnew SolidBrush(Color::Black), PointF(i * CELL_MAX_SIZE + 1, j * CELL_MAX_SIZE + 41));
 							}
 							
 						}
@@ -782,7 +786,7 @@ namespace AImap {
 				return false;
 			}
 			else {
-				comboBox_Player->Enabled = false;
+				//comboBox_Player->Enabled = false;
 				return true;
 			}
 		}
@@ -790,7 +794,8 @@ namespace AImap {
 		void disableObject() {
 			for each (Button^ var in arrayButton)
 			{
-				var->Enabled = false;
+				//var->Enabled = false;
+				MessageBox::Show(var->Name);
 			}
 			for each (CheckBox^ var in arrayCheckBox)
 			{
@@ -804,6 +809,7 @@ namespace AImap {
 			{
 				var->Enabled = false;
 			}
+			
 			comboBox_Player->Enabled = false;
 			pictureBox_Start->Enabled = false;
 			pictureBox_Goal->Enabled = false;
@@ -991,7 +997,7 @@ namespace AImap {
 			int id;
 
 			if (txt->Text == "") {
-
+				txt->Text == "0";
 			}
 			else if (System::Text::RegularExpressions::Regex::IsMatch(txt->Text, "^[0-9]*[.]?[0-9]+$") ||
 				System::Text::RegularExpressions::Regex::IsMatch(txt->Text, "^[0-9]+[.]$")) {
@@ -1008,16 +1014,6 @@ namespace AImap {
 				txt->Text = "";
 			}
 		}
-
-	/*private: System::Void panelMap_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
-		Graphics ^g = panelMap->CreateGraphics();
-		Pen ^p = gcnew Pen(Color::Black);
-		for (int i = 0; i < 2; i++) {
-			for (int j = 0; j < 2; j++) {
-				g->DrawRectangle(p, 2 * CELL_MAX_SIZE, i * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
-			}
-		}
-	}*/
 
 	// Cerrar completamente el programa
 	private: System::Void Map_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
@@ -1154,6 +1150,7 @@ namespace AImap {
 				pictureBox->Height = 50;
 				pictureBox->Width = 50;
 				}
+			MessageBox::Show("Error, no puede poner el punto de inicio o final en un terreno con la casilla marcada N/A");
 			}
 		else {
 			if (listCell->findPositionXY(cell) != nullptr) {
@@ -1218,14 +1215,15 @@ namespace AImap {
 		
 		//pictureBox_Start->SendToBack();
 		panelMap->SendToBack();
-		disableObject();
-		//if (isReadyToPlay()) {
-		isPlaying = true;
+		
+		if (isReadyToPlay()) {
+			isPlaying = true;
+			disableObject();
 			drawMap(false);
 			pictureBox_Player->Location = pictureBox_Start->Location;
 			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
 			Map::Focus();
-		//}
+		}
 		//panelMap->Focus();
 		
 	}
@@ -1405,8 +1403,12 @@ namespace AImap {
 			informacion = informacion + "Terreno: " + gcnew String(groundAux.getName().c_str()) + "\n";
 
 			//Costo
-			informacion = informacion + "Costo: " + groundAux.getValue().ToString() + "\n";
-
+			if (groundAux.getIsValid()) {
+				informacion = informacion + "Costo: " + groundAux.getValue().ToString() + "\n";
+			}
+			else {
+				informacion = informacion + "N/A\n";
+			}
 			//Inicial
 			if (pointStart == cellAux.getId()) {
 				informacion = informacion + "Inicial: Sí \n";
