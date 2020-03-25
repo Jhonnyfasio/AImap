@@ -2,9 +2,6 @@
 // Archivo de inclusión generado de Microsoft Visual C++.
 // Usado por AImap.rc
 //
-#define ID_GIF_FISH                     4
-#define IDB_BITMAP1                     101
-#define IDR_GIF1                        102
 
 // Next default values for new objects
 // 

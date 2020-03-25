@@ -63,32 +63,6 @@ namespace AImap {
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Label^  label3;
 	private: System::Windows::Forms::PictureBox^  pictureBox_Player;
-	private: BufferedGraphics ^graphicsBuffer;
-
-			 Collection<Cell> *listCell;
-			 Collection<Ground> *listGround;
-			 Collection<Player> *listPlayer;
-			 Collection<Ground> *listColorInUse;
-			 Collection<ColorClass> *listColor;
-			 Collection<CostoJugador> *listCostoJugador;
-			 cli::array<ComboBox^>^ arrayComboBox;
-			 cli::array<TextBox^>^ arrayTextBox;
-			 cli::array<Button^>^ arrayButton;
-			 cli::array<CheckBox^>^ arrayCheckBox;
-			 String ^fileNameMapGlobal;
-			 Point pictureBoxStarPoint, pictureBoxGoalPoint, pictureBoxPlayerPoint;
-
-			 int pointGoal = -1;
-			 int pointStart = -1;
-
-
-			 int publicSizeHeightMax;
-			 int publicSizeWidthMax;
-
-			 int visit = 0;
-	private: System::Windows::Forms::Label^  label4;
-
-			 bool isPlaying = false;
 	private: System::Windows::Forms::TextBox^  textBox2;
 	private: System::Windows::Forms::Button^  button1;
 	private: System::Windows::Forms::Label^  label5;
@@ -100,7 +74,33 @@ namespace AImap {
 	private: System::Windows::Forms::ToolTip^  toolTip1;
 	private: System::Windows::Forms::Label^  label8;
 
-			 bool isCorruptFile = false;
+	private: BufferedGraphics ^graphicsBuffer;
+
+	Collection<Cell> *listCell;
+	Collection<Ground> *listGround;
+	Collection<Player> *listPlayer;
+	Collection<Ground> *listColorInUse;
+	Collection<ColorClass> *listColor;
+	Collection<CostoJugador> *listCostoJugador;
+	cli::array<ComboBox^>^ arrayComboBox;
+	cli::array<TextBox^>^ arrayTextBox;
+	cli::array<Button^>^ arrayButton;
+	cli::array<CheckBox^>^ arrayCheckBox;
+	String ^fileNameMapGlobal;
+	Point pictureBoxStarPoint, pictureBoxGoalPoint, pictureBoxPlayerPoint;
+	Graphics ^g;
+
+	int pointGoal = -1;
+	int pointStart = -1;
+	
+	int publicSizeHeightMax;
+	int publicSizeWidthMax;
+	
+	int visit = 0;
+	private: System::Windows::Forms::Label^  label4;
+
+	bool isPlaying = false;
+	bool isCorruptFile = false;
 
 	public:
 
@@ -113,6 +113,7 @@ namespace AImap {
 		Map(String ^fileNameMap) {
 			InitializeComponent();
 			//mainMenu = menuMap;
+			g = panelMap->CreateGraphics();
 			listCell = new Collection<Cell>;
 			listGround = new Collection<Ground>;
 			listPlayer = new Collection<Player>;
@@ -278,7 +279,7 @@ namespace AImap {
 			// 
 			this->panelMap->AllowDrop = true;
 			this->panelMap->AutoSize = true;
-			this->panelMap->BackColor = System::Drawing::Color::Transparent;
+			this->panelMap->BackColor = System::Drawing::Color::Silver;
 			this->panelMap->Location = System::Drawing::Point(26, 110);
 			this->panelMap->Name = L"panelMap";
 			this->panelMap->Size = System::Drawing::Size(750, 750);
@@ -486,6 +487,7 @@ namespace AImap {
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->comboBox_Player);
 			this->Controls->Add(this->button_SaveGrounds);
+			this->DoubleBuffered = true;
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedDialog;
 			this->HelpButton = true;
 			this->Location = System::Drawing::Point(30, 30);
@@ -505,7 +507,7 @@ namespace AImap {
 #pragma endregion
 		void UpdateGraphicsBuffer() {
 			BufferedGraphicsContext ^bufferContext = BufferedGraphicsManager::Current;
-			//graphicsBuffer = bufferContext->Allocate(panelMap->CreateGraphics(), this->DisplayRectangle);
+			graphicsBuffer = bufferContext->Allocate(panelMap->CreateGraphics(), this->DisplayRectangle);
 		}
 
 		// Carga el mapa al sistema
@@ -1007,7 +1009,7 @@ namespace AImap {
 
 		// Dibuja el mapa
 		void drawMap(const bool drawId) {
-			Graphics ^g = panelMap->CreateGraphics();
+			//g = panelMap->CreateGraphics();
 			SolidBrush ^sb = gcnew SolidBrush(Color::Red);
 			Pen ^p = gcnew Pen(Color::Blue);
 			System::String ^string = "";
