@@ -213,6 +213,7 @@ namespace AImap {
 			this->label2->AutoSize = true;
 			this->label2->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
+			this->label2->ForeColor = System::Drawing::Color::Black;
 			this->label2->Location = System::Drawing::Point(796, 42);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(80, 20);
@@ -378,6 +379,7 @@ namespace AImap {
 			this->label5->AutoSize = true;
 			this->label5->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15.75F, System::Drawing::FontStyle::Underline, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
+			this->label5->ForeColor = System::Drawing::Color::DarkRed;
 			this->label5->Location = System::Drawing::Point(790, 341);
 			this->label5->Name = L"label5";
 			this->label5->Size = System::Drawing::Size(251, 25);
@@ -389,6 +391,7 @@ namespace AImap {
 			this->label6->AutoSize = true;
 			this->label6->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15.75F, System::Drawing::FontStyle::Underline, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
+			this->label6->ForeColor = System::Drawing::Color::DarkRed;
 			this->label6->Location = System::Drawing::Point(790, 473);
 			this->label6->Name = L"label6";
 			this->label6->Size = System::Drawing::Size(248, 25);
@@ -419,6 +422,7 @@ namespace AImap {
 			this->label7->AutoSize = true;
 			this->label7->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 26.25F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
+			this->label7->ForeColor = System::Drawing::SystemColors::ControlDark;
 			this->label7->Location = System::Drawing::Point(815, 398);
 			this->label7->Name = L"label7";
 			this->label7->Size = System::Drawing::Size(205, 39);
@@ -432,9 +436,9 @@ namespace AImap {
 			this->button_Reset->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->button_Reset->ForeColor = System::Drawing::SystemColors::ButtonHighlight;
-			this->button_Reset->Location = System::Drawing::Point(615, 13);
+			this->button_Reset->Location = System::Drawing::Point(626, 13);
 			this->button_Reset->Name = L"button_Reset";
-			this->button_Reset->Size = System::Drawing::Size(128, 66);
+			this->button_Reset->Size = System::Drawing::Size(120, 66);
 			this->button_Reset->TabIndex = 34;
 			this->button_Reset->Text = L"Volver a Jugar";
 			this->button_Reset->UseVisualStyleBackColor = false;
@@ -445,6 +449,7 @@ namespace AImap {
 			this->label8->AutoSize = true;
 			this->label8->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14.25F, System::Drawing::FontStyle::Underline, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
+			this->label8->ForeColor = System::Drawing::Color::DarkRed;
 			this->label8->Location = System::Drawing::Point(790, 13);
 			this->label8->Name = L"label8";
 			this->label8->Size = System::Drawing::Size(239, 24);
@@ -458,8 +463,8 @@ namespace AImap {
 			this->AutoSize = true;
 			this->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->ClientSize = System::Drawing::Size(1042, 909);
-			this->Controls->Add(this->label8);
 			this->Controls->Add(this->button_Reset);
+			this->Controls->Add(this->label8);
 			this->Controls->Add(this->label7);
 			this->Controls->Add(this->checkBox1);
 			this->Controls->Add(this->textBox3);
@@ -723,8 +728,8 @@ namespace AImap {
 							//MessageBox::Show("Column: " + column.ToString() + " - " + sizeMax.ToString());
 							if (column != sizeMax && !readerFile.eof()) {
 								marshalString((row + 1).ToString(), str);
-								marshalString((counter + 1).ToString(), str2);
-								messageError("Error, el mapa tiene lados irregulares (Linea: " + str + ", Columna: " + str2);
+								marshalString((column).ToString(), str2);
+								messageError("Error, el mapa tiene lados irregulares (Linea: " + str + ", Columna: " + str2 + ")");
 								//this->Close();
 								isCorruptFile = true;
 								readerFile.close();
@@ -746,7 +751,7 @@ namespace AImap {
 								column = 0;
 							}
 							if (str == "" && !readerFile.eof()) {
-								messageError("No se admiten valores nulos (dobles comas).");
+								messageError("No se admiten valores nulos.");
 								isCorruptFile = true;
 							}
 							//txtPrueba->Text += cell.getId().ToString() + "\r\n";
@@ -792,7 +797,6 @@ namespace AImap {
 				label->Location = Point(3, 125 + (j * CELL_MAX_SIZE));
 				this->Controls->Add(label);
 			}
-
 		}
 
 		// Crea botones, textbos y combobox dinámicos para los colores
@@ -1483,6 +1487,7 @@ namespace AImap {
 		void textBox_Color_Float(Object^ sender, EventArgs^ e) {
 			TextBox ^txt = safe_cast<TextBox^>(sender);
 			Ground ground;
+			String ^text;
 			int id;
 			//MessageBox::Show("Cambió");
 			if (txt->Text == "") {
@@ -1493,14 +1498,17 @@ namespace AImap {
 				// ((.[0-9]+)|[0-9]+)  
 				id = Int32::Parse(txt->Name->Substring(13));
 				ground.setId(id);
+				
 				if (listGround->findData(ground) != nullptr) {
-					listGround->findData(ground)->getData().setValue(System::Math::Truncate((Convert::ToDouble(txt->Text) * 100)) / 100);
-					txt->Text = (System::Math::Truncate((Convert::ToDouble(txt->Text) * 100)) / 100).ToString();
+					text = txt->Text;
+					//MessageBox::Show(System::Single::Parse(("0.12"), gcnew System::Globalization::CultureInfo("en-US")).ToString());
+					listGround->findData(ground)->getData().setValue(System::Math::Truncate((Convert::ToDouble((txt->Text),gcnew System::Globalization::CultureInfo("en-US")) * 100)) / 100);
+					txt->Text = (System::Math::Truncate((Convert::ToDouble((txt->Text), gcnew System::Globalization::CultureInfo("en-US")) * 100)) / 100).ToString();
 				}
 			}
 			else {
 				MessageBox::Show("Ingrese un valor numérico correcto");
-				txt->Text = "";
+				txt->Text = "0";
 			}
 		}
 
