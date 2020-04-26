@@ -77,6 +77,7 @@ public:
 
 		if (Vacio()) {
 			ancla = nuevoVertice;
+			System::Windows::Forms::MessageBox::Show("Insertando Vacio: " + System::Char::ToString('A' + elem.getPositionX()) + "," + (elem.getPositionY() + 1).ToString());
 		}
 		else {
 			if (existeVertice(elem) == nullptr) {
@@ -85,7 +86,8 @@ public:
 				while (aux->sigVertice != nullptr) {
 					aux = aux->sigVertice;
 				}
-
+			
+				System::Windows::Forms::MessageBox::Show("Insertando: " + System::Char::ToString('A' + elem.getPositionX()) + ","+(elem.getPositionY()+1).ToString());
 				aux->sigVertice = nuevoVertice;
 			}
 		}

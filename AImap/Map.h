@@ -68,7 +68,8 @@ namespace AImap {
 	private: System::Windows::Forms::ComboBox^  comboBox_Priority;
 	private: System::Windows::Forms::Label^  label7;
 	private: System::Windows::Forms::Label^  label9;
-	private: System::Windows::Forms::ComboBox^  comboBox1;
+	private: System::Windows::Forms::ComboBox^  comboBox_Algoritmos;
+
 	private: BufferedGraphics ^graphicsBuffer;
 
 	Collection<Cell> *listCell;
@@ -82,6 +83,8 @@ namespace AImap {
 	cli::array<TextBox^>^ arrayTextBox;
 	cli::array<Button^>^ arrayButton;
 	cli::array<CheckBox^>^ arrayCheckBox;
+	cli::array<String^>^ arrayPriority;
+	cli::array <String^>^ priority;
 	String ^fileNameMapGlobal;
 	Point pictureBoxStarPoint, pictureBoxGoalPoint, pictureBoxPlayerPoint;
 	Graphics ^g;
@@ -120,6 +123,7 @@ namespace AImap {
 			pictureBoxGoalPoint = pictureBox_Goal->Location;
 			pictureBoxPlayerPoint = pictureBox_Player->Location;
 
+			createArrayPriority();
 			//UpdateGraphicsBuffer();
 		}
 
@@ -175,7 +179,7 @@ namespace AImap {
 			this->comboBox_Priority = (gcnew System::Windows::Forms::ComboBox());
 			this->label7 = (gcnew System::Windows::Forms::Label());
 			this->label9 = (gcnew System::Windows::Forms::Label());
-			this->comboBox1 = (gcnew System::Windows::Forms::ComboBox());
+			this->comboBox_Algoritmos = (gcnew System::Windows::Forms::ComboBox());
 			this->button1 = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_PlayerIcon))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->BeginInit();
@@ -416,6 +420,7 @@ namespace AImap {
 			this->comboBox_Priority->Name = L"comboBox_Priority";
 			this->comboBox_Priority->Size = System::Drawing::Size(316, 24);
 			this->comboBox_Priority->TabIndex = 38;
+			this->comboBox_Priority->SelectedIndex = 0;
 			// 
 			// label7
 			// 
@@ -439,12 +444,12 @@ namespace AImap {
 			this->label9->TabIndex = 41;
 			this->label9->Text = L"Algoritmo";
 			// 
-			// comboBox1
+			// comboBox_Algoritmos
 			// 
-			this->comboBox1->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(0)));
-			this->comboBox1->FormattingEnabled = true;
-			this->comboBox1->Items->AddRange(gcnew cli::array< System::Object^  >(24) {
+			this->comboBox_Algoritmos->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular,
+				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
+			this->comboBox_Algoritmos->FormattingEnabled = true;
+			this->comboBox_Algoritmos->Items->AddRange(gcnew cli::array< System::Object^  >(24) {
 				L"01.- Abajo, Izquierda, Arriba, Derecha (🢃, 🢀, 🢁, 🢂)",
 					L"02.- Abajo, Izquierda, Derecha, Arriba (🢃, 🢀, 🢂, 🢁)", L"03.- Abajo, Arriba, Derecha, Izquierda (🢃, 🢁, 🢂, 🢀)", L"04.- Abajo, Arriba, Izquierda, Derecha (🢃, 🢁, 🢀, 🢂)",
 					L"05.- Abajo, Derecha, Izquierda, Arriba (🢃, 🢂, 🢀, 🢁)", L"06.- Abajo, Derecha, Arriba, Izquierda (🢃, 🢂, 🢁, 🢀)", L"07.- Izquierda, Arriba, Derecha, Abajo (🢀, 🢁, 🢂, 🢃)",
@@ -455,10 +460,10 @@ namespace AImap {
 					L"20.- Derecha, Abajo, Arriba, Izquierda (🢂, 🢃, 🢁, 🢀)", L"21.- Derecha, Izquierda, Arriba, Abajo (🢂, 🢀, 🢁, 🢃)", L"22.- Derecha, Izquierda, Abajo, Arriba (🢂, 🢀, 🢃, 🢁)",
 					L"23.- Derecha, Arriba, Abajo, Izquierda (🢂, 🢁, 🢃, 🢀)", L"24.- Derecha, Arriba, Izquierda, Abajo (🢂, 🢁, 🢀, 🢃)"
 			});
-			this->comboBox1->Location = System::Drawing::Point(165, 29);
-			this->comboBox1->Name = L"comboBox1";
-			this->comboBox1->Size = System::Drawing::Size(189, 24);
-			this->comboBox1->TabIndex = 40;
+			this->comboBox_Algoritmos->Location = System::Drawing::Point(165, 29);
+			this->comboBox_Algoritmos->Name = L"comboBox_Algoritmos";
+			this->comboBox_Algoritmos->Size = System::Drawing::Size(189, 24);
+			this->comboBox_Algoritmos->TabIndex = 40;
 			// 
 			// button1
 			// 
@@ -479,7 +484,7 @@ namespace AImap {
 			this->ClientSize = System::Drawing::Size(1334, 868);
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->label9);
-			this->Controls->Add(this->comboBox1);
+			this->Controls->Add(this->comboBox_Algoritmos);
 			this->Controls->Add(this->label7);
 			this->Controls->Add(this->comboBox_Priority);
 			this->Controls->Add(this->label5);
@@ -1346,11 +1351,10 @@ namespace AImap {
 		void unlockCell(Point point) {
 			//Point point = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
 			Cell cell;
-			Vertice *origen, *destino;
+			Vertice *origen, *destinoArriba, *destinoAbajo, *destinoIzquierda, *destinoDerecha, *destino;
 			Ground ground;
+			origen = destinoArriba = destinoAbajo = destinoIzquierda = destinoDerecha = nullptr;
 			point = Point(point.X / CELL_MAX_SIZE, point.Y / CELL_MAX_SIZE);
-
-			Point newPoint = Point(point.X, point.Y + 1);
 
 			cell.setPositionX(point.X);
 			cell.setPositionY(point.Y);
@@ -1359,6 +1363,7 @@ namespace AImap {
 				origen = arbol->existeVertice(cell);
 			}
 
+			Point newPoint = Point(point.X, point.Y + 1);
 			//MessageBox::Show("Finding in: " + newPoint);
 			if (isValidPositionPanelMap(newPoint)) {
 				cell.setPositionX(newPoint.X);
@@ -1366,12 +1371,10 @@ namespace AImap {
 				if (listCell->findPositionXY(cell) != nullptr) {
 					cell = listCell->findPositionXY(cell)->getData();
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
+
 					arbol->insertaVertice(cell);
-					ground.setId(cell.getIdGround());
-					if (!arbol->existeArista(origen, destino)) {
-						destino = arbol->existeVertice(cell);
-						arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
-					}
+					destinoArriba = arbol->existeVertice(cell);
+					
 					//arbol->insertaVertice(listCell-);
 				}
 			}
@@ -1383,12 +1386,9 @@ namespace AImap {
 				if (listCell->findPositionXY(cell) != nullptr) {
 					cell = listCell->findPositionXY(cell)->getData();
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
+
 					arbol->insertaVertice(cell);
-					ground.setId(cell.getIdGround());
-					if (!arbol->existeArista(origen, destino)) {
-						destino = arbol->existeVertice(cell);
-						arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
-					}
+					destinoAbajo = arbol->existeVertice(cell);
 				}
 			}
 
@@ -1399,12 +1399,9 @@ namespace AImap {
 				if (listCell->findPositionXY(cell) != nullptr) {
 					cell = listCell->findPositionXY(cell)->getData();
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
+					
 					arbol->insertaVertice(cell);
-					ground.setId(cell.getIdGround());
-					if (!arbol->existeArista(origen, destino)) {
-						destino = arbol->existeVertice(cell);
-						arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
-					}
+					destinoDerecha = arbol->existeVertice(cell);
 				}
 			}
 			newPoint = Point(point.X - 1, point.Y);
@@ -1414,14 +1411,72 @@ namespace AImap {
 				if (listCell->findPositionXY(cell) != nullptr) {
 					cell = listCell->findPositionXY(cell)->getData();
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
+					
 					arbol->insertaVertice(cell);
-					ground.setId(cell.getIdGround());
-					if (!arbol->existeArista(origen, destino)) {
-						destino = arbol->existeVertice(cell);
-						arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
-					}
+					destinoIzquierda = arbol->existeVertice(cell);
 				}
 			}
+
+			for (int i = 0; i < 4; i++) {
+				if (priority[i] == "Arriba") {
+					destino = destinoArriba;
+					ground.setId(cell.getIdGround());
+					MessageBox::Show("Arriba");
+				}
+				else if (priority[i] == "Abajo") {
+					destino = destinoAbajo;
+					ground.setId(cell.getIdGround());
+					MessageBox::Show("Abajo");
+				}
+				else if (priority[i] == "Derecha") {
+					destino = destinoDerecha;
+					ground.setId(cell.getIdGround());
+					MessageBox::Show("Derecha");
+				}
+				else if (priority[i] == "Izquierda") {
+					destino = destinoIzquierda;
+					ground.setId(cell.getIdGround());
+					MessageBox::Show("izquierda");
+				}
+				else {
+					MessageBox::Show("No obteniendo destino prioridad");
+				}
+				//origen->elemento.getName();
+				//MessageBox::Show("Insertando Origen: " + "hi");
+				if (!arbol->existeArista(origen,destino)) {
+					arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
+					}
+					
+			}
+			
+		}
+
+		void createArrayPriority() {
+			arrayPriority = gcnew cli::array<String^>(24);
+			arrayPriority[0] = "Abajo,Izquierda,Arriba,Derecha,";
+			arrayPriority[1] = "Abajo,Izquierda,Derecha,Arriba,"; 
+			arrayPriority[2] = "Abajo,Arriba,Derecha,Izquierda,"; 
+			arrayPriority[3] = "Abajo,Arriba,Izquierda,Derecha,";
+			arrayPriority[4] = "Abajo,Derecha,Izquierda,Arriba,"; 
+			arrayPriority[5] = "Abajo,Derecha,Arriba,Izquierda,"; 
+			arrayPriority[6] = "Izquierda,Arriba,Derecha,Abajo,";
+			arrayPriority[7] = "Izquierda,Arriba,Abajo,Derecha,"; 
+			arrayPriority[8] = "Izquierda,Derecha,Abajo,Arriba,"; 
+			arrayPriority[9] = "Izquierda,Derecha,Arriba,Abajo,";
+			arrayPriority[10] = "Izquierda,Abajo,Arriba,Derecha,"; 
+			arrayPriority[11] = "Izquierda,Abajo,Derecha,Arriba,"; 
+			arrayPriority[12] = "Arriba,Derecha,Abajo,Izquierda,";
+			arrayPriority[13] = "Arriba,Derecha,Izquierda,Abajo,"; 
+			arrayPriority[14] = "Arriba,Abajo,Derecha,Izquierda,"; 
+			arrayPriority[15] = "Arriba,Abajo,Izquierda,Derecha,";
+			arrayPriority[16] = "Arriba,Izquierda,Derecha,Abajo,"; 
+			arrayPriority[17] = "Arriba,Izquierda,Abajo,Derecha,"; 
+			arrayPriority[18] = "Derecha,Abajo,Izquierda,Arriba,";
+			arrayPriority[19] = "Derecha,Abajo,Arriba,Izquierda,"; 
+			arrayPriority[20] = "Derecha,Izquierda,Arriba,Abajo,"; 
+			arrayPriority[21] = "Derecha,Izquierda,Abajo,Arriba,";
+			arrayPriority[22] = "Derecha,Arriba,Abajo,Izquierda,";
+			arrayPriority[23] = "Derecha,Arriba,Izquierda,Abajo,";
 		}
 
 		// //////////////////////////////////////////////////////// HERRAMIENTAS ////////////////////////////////////////////////////////////// //
@@ -1849,6 +1904,7 @@ namespace AImap {
 		Point point;
 		Point newPoint;
 		Cell cell;
+		priority = gcnew cli::array<String^>(4);
 		
 		//pictureBox_Start->SendToBack();
 		panelMap->SendToBack();
@@ -1860,6 +1916,14 @@ namespace AImap {
 			//panelMap_Paint_1(panelMap, panelMap->InvokePaint);
 			panelMap->Refresh();
 			pictureBox_Player->Location = pictureBox_Start->Location;
+
+			priority = arrayPriority[comboBox_Priority->SelectedIndex]->Split(',');
+			String ^str;
+			for (int i = 0; i < 4; i++) {
+				str += priority[i] + ",";
+			}
+			//MessageBox::Show("Array: " + arrayPriority[comboBox_Priority->SelectedIndex]);
+			//MessageBox::Show("ComboBox: "+ comboBox_Priority->SelectedIndex.ToString() + str);
 
 			point = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
 			newPoint = Point(point.X / CELL_MAX_SIZE, point.Y / CELL_MAX_SIZE);
@@ -1878,6 +1942,8 @@ namespace AImap {
 			setVisit(point);
 			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
 			textBox1->Focus();
+			
+
 		}
 		//panelMap->Focus();
 		
