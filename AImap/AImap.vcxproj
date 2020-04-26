@@ -139,6 +139,7 @@
     <ClCompile Include="MenuMap.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="arbol.h" />
     <ClInclude Include="arrayclass.h" />
     <ClInclude Include="cell.h" />
     <ClInclude Include="collection.h" />

@@ -11,6 +11,7 @@ class Cell {
 		int positionX;
 		int positionY;
 		int lastVisitPosition = 0;
+		bool isKnown = false;
 
 	public:
 
@@ -23,17 +24,25 @@ class Cell {
 		std::string getVisitCounter(){
 			return visitCounter;
 		}
-
 		int getPositionX() {
 			return positionX;
 		}
-
 		int getPositionY() {
 			return positionY;
 		}
-
 		int getLastVisitPosition() {
 			return lastVisitPosition;
+		}
+		bool getIsKnown() {
+			return isKnown;
+		}
+		std::string getName() {
+			std::stringstream toStr;
+			std::string str;
+			str.push_back('A' + positionX);
+			toStr << positionY;
+			str += "," + toStr.str();
+			return str;
 		}
 
 		void setId(const int& idX) {
@@ -63,6 +72,10 @@ class Cell {
 			positionY = positionYY;
 		}
 
+		void setIsKnown(const bool& isKnownX) {
+			isKnown = isKnownX;
+		}
+
 		Cell& operator =(const Cell& c){
 			id = c.id;
 			idGround = c.idGround;
@@ -71,6 +84,7 @@ class Cell {
 			positionX = c.positionX;
 			positionY = c.positionY;
 			lastVisitPosition = c.lastVisitPosition;
+			isKnown = c.isKnown;
 
 			return *this;
 		}
