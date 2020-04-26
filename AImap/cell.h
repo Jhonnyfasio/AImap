@@ -41,7 +41,7 @@ class Cell {
 			std::string str;
 			str.push_back('A' + positionX);
 			toStr << (positionY+1);
-			str += "," + toStr.str();
+			str ="("+str+ "," + toStr.str()+")";
 			return str;
 		}
 

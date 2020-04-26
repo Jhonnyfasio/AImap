@@ -7,6 +7,7 @@
 class Arista;
 
 class Vertice {
+public:
 	Vertice *sigVertice;
 	Arista *listaAdy;
 	Cell elemento;
@@ -77,7 +78,7 @@ public:
 
 		if (Vacio()) {
 			ancla = nuevoVertice;
-			System::Windows::Forms::MessageBox::Show("Insertando Vacio: " + System::Char::ToString('A' + elem.getPositionX()) + "," + (elem.getPositionY() + 1).ToString());
+			//System::Windows::Forms::MessageBox::Show("Insertando Vacio: " + System::Char::ToString('A' + elem.getPositionX()) + "," + (elem.getPositionY() + 1).ToString());
 		}
 		else {
 			if (existeVertice(elem) == nullptr) {
@@ -87,7 +88,7 @@ public:
 					aux = aux->sigVertice;
 				}
 			
-				System::Windows::Forms::MessageBox::Show("Insertando: " + System::Char::ToString('A' + elem.getPositionX()) + ","+(elem.getPositionY()+1).ToString());
+				//System::Windows::Forms::MessageBox::Show("Insertando: " + System::Char::ToString('A' + elem.getPositionX()) + ","+(elem.getPositionY()+1).ToString());
 				aux->sigVertice = nuevoVertice;
 			}
 		}
@@ -117,38 +118,72 @@ public:
 		}
 	}
 
-	std::string mostrarListaAdyacencia() {
+	/*std::string mostrarListaAdyacencia() {
 		Vertice *verticeAux;
 		Arista *aristaAux;
 		std::string cadenaListaAdy;
 		std::stringstream toStr;
 		
 		verticeAux = ancla;
-
+		System::Windows::Forms::MessageBox::Show(Tamanio().ToString());
 		while (verticeAux != nullptr) {
-			cadenaListaAdy += verticeAux->elemento.getName();
+			cadenaListaAdy += verticeAux->elemento.getName()+"->";
 			aristaAux = verticeAux->listaAdy;
 
 			while (aristaAux != nullptr) {
 				toStr.str("");
 				if (aristaAux->sigArista == nullptr) {
 					toStr << aristaAux->peso;
-					cadenaListaAdy += verticeAux->elemento.getName() + ':' + toStr.str();
+					cadenaListaAdy += aristaAux->verticePertenece->elemento.getName() + ':' + toStr.str();
 				}
 				else {
 					toStr << aristaAux->peso;
-					cadenaListaAdy += verticeAux->elemento.getName() + ':' + toStr.str();
-					cadenaListaAdy += '->';
+					cadenaListaAdy += aristaAux->verticePertenece->elemento.getName() + ':' + toStr.str();
+					cadenaListaAdy += "->";
 				}
 				aristaAux = aristaAux->sigArista;
 			}
 
 			verticeAux = verticeAux->sigVertice;
 			cadenaListaAdy += '\n';
-			return cadenaListaAdy;
 		}
-	}
+		return cadenaListaAdy;
+	}*/
 
+	std::string mostrarListaAdyacencia() {
+		Vertice *verticeAux;
+		Arista *aristaAux;
+		std::string cadenaListaAdy;
+		std::stringstream toStr;
+
+		verticeAux = ancla;
+
+		while (verticeAux != nullptr) {
+			cadenaListaAdy += verticeAux->elemento.getName()+"->";
+			aristaAux = verticeAux->listaAdy;
+
+			while (aristaAux != nullptr) {
+				toStr.str("");
+				if (aristaAux->sigArista == nullptr) {
+					toStr << aristaAux->peso;
+					//cadenaListaAdy += verticeAux->elemento.getName() + ':' + toStr.str();
+					cadenaListaAdy += aristaAux->verticePertenece->elemento.getName() + ':' + toStr.str();
+				}
+				else {
+					toStr << aristaAux->peso;
+					//cadenaListaAdy += verticeAux->elemento.getName() + ':' + toStr.str();
+					cadenaListaAdy += aristaAux->verticePertenece->elemento.getName() + ':' + toStr.str();
+					cadenaListaAdy += "->";
+				}
+				aristaAux = aristaAux->sigArista;
+			}
+
+			verticeAux = verticeAux->sigVertice;
+			cadenaListaAdy += '\n';
+		}
+		return cadenaListaAdy;
+	}
+	
 	void eliminarArista(Vertice* origen, Vertice* destino) {
 		int band = 0;
 		Arista *actual, *anterior;

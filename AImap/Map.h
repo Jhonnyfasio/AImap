@@ -1352,7 +1352,9 @@ namespace AImap {
 			//Point point = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
 			Cell cell;
 			Vertice *origen, *destinoArriba, *destinoAbajo, *destinoIzquierda, *destinoDerecha, *destino;
-			Ground ground;
+			Ground ground, groundArriba, groundAbajo, groundIzquierda, groundDerecha;
+			String ^string;
+
 			origen = destinoArriba = destinoAbajo = destinoIzquierda = destinoDerecha = nullptr;
 			point = Point(point.X / CELL_MAX_SIZE, point.Y / CELL_MAX_SIZE);
 
@@ -1363,6 +1365,7 @@ namespace AImap {
 				origen = arbol->existeVertice(cell);
 			}
 
+			// Valida el desplace hacia abajo
 			Point newPoint = Point(point.X, point.Y + 1);
 			//MessageBox::Show("Finding in: " + newPoint);
 			if (isValidPositionPanelMap(newPoint)) {
@@ -1372,13 +1375,15 @@ namespace AImap {
 					cell = listCell->findPositionXY(cell)->getData();
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
 
+					groundAbajo.setId(cell.getIdGround());
 					arbol->insertaVertice(cell);
-					destinoArriba = arbol->existeVertice(cell);
+					destinoAbajo = arbol->existeVertice(cell);
 					
 					//arbol->insertaVertice(listCell-);
 				}
 			}
 
+			// Valida el desplace hacia arriba
 			newPoint = Point(point.X, point.Y - 1);
 			if (isValidPositionPanelMap(newPoint)) {
 				cell.setPositionX(newPoint.X);
@@ -1387,11 +1392,13 @@ namespace AImap {
 					cell = listCell->findPositionXY(cell)->getData();
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
 
+					groundArriba.setId(cell.getIdGround());
 					arbol->insertaVertice(cell);
-					destinoAbajo = arbol->existeVertice(cell);
+					destinoArriba = arbol->existeVertice(cell);
 				}
 			}
 
+			// Valida el desplace hacia la derecha
 			newPoint = Point(point.X + 1, point.Y);
 			if (isValidPositionPanelMap(newPoint)) {
 				cell.setPositionX(newPoint.X);
@@ -1400,10 +1407,13 @@ namespace AImap {
 					cell = listCell->findPositionXY(cell)->getData();
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
 					
+					groundDerecha.setId(cell.getIdGround());
 					arbol->insertaVertice(cell);
 					destinoDerecha = arbol->existeVertice(cell);
 				}
 			}
+
+			//Valida el desplace hacia la izquierda
 			newPoint = Point(point.X - 1, point.Y);
 			if (isValidPositionPanelMap(newPoint)) {
 				cell.setPositionX(newPoint.X);
@@ -1412,6 +1422,7 @@ namespace AImap {
 					cell = listCell->findPositionXY(cell)->getData();
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
 					
+					groundIzquierda.setId(cell.getIdGround());
 					arbol->insertaVertice(cell);
 					destinoIzquierda = arbol->existeVertice(cell);
 				}
@@ -1420,30 +1431,33 @@ namespace AImap {
 			for (int i = 0; i < 4; i++) {
 				if (priority[i] == "Arriba") {
 					destino = destinoArriba;
-					ground.setId(cell.getIdGround());
-					MessageBox::Show("Arriba");
+					ground = groundArriba;
+					//MessageBox::Show("Arriba");
 				}
 				else if (priority[i] == "Abajo") {
 					destino = destinoAbajo;
-					ground.setId(cell.getIdGround());
-					MessageBox::Show("Abajo");
+					ground = groundAbajo;
+					//MessageBox::Show("Abajo");
 				}
 				else if (priority[i] == "Derecha") {
 					destino = destinoDerecha;
-					ground.setId(cell.getIdGround());
-					MessageBox::Show("Derecha");
+					ground = groundDerecha;
+					//MessageBox::Show("Derecha");
 				}
 				else if (priority[i] == "Izquierda") {
 					destino = destinoIzquierda;
-					ground.setId(cell.getIdGround());
-					MessageBox::Show("izquierda");
+					ground = groundIzquierda;
+					//MessageBox::Show("izquierda");
 				}
 				else {
-					MessageBox::Show("No obteniendo destino prioridad");
+					//MessageBox::Show("No obteniendo destino prioridad");
 				}
 				//origen->elemento.getName();
 				//MessageBox::Show("Insertando Origen: " + "hi");
-				if (!arbol->existeArista(origen,destino)) {
+				
+				if (destino != nullptr && !arbol->existeArista(origen,destino)) {
+					//MessageBox::Show("Añandiendo Origen: " + gcnew String(origen->elemento.getName().c_str()) + ", Destino: "+ 
+						//gcnew String(destino->elemento.getName().c_str()));
 					arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
 					}
 					
