@@ -264,7 +264,7 @@ namespace AImap {
 			this->panelMap->AllowDrop = true;
 			this->panelMap->AutoSize = true;
 			this->panelMap->BackColor = System::Drawing::Color::Silver;
-			this->panelMap->Location = System::Drawing::Point(26, 110);
+			this->panelMap->Location = System::Drawing::Point(26, 130);
 			this->panelMap->Name = L"panelMap";
 			this->panelMap->Size = System::Drawing::Size(750, 750);
 			this->panelMap->TabIndex = 14;
@@ -382,6 +382,7 @@ namespace AImap {
 			// 
 			// panelTree
 			// 
+			this->panelTree->BackColor = System::Drawing::Color::Silver;
 			this->panelTree->Location = System::Drawing::Point(800, 364);
 			this->panelTree->Name = L"panelTree";
 			this->panelTree->Size = System::Drawing::Size(522, 492);
@@ -420,7 +421,6 @@ namespace AImap {
 			this->comboBox_Priority->Name = L"comboBox_Priority";
 			this->comboBox_Priority->Size = System::Drawing::Size(316, 24);
 			this->comboBox_Priority->TabIndex = 38;
-			this->comboBox_Priority->SelectedIndex = 0;
 			// 
 			// label7
 			// 
@@ -524,12 +524,12 @@ namespace AImap {
 		}
 #pragma endregion
 		void UpdateGraphicsBuffer() {
-			BufferedGraphicsContext ^bufferContext = BufferedGraphicsManager::Current;
-			BufferedGraphics ^myBuffer;
+			//BufferedGraphicsContext ^bufferContext = BufferedGraphicsManager::Current;
+			//BufferedGraphics ^myBuffer;
 			//MessageBox::Show(panelMap->DoubleBuffered.ToString());
 			//panelMap->DoubleBuffered;
 			//graphicsBuffer = bufferContext->Allocate(g, System::Drawing::Rectangle(panelMap->Location,panelMap->Size));
-			graphicsBuffer = bufferContext->Allocate(this->CreateGraphics(), this->DisplayRectangle);
+			//graphicsBuffer = bufferContext->Allocate(this->CreateGraphics(), this->DisplayRectangle);
 			//g = graphicsBuffer->Graphics;
 		}
 
@@ -811,7 +811,7 @@ namespace AImap {
 				label->Size = System::Drawing::Size(20, 20);
 
 				label->Text = System::Char::ToString(letra++);
-				label->Location = Point(43 + (i * CELL_MAX_SIZE), 86);
+				label->Location = Point(43 + (i * CELL_MAX_SIZE), 110);
 				this->Controls->Add(label);
 			}
 			for (int j = 0; j < publicSizeHeightMax; j++) {
@@ -819,7 +819,7 @@ namespace AImap {
 				label->Size = System::Drawing::Size(20, 20);
 				label->TextAlign = System::Drawing::ContentAlignment::TopRight;
 				label->Text = (j + 1).ToString();
-				label->Location = Point(3, 125 + (j * CELL_MAX_SIZE));
+				label->Location = Point(3, 145 + (j * CELL_MAX_SIZE));
 				this->Controls->Add(label);
 			}
 		}
@@ -1493,6 +1493,51 @@ namespace AImap {
 			arrayPriority[23] = "Derecha,Arriba,Izquierda,Abajo,";
 		}
 
+		void moveTo(Cell cell) {
+			//pictureBox_Player->Location = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
+			//pictureBox_Player->Location = panelMap->PointToClient(Point(cell.getPositionX(), cell.getPositionY()));
+			
+		}
+
+		// //////////////////////////////////////////// ALGORTIMOS /////////////////////////////////////////////
+		std::string recorridoProfundidad(Cell elem) {
+			Vertice* orig(arbol->existeVertice(elem));
+
+			if (orig == nullptr) {
+				/// Error
+				return "El vertice origen no existe\n";
+			}
+
+			Collection<Vertice*> *pilaVertices = new Collection <Vertice*>;
+			Collection<Vertice*> *listVisitados = new Collection <Vertice*>;
+			Vertice* actual;
+			std::string result;
+
+			pilaVertices->push(orig);   /// Apilar el vértice origen.
+
+			while (!pilaVertices->isEmpty()) {         /// Trabajar mientras la pila no esté vacía.
+				actual = pilaVertices->pop();        ///Desapilar un vertice, sera el actual
+
+				if (listVisitados->findData(actual) == nullptr) {      ///Si el vertice no ha sido visitado
+					result += actual->elemento.getName() + ", ";              ///Se procesa
+
+					listVisitados->insertData(listVisitados->getLast(), actual);      ///colocar en visitados
+
+					Arista *aux;
+					aux = actual->listaAdy;
+
+					while (aux != nullptr) {        ///Recorrido de aristas para los vertices destino
+						if (listVisitados->findData(aux->verticePertenece) == nullptr) {        ///si no han sido visitados
+							pilaVertices->push(aux->verticePertenece);         ///apilar
+						}
+
+						aux = aux->sigArista;
+					}
+				}
+			}
+			return result;
+		}
+
 		// //////////////////////////////////////////////////////// HERRAMIENTAS ////////////////////////////////////////////////////////////// //
 
 		Ground *colorAux = new Ground();
@@ -1919,7 +1964,6 @@ namespace AImap {
 		Point newPoint;
 		Cell cell;
 		priority = gcnew cli::array<String^>(4);
-		
 		//pictureBox_Start->SendToBack();
 		panelMap->SendToBack();
 		
@@ -1928,8 +1972,12 @@ namespace AImap {
 			disableObject();
 			//drawMap(false);
 			//panelMap_Paint_1(panelMap, panelMap->InvokePaint);
-			panelMap->Refresh();
+			//panelMap->Refresh();
 			pictureBox_Player->Location = pictureBox_Start->Location;
+			//MessageBox::Show("hi");
+			//panelMap->Controls->Add(pictureBox_Player);
+			//pictureBox_Player->Location = panelMap->PointToClient(PointToScreen(pictureBox_Start->Location));
+			//MessageBox::Show("hi");
 
 			priority = arrayPriority[comboBox_Priority->SelectedIndex]->Split(',');
 			String ^str;

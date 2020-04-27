@@ -202,7 +202,7 @@ public:
 	}
 
 	Node* insertData(Node* p, const T& e) {
-		if (p != nullptr and !isValidPos(p)) {
+		if (p != nullptr && !isValidPos(p)) {
 			throw Exception("Invalid position, insert");
 		}
 

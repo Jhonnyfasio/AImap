@@ -16,6 +16,7 @@ public:
 };
 
 class Arista {
+public:
 	Arista *sigArista;
 	Vertice *verticePertenece;
 	float peso;
