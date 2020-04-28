@@ -11,6 +11,7 @@ public:
 	Vertice *sigVertice;
 	Arista *listaAdy;
 	Cell elemento;
+	int nivel = -1;
 
 	friend class Arbol;
 };
@@ -78,6 +79,7 @@ public:
 		nuevoVertice->listaAdy = nullptr;
 
 		if (Vacio()) {
+			nuevoVertice->nivel = 0;
 			ancla = nuevoVertice;
 			//System::Windows::Forms::MessageBox::Show("Insertando Vacio: " + System::Char::ToString('A' + elem.getPositionX()) + "," + (elem.getPositionY() + 1).ToString());
 		}
@@ -88,7 +90,7 @@ public:
 				while (aux->sigVertice != nullptr) {
 					aux = aux->sigVertice;
 				}
-			
+
 				//System::Windows::Forms::MessageBox::Show("Insertando: " + System::Char::ToString('A' + elem.getPositionX()) + ","+(elem.getPositionY()+1).ToString());
 				aux->sigVertice = nuevoVertice;
 			}
@@ -108,6 +110,9 @@ public:
 		if (aux == nullptr) {
 			origen->listaAdy = nuevaArista;
 			nuevaArista->verticePertenece = destino;
+			if (destino->nivel == -1) {
+				destino->nivel = origen->nivel + 1;
+			}
 		}
 		else {
 			while (aux->sigArista != nullptr) {
@@ -116,6 +121,9 @@ public:
 
 			aux->sigArista = nuevaArista;
 			nuevaArista->verticePertenece = destino;
+			if (destino->nivel == -1) {
+				destino->nivel = origen->nivel + 1;
+			}
 		}
 	}
 
@@ -124,7 +132,7 @@ public:
 		Arista *aristaAux;
 		std::string cadenaListaAdy;
 		std::stringstream toStr;
-		
+
 		verticeAux = ancla;
 		System::Windows::Forms::MessageBox::Show(Tamanio().ToString());
 		while (verticeAux != nullptr) {
@@ -156,23 +164,25 @@ public:
 		Arista *aristaAux;
 		std::string cadenaListaAdy;
 		std::stringstream toStr;
+		std::stringstream toStr2;       //Agregado para mostrar nivel
 
 		verticeAux = ancla;
 
 		while (verticeAux != nullptr) {
-			cadenaListaAdy += verticeAux->elemento.getName()+"->";
+			toStr2.str("");              //Agregado para mostrar nivel
+			//cadenaListaAdy += verticeAux->elemento.getName()+"->";     //Anteriormente...
+			toStr2 << verticeAux->nivel;  //Agregado para mostrar nivel
+			cadenaListaAdy += verticeAux->elemento.getName() + "(" + toStr2.str() + ")" + "->";  //Agregado para mostrar nivel
 			aristaAux = verticeAux->listaAdy;
 
 			while (aristaAux != nullptr) {
 				toStr.str("");
 				if (aristaAux->sigArista == nullptr) {
 					toStr << aristaAux->peso;
-					//cadenaListaAdy += verticeAux->elemento.getName() + ':' + toStr.str();
 					cadenaListaAdy += aristaAux->verticePertenece->elemento.getName() + ':' + toStr.str();
 				}
 				else {
 					toStr << aristaAux->peso;
-					//cadenaListaAdy += verticeAux->elemento.getName() + ':' + toStr.str();
 					cadenaListaAdy += aristaAux->verticePertenece->elemento.getName() + ':' + toStr.str();
 					cadenaListaAdy += "->";
 				}
@@ -184,7 +194,7 @@ public:
 		}
 		return cadenaListaAdy;
 	}
-	
+
 	void eliminarArista(Vertice* origen, Vertice* destino) {
 		int band = 0;
 		Arista *actual, *anterior;
@@ -290,4 +300,108 @@ public:
 		}
 		return false;
 	}
+
+	//Cantidad de hojas en todo el arbol
+	int hojasTotal() {
+		Vertice *verticeAux;
+		Arista *aristaAux;
+		int cantHojas = 0;
+
+		verticeAux = ancla;
+
+		while (verticeAux != nullptr) {
+			aristaAux = verticeAux->listaAdy;
+
+			if (aristaAux == nullptr) {
+				cantHojas++;
+			}
+			verticeAux = verticeAux->sigVertice;
+		}
+		return cantHojas;
+	}
+
+	///Cuantas hojas tiene un vertice
+	int cantHojas(Vertice* origen) {
+		Vertice *verticeAux;
+		Arista *aristaAux;
+		int cantHojas = 0;
+
+		verticeAux = origen;
+
+		if (verticeAux != nullptr) {
+			aristaAux = verticeAux->listaAdy;
+
+			while (aristaAux != nullptr) {
+
+				if (aristaAux->verticePertenece->listaAdy == nullptr) {
+					cantHojas++;
+				}
+				aristaAux = aristaAux->sigArista;
+			}
+		}
+		return cantHojas;
+	}
+
+	//Cuantos niveles hay desde un vertice 
+	int cantNiveles(Vertice* origen) {
+		int totalNivel, cantNivel = 0;
+
+		totalNivel = nivelTotal();
+
+		cantNivel = totalNivel - origen->nivel;
+
+		return cantNivel;
+	}
+
+	int nivelTotal() {    //Profundidad
+		Vertice *aux;
+		int nivelMax = 0;
+
+		aux = ancla;
+		while (aux != nullptr) {
+			if (aux->nivel > nivelMax) {
+				nivelMax = aux->nivel;
+			}
+			aux = aux->sigVertice;
+		}
+		return nivelMax;
+	}
+
+	Vertice* anterior(Vertice* toFind) {
+		Vertice *verticeAux, *aux;
+		int cantHojas = 0;
+
+		verticeAux = ancla;
+
+		while (verticeAux != nullptr) {
+
+			if (existeArista(verticeAux, toFind)) {
+				return verticeAux;
+			}
+		verticeAux = verticeAux->sigVertice;
+		}
+		return nullptr;
+	}
+
+	//En un nivel especifico cuantos vertices hay
+	int cantidadVertices(int nivel) {
+		Vertice *aux;
+		int cantVertices = 0;
+		bool existeNivel = false;
+
+		aux = ancla;
+		while (aux != nullptr) {
+			if (aux->nivel == nivel) {
+				existeNivel = true;
+				cantVertices++;
+			}
+			aux = aux->sigVertice;
+		}
+		if (!existeNivel) {
+			cantVertices = -1;
+		}
+		return cantVertices;
+	}
+
+
 };

@@ -69,6 +69,7 @@ namespace AImap {
 	private: System::Windows::Forms::Label^  label7;
 	private: System::Windows::Forms::Label^  label9;
 	private: System::Windows::Forms::ComboBox^  comboBox_Algoritmos;
+	private: System::Windows::Forms::Timer^ timer1;
 
 	private: BufferedGraphics ^graphicsBuffer;
 
@@ -78,6 +79,9 @@ namespace AImap {
 	Collection<Ground> *listColorInUse;
 	Collection<ColorClass> *listColor;
 	Collection<CostoJugador> *listCostoJugador;
+	Collection<Vertice*> *pilaVertices;
+	Collection<Vertice*> *listVisitados;
+	Collection<Vertice*> *path;
 	Arbol *arbol;
 	cli::array<ComboBox^>^ arrayComboBox;
 	cli::array<TextBox^>^ arrayTextBox;
@@ -89,6 +93,7 @@ namespace AImap {
 	Point pictureBoxStarPoint, pictureBoxGoalPoint, pictureBoxPlayerPoint;
 	Graphics ^g;
 
+
 	int pointGoal = -1;
 	int pointStart = -1;
 	int publicSizeHeightMax;
@@ -96,6 +101,8 @@ namespace AImap {
 	int visit = 0;
 	bool isPlaying = false;
 	private: System::Windows::Forms::Button^  button1;
+	private: System::Windows::Forms::TextBox^  textBox2;
+	private: System::Windows::Forms::TextBox^  textBox3;
 			 bool isCorruptFile = false;
 
 	public:
@@ -115,15 +122,17 @@ namespace AImap {
 			listPlayer = new Collection<Player>;
 			listColor = new Collection<ColorClass>;
 			listCostoJugador = new Collection<CostoJugador>;
-			arbol = new Arbol();
+			
 			
 			fileNameMapGlobal = fileNameMap;
 
 			pictureBoxStarPoint = pictureBox_Start->Location;
 			pictureBoxGoalPoint = pictureBox_Goal->Location;
 			pictureBoxPlayerPoint = pictureBox_Player->Location;
-
+			
 			createArrayPriority();
+			comboBox_Priority->SelectedIndex = 0;
+			comboBox_Algoritmos->SelectedIndex = 1;
 			//UpdateGraphicsBuffer();
 		}
 
@@ -181,6 +190,9 @@ namespace AImap {
 			this->label9 = (gcnew System::Windows::Forms::Label());
 			this->comboBox_Algoritmos = (gcnew System::Windows::Forms::ComboBox());
 			this->button1 = (gcnew System::Windows::Forms::Button());
+			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
+			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
+			this->textBox3 = (gcnew System::Windows::Forms::TextBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_PlayerIcon))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->BeginInit();
@@ -242,12 +254,11 @@ namespace AImap {
 			// 
 			// textBox1
 			// 
-			this->textBox1->Location = System::Drawing::Point(489, 40);
+			this->textBox1->Location = System::Drawing::Point(381, 40);
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->ReadOnly = true;
 			this->textBox1->Size = System::Drawing::Size(87, 20);
 			this->textBox1->TabIndex = 16;
-			this->textBox1->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
 			// 
 			// txtPrueba2
 			// 
@@ -449,17 +460,7 @@ namespace AImap {
 			this->comboBox_Algoritmos->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular,
 				System::Drawing::GraphicsUnit::Point, static_cast<System::Byte>(0)));
 			this->comboBox_Algoritmos->FormattingEnabled = true;
-			this->comboBox_Algoritmos->Items->AddRange(gcnew cli::array< System::Object^  >(24) {
-				L"01.- Abajo, Izquierda, Arriba, Derecha (🢃, 🢀, 🢁, 🢂)",
-					L"02.- Abajo, Izquierda, Derecha, Arriba (🢃, 🢀, 🢂, 🢁)", L"03.- Abajo, Arriba, Derecha, Izquierda (🢃, 🢁, 🢂, 🢀)", L"04.- Abajo, Arriba, Izquierda, Derecha (🢃, 🢁, 🢀, 🢂)",
-					L"05.- Abajo, Derecha, Izquierda, Arriba (🢃, 🢂, 🢀, 🢁)", L"06.- Abajo, Derecha, Arriba, Izquierda (🢃, 🢂, 🢁, 🢀)", L"07.- Izquierda, Arriba, Derecha, Abajo (🢀, 🢁, 🢂, 🢃)",
-					L"08.- Izquierda, Arriba, Abajo, Derecha (🢀, 🢁, 🢃, 🢂)", L"09.- Izquierda, Derecha, Abajo, Arriba (🢀, 🢂, 🢃, 🢁)", L"10.- Izquierda, Derecha, Arriba, Abajo (🢀, 🢂, 🢁, 🢃)",
-					L"11.- Izquierda, Abajo, Arriba, Derecha (🢀, 🢃, 🢁, 🢂)", L"12.- Izquierda, Abajo, Derecha, Arriba (🢀, 🢃, 🢂, 🢁)", L"13.- Arriba, Derecha, Abajo, Izquierda (🢁, 🢂, 🢃, 🢀)",
-					L"14.- Arriba, Derecha, Izquierda, Abajo (🢁, 🢂, 🢀, 🢃)", L"15.- Arriba, Abajo, Derecha, Izquierda (🢁, 🢃, 🢂, 🢀)", L"16.- Arriba, Abajo, Izquierda, Derecha (🢁, 🢃, 🢀, 🢂)",
-					L"17.- Arriba, Izquierda, Derecha, Abajo (🢁, 🢀, 🢂, 🢃)", L"18.- Arriba, Izquierda, Abajo, Derecha (🢁, 🢀, 🢃, 🢂)", L"19.- Derecha, Abajo, Izquierda, Arriba (🢂, 🢃, 🢀, 🢁)",
-					L"20.- Derecha, Abajo, Arriba, Izquierda (🢂, 🢃, 🢁, 🢀)", L"21.- Derecha, Izquierda, Arriba, Abajo (🢂, 🢀, 🢁, 🢃)", L"22.- Derecha, Izquierda, Abajo, Arriba (🢂, 🢀, 🢃, 🢁)",
-					L"23.- Derecha, Arriba, Abajo, Izquierda (🢂, 🢁, 🢃, 🢀)", L"24.- Derecha, Arriba, Izquierda, Abajo (🢂, 🢁, 🢀, 🢃)"
-			});
+			this->comboBox_Algoritmos->Items->AddRange(gcnew cli::array< System::Object^  >(2) { L"Manual", L"Algoritmo de Profundidad" });
 			this->comboBox_Algoritmos->Location = System::Drawing::Point(165, 29);
 			this->comboBox_Algoritmos->Name = L"comboBox_Algoritmos";
 			this->comboBox_Algoritmos->Size = System::Drawing::Size(189, 24);
@@ -475,6 +476,26 @@ namespace AImap {
 			this->button1->UseVisualStyleBackColor = true;
 			this->button1->Click += gcnew System::EventHandler(this, &Map::button1_Click);
 			// 
+			// timer1
+			// 
+			this->timer1->Tick += gcnew System::EventHandler(this, &Map::timer1_Tick);
+			// 
+			// textBox2
+			// 
+			this->textBox2->Location = System::Drawing::Point(570, 87);
+			this->textBox2->Name = L"textBox2";
+			this->textBox2->ReadOnly = true;
+			this->textBox2->Size = System::Drawing::Size(206, 20);
+			this->textBox2->TabIndex = 43;
+			// 
+			// textBox3
+			// 
+			this->textBox3->Location = System::Drawing::Point(1039, 225);
+			this->textBox3->Name = L"textBox3";
+			this->textBox3->ReadOnly = true;
+			this->textBox3->Size = System::Drawing::Size(206, 20);
+			this->textBox3->TabIndex = 44;
+			// 
 			// Map
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -482,6 +503,8 @@ namespace AImap {
 			this->AutoSize = true;
 			this->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->ClientSize = System::Drawing::Size(1334, 868);
+			this->Controls->Add(this->textBox3);
+			this->Controls->Add(this->textBox2);
 			this->Controls->Add(this->button1);
 			this->Controls->Add(this->label9);
 			this->Controls->Add(this->comboBox_Algoritmos);
@@ -513,7 +536,6 @@ namespace AImap {
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterScreen;
 			this->Text = L"Map";
 			this->Shown += gcnew System::EventHandler(this, &Map::Map_Shown);
-			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_PlayerIcon))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->EndInit();
@@ -523,6 +545,7 @@ namespace AImap {
 
 		}
 #pragma endregion
+
 		void UpdateGraphicsBuffer() {
 			//BufferedGraphicsContext ^bufferContext = BufferedGraphicsManager::Current;
 			//BufferedGraphics ^myBuffer;
@@ -1350,7 +1373,7 @@ namespace AImap {
 
 		void unlockCell(Point point) {
 			//Point point = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
-			Cell cell;
+			Cell cell, cellOrigen, cellArriba, cellAbajo, cellIzquierda, cellDerecha;
 			Vertice *origen, *destinoArriba, *destinoAbajo, *destinoIzquierda, *destinoDerecha, *destino;
 			Ground ground, groundArriba, groundAbajo, groundIzquierda, groundDerecha;
 			String ^string;
@@ -1361,73 +1384,84 @@ namespace AImap {
 			cell.setPositionX(point.X);
 			cell.setPositionY(point.Y);
 			if (listCell->findPositionXY(cell) != nullptr) {
-				cell = listCell->findPositionXY(cell)->getData();
+				cellOrigen = cell = listCell->findPositionXY(cell)->getData();
 				origen = arbol->existeVertice(cell);
+				textBox3->Text = "Unlocking: " + point.ToString();
+				//moveTo(cell);
 			}
 
-			// Valida el desplace hacia abajo
+			// Valida la casilla hacia abajo
 			Point newPoint = Point(point.X, point.Y + 1);
 			//MessageBox::Show("Finding in: " + newPoint);
 			if (isValidPositionPanelMap(newPoint)) {
 				cell.setPositionX(newPoint.X);
 				cell.setPositionY(newPoint.Y);
-				if (listCell->findPositionXY(cell) != nullptr) {
+				if (listCell->findPositionXY(cell) != nullptr && !listCell->findPositionXY(cell)->getData().getIsKnown()) {
 					cell = listCell->findPositionXY(cell)->getData();
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
 
 					groundAbajo.setId(cell.getIdGround());
 					arbol->insertaVertice(cell);
-					destinoAbajo = arbol->existeVertice(cell);
-					
+					if (listGround->findData(groundAbajo)->getData().getIsValid()) {
+						destinoAbajo = arbol->existeVertice(cell);
+					}
 					//arbol->insertaVertice(listCell-);
 				}
 			}
 
-			// Valida el desplace hacia arriba
+			// Valida la casilla hacia arriba
 			newPoint = Point(point.X, point.Y - 1);
 			if (isValidPositionPanelMap(newPoint)) {
 				cell.setPositionX(newPoint.X);
 				cell.setPositionY(newPoint.Y);
-				if (listCell->findPositionXY(cell) != nullptr) {
+				if (listCell->findPositionXY(cell) != nullptr && !listCell->findPositionXY(cell)->getData().getIsKnown()) {
 					cell = listCell->findPositionXY(cell)->getData();
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
 
 					groundArriba.setId(cell.getIdGround());
 					arbol->insertaVertice(cell);
-					destinoArriba = arbol->existeVertice(cell);
+					if (listGround->findData(groundArriba)->getData().getIsValid()) {
+						destinoArriba = arbol->existeVertice(cell);
+					}
 				}
 			}
 
-			// Valida el desplace hacia la derecha
+			// Valida la casilla hacia la derecha
 			newPoint = Point(point.X + 1, point.Y);
 			if (isValidPositionPanelMap(newPoint)) {
 				cell.setPositionX(newPoint.X);
 				cell.setPositionY(newPoint.Y);
-				if (listCell->findPositionXY(cell) != nullptr) {
+				if (listCell->findPositionXY(cell) != nullptr && !listCell->findPositionXY(cell)->getData().getIsKnown()) {
 					cell = listCell->findPositionXY(cell)->getData();
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
 					
 					groundDerecha.setId(cell.getIdGround());
 					arbol->insertaVertice(cell);
-					destinoDerecha = arbol->existeVertice(cell);
+					if (listGround->findData(groundDerecha)->getData().getIsValid()) {
+						destinoDerecha = arbol->existeVertice(cell);
+					}
+					
 				}
 			}
 
-			//Valida el desplace hacia la izquierda
+			//Valida la casilla hacia la izquierda
 			newPoint = Point(point.X - 1, point.Y);
 			if (isValidPositionPanelMap(newPoint)) {
 				cell.setPositionX(newPoint.X);
 				cell.setPositionY(newPoint.Y);
-				if (listCell->findPositionXY(cell) != nullptr) {
+				if (listCell->findPositionXY(cell) != nullptr && !listCell->findPositionXY(cell)->getData().getIsKnown()) {
 					cell = listCell->findPositionXY(cell)->getData();
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
 					
 					groundIzquierda.setId(cell.getIdGround());
 					arbol->insertaVertice(cell);
-					destinoIzquierda = arbol->existeVertice(cell);
+					if (listGround->findData(groundIzquierda)->getData().getIsValid()) {
+						destinoIzquierda = arbol->existeVertice(cell);
+					}
+					
 				}
 			}
-
+			textBox3->Text = priority[0];
 			for (int i = 0; i < 4; i++) {
 				if (priority[i] == "Arriba") {
 					destino = destinoArriba;
@@ -1455,7 +1489,7 @@ namespace AImap {
 				//origen->elemento.getName();
 				//MessageBox::Show("Insertando Origen: " + "hi");
 				
-				if (destino != nullptr && !arbol->existeArista(origen,destino)) {
+				if (destino != nullptr && !arbol->existeArista(origen,destino) ) {
 					//MessageBox::Show("Añandiendo Origen: " + gcnew String(origen->elemento.getName().c_str()) + ", Destino: "+ 
 						//gcnew String(destino->elemento.getName().c_str()));
 					arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
@@ -1496,46 +1530,126 @@ namespace AImap {
 		void moveTo(Cell cell) {
 			//pictureBox_Player->Location = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
 			//pictureBox_Player->Location = panelMap->PointToClient(Point(cell.getPositionX(), cell.getPositionY()));
-			
+			/*MessageBox::Show("Algo: "+ panelMap->PointToClient(Point(cell.getPositionX() * CELL_MAX_SIZE + 5, cell.getPositionY() * CELL_MAX_SIZE + 5)).ToString()+
+				"Pos: " + cell.getPositionX() + ", "+ cell.getPositionY() + "\n" + 
+				PointToScreen(panelMap->PointToClient(Point(cell.getPositionX(),cell.getPositionY()))).ToString());
+			*/
+			//pictureBox_Player->Location = Point(cell.getPositionX() * CELL_MAX_SIZE + 5, cell.getPositionY() * CELL_MAX_SIZE + 5);
+			//Point point =panelMap->PointToClient(PointToScreen(Point(pictureBox_Player->Location)));
+			//point = Point(point.X / CELL_MAX_SIZE, point.Y / CELL_MAX_SIZE);
+			//textBox2->Text += "Puntos: (" + point.ToString() + "),(" + cell.getPositionX().ToString() + "," + cell.getPositionY().ToString() + ")";
+			moveEvent(Point(cell.getPositionX(), cell.getPositionY()));
+			/*if (point.X < cell.getPositionX()) {
+				//KeyDownEvent(Keys::Right);
+				moveEvent(point);
+				//textBox2->Text += "De(" + point.X.ToString()+","+cell.getPositionX().ToString()+"),";
+			}
+			else if (point.X > cell.getPositionX()) {
+				//KeyDownEvent(Keys::Left);
+				moveEvent(point);
+				///textBox2->Text += "Iz(" + point.X.ToString() + "," + cell.getPositionX().ToString() + "),";
+			}
+			else if (point.Y < cell.getPositionY()) {
+				//KeyDownEvent(Keys::Down);
+				moveEvent(point);
+				//textBox2->Text += "Ab(" + point.Y.ToString() + "," + cell.getPositionY().ToString() + "),";
+			}
+			else if (point.Y > cell.getPositionY()) {
+				//KeyDownEvent(Keys::Up);
+				moveEvent(point);
+				//textBox2->Text += "Ar(" + point.Y.ToString() + "," + cell.getPositionY().ToString() + "),";
+			}
+			else {
+
+			}*/
 		}
 
 		// //////////////////////////////////////////// ALGORTIMOS /////////////////////////////////////////////
-		std::string recorridoProfundidad(Cell elem) {
+		void A_Profundidad(Cell elem) {
+			timer1->Interval = 1000;
 			Vertice* orig(arbol->existeVertice(elem));
-
 			if (orig == nullptr) {
 				/// Error
-				return "El vertice origen no existe\n";
+				MessageBox::Show("El vertice origen no existe\n");
 			}
+			else {
+				pilaVertices = new Collection <Vertice*>;
+				listVisitados = new Collection <Vertice*>;
+				path = new Collection <Vertice*>;
+				pilaVertices->push(orig);   /// Apilar el vértice origen.
+				//MessageBox::Show("here");
+				textBox1->Text = "";
+				timer1->Start();
+			}
+			
+		}
 
-			Collection<Vertice*> *pilaVertices = new Collection <Vertice*>;
-			Collection<Vertice*> *listVisitados = new Collection <Vertice*>;
-			Vertice* actual;
+		void showPath(Vertice* final) {
+			Point point = panelMap->PointToClient(PointToScreen(pictureBox_Start->Location));
+			Vertice* inicial;
+			Cell cell;
+			String ^string;
+			point = Point(point.X / CELL_MAX_SIZE, point.Y / CELL_MAX_SIZE);
+			cell.setPositionX(point.X);
+			cell.setPositionY(point.Y);
+
+			cell = listCell->findPositionXY(cell)->getData();
+			inicial = arbol->existeVertice(cell);
+
+			path->push(final);
+			//textBox3->Text = "";
+			while (final != inicial) {
+				final = arbol->anterior(final);
+				//textBox3->Text += "1";
+				if (final != nullptr) {
+					path->push(final);
+				}
+			}
+			
+			while (!path->isEmpty()) {
+				string += gcnew String(path->pop()->elemento.getName().c_str()) + ",";
+			}
+			MessageBox::Show(string);
+		}
+
+		private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e) {
+			//std::string recorridoProfundidad(Cell elem) {
+			Vertice* actual, *pathActual;
+			Arista *aux;
 			std::string result;
-
-			pilaVertices->push(orig);   /// Apilar el vértice origen.
-
-			while (!pilaVertices->isEmpty()) {         /// Trabajar mientras la pila no esté vacía.
-				actual = pilaVertices->pop();        ///Desapilar un vertice, sera el actual
-
+			String ^str;
+			if (!pilaVertices->isEmpty()) {
+				//MessageBox::Show("here");
+				pathActual = actual = pilaVertices->pop();        ///Desapilar un vertice, sera el actual
 				if (listVisitados->findData(actual) == nullptr) {      ///Si el vertice no ha sido visitado
 					result += actual->elemento.getName() + ", ";              ///Se procesa
+					
+					str = gcnew String(actual->elemento.getName().c_str());
+					textBox1->Text += str;
+					listVisitados->insertData(actual);      ///colocar en visitados
+					moveTo(actual->elemento);
 
-					listVisitados->insertData(listVisitados->getLast(), actual);      ///colocar en visitados
-
-					Arista *aux;
+					
 					aux = actual->listaAdy;
 
 					while (aux != nullptr) {        ///Recorrido de aristas para los vertices destino
+						textBox3->Text += ",Push: ";
 						if (listVisitados->findData(aux->verticePertenece) == nullptr) {        ///si no han sido visitados
+							textBox3->Text += gcnew String(aux->verticePertenece->elemento.getName().c_str()) + ",";
 							pilaVertices->push(aux->verticePertenece);         ///apilar
 						}
-
 						aux = aux->sigArista;
 					}
 				}
 			}
-			return result;
+			else {
+				//MessageBox::Show("Empty");
+			}
+			//while (!pilaVertices->isEmpty()) {         /// Trabajar mientras la pila no esté vacía.
+			
+			//}
+			//return result;
+			//}
 		}
 
 		// //////////////////////////////////////////////////////// HERRAMIENTAS ////////////////////////////////////////////////////////////// //
@@ -1922,6 +2036,8 @@ namespace AImap {
 			else {
 				pictureBox->Location = pictureBoxStarPoint;
 			}
+			/*MessageBox::Show(
+				PointToClient(pictureBox_Start->Location).ToString());*/
 		}
 	}
 	
@@ -1978,7 +2094,7 @@ namespace AImap {
 			//panelMap->Controls->Add(pictureBox_Player);
 			//pictureBox_Player->Location = panelMap->PointToClient(PointToScreen(pictureBox_Start->Location));
 			//MessageBox::Show("hi");
-
+			arbol = new Arbol();
 			priority = arrayPriority[comboBox_Priority->SelectedIndex]->Split(',');
 			String ^str;
 			for (int i = 0; i < 4; i++) {
@@ -1993,8 +2109,9 @@ namespace AImap {
 				cell.setPositionX(newPoint.X);
 				cell.setPositionY(newPoint.Y);
 				if (listCell->findPositionXY(cell) != nullptr) {
-					cell = listCell->findPositionXY(cell)->getData();
+					
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
+					cell = listCell->findPositionXY(cell)->getData();
 					arbol->insertaVertice(cell);
 					//arbol->insertaVertice(listCell-);
 				}
@@ -2002,8 +2119,16 @@ namespace AImap {
 			unlockCell(point);
 			
 			setVisit(point);
-			this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
-			textBox1->Focus();
+			if (comboBox_Algoritmos->SelectedIndex == 0) {
+				this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
+				textBox1->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
+				textBox1->Focus();
+			}
+			else {
+				//MessageBox::Show("here");
+				A_Profundidad(cell);
+			}
+			
 			
 
 		}
@@ -2013,6 +2138,10 @@ namespace AImap {
 	
 	// Detectar el click de las teclas para mover el jugador
 	private: System::Void Map_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+		KeyDownEvent(e->KeyCode);
+	}
+	
+	private: void KeyDownEvent(Keys e) {
 		Point point = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
 		Point auxPoint = point;
 		Point auxAuxPoint = auxPoint;
@@ -2020,31 +2149,32 @@ namespace AImap {
 		stringstream toStr;
 		int locationX, locationY, intAux;
 		bool moved = false;
+		//MessageBox::Show(e.ToString());
 		if (pictureBox_Player->Location != pictureBox_Goal->Location) {
 			//FLECHA IZQUIERDA
-			if (e->KeyValue.ToString() == "37") {
+			if (e == Keys::Left) {
 				point.X = point.X - CELL_MAX_SIZE;
-				auxPoint= Point(point.X, auxPoint.Y);
+				auxPoint = Point(point.X, auxPoint.Y);
 				if (isValidGround(auxPoint) && isValidPositionPanelMap(point)) {
 					pictureBox_Player->Location = Point(pictureBox_Player->Location.X - CELL_MAX_SIZE,
 						pictureBox_Player->Location.Y);
-					
+
 					moved = true;
 				}
 			}
 			//FLECHA ARRIBA
-			else if (e->KeyValue.ToString() == "38") {
+			else if (e == Keys::Up) {
 				point.Y = point.Y - CELL_MAX_SIZE;
 				auxPoint = Point(auxPoint.X, point.Y);
 				if (isValidGround(auxPoint) && isValidPositionPanelMap(point)) {
 					pictureBox_Player->Location = Point(pictureBox_Player->Location.X,
 						pictureBox_Player->Location.Y - CELL_MAX_SIZE);
-					
+
 					moved = true;
 				}
 			}
 			//FLECHA ABAJO
-			else if (e->KeyValue.ToString() == "40") {
+			else if (e == Keys::Down) {
 				/*MessageBox::Show("LocX: " + locationX.ToString() + " LocY: " + locationY.ToString() + " - " +
 					pictureBox_Player->Location.Y + " - " + panelMap->MousePosition.Y);*/
 				point.Y = point.Y + CELL_MAX_SIZE;
@@ -2057,7 +2187,7 @@ namespace AImap {
 			}
 
 			//FLECHA DERECHA
-			else if (e->KeyValue.ToString() == "39") {
+			else if (e == Keys::Right) {
 				point.X = point.X + CELL_MAX_SIZE;
 				auxPoint = Point(point.X, auxPoint.Y);
 				if (isValidGround(auxPoint) && isValidPositionPanelMap(point)) {
@@ -2071,7 +2201,6 @@ namespace AImap {
 			}
 			if (moved) {
 				setVisit(auxPoint);
-			
 				unlockCell(panelMap->PointToClient(PointToScreen(pictureBox_Player->Location)));
 				//drawMap(false);
 				//panelMap_Paint_1(panelMap, panelMap->InvokePaint);
@@ -2085,6 +2214,52 @@ namespace AImap {
 		}
 	}
 	
+	// Mueve el jugador a una posición en específico.
+	void moveEvent(Point pointNext) {
+		Point pointActual = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
+		Point auxPoint = pointActual;
+		Point auxAuxPoint;
+		Cell cell;
+		stringstream toStr;
+		int locationX, locationY, intAux;
+		bool moved = false;
+
+		cell.setPositionX(pointNext.X);
+		cell.setPositionY(pointNext.Y);
+		pointActual = Point(pointActual.X / CELL_MAX_SIZE, pointActual.Y / CELL_MAX_SIZE);
+		textBox3->Text += gcnew String(listCell->findPositionXY(cell)->getData().getName().c_str())+":"+pointNext.ToString() + "," + pointActual.ToString();
+		auxPoint = Point(pointNext.X - pointActual.X, pointNext.Y - pointActual.Y);
+
+		if (pictureBox_Player->Location != pictureBox_Goal->Location) {
+			if (auxPoint.X != 0 || auxPoint.Y != 0) {
+				auxAuxPoint = pictureBox_Player->Location;
+				pictureBox_Player->Location = Point(auxAuxPoint.X + (auxPoint.X * CELL_MAX_SIZE), auxAuxPoint.Y + (auxPoint.Y * CELL_MAX_SIZE));
+				moved = true;
+			}
+			else {
+				// Nothing
+			}
+			if (moved) {
+				pointActual = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
+				setVisit(panelMap->PointToClient(PointToScreen(pictureBox_Player->Location)));
+				unlockCell(panelMap->PointToClient(PointToScreen(pictureBox_Player->Location)));
+				panelMap->Refresh();
+				//drawMap(false);
+				//panelMap_Paint_1(panelMap, panelMap->InvokePaint);
+				//panelMap->Refresh();
+			}
+		}
+		if (pictureBox_Player->Location == pictureBox_Goal->Location) {
+			timer1->Enabled = false;
+			showPath(arbol->existeVertice(listVisitados->getTop()->elemento));
+			MessageBox::Show("Has llegado a la meta \n");
+			
+			//pictureBox_Player->Location = pictureBox_Start->Location;
+			pictureBox_Player->Location = pictureBoxPlayerPoint;
+			
+		}
+	}
+
 	// Valida que el jugador no se salga del mapa de juego
 	bool isValidPositionPanelMap(Point ^point) {
 		Cell cell;
@@ -2126,6 +2301,7 @@ namespace AImap {
 		if (e->Button == Windows::Forms::MouseButtons::Left) {
 			ToolTip ^tt = gcnew ToolTip();
 			IWin32Window ^win = this;
+			///MessageBox::Show(MousePosition.ToString());
 			Point point = panelMap->PointToClient(MousePosition);
 			tt->UseAnimation = true;
 			System::String^ informacion = toolTipMensaje(point);
@@ -2146,12 +2322,16 @@ namespace AImap {
 	}
 }
 	private: System::Void button_Reset_Click(System::Object^  sender, System::EventArgs^  e) {
+		timer1->Stop();
 		enableObject();
 		isPlaying = false;
 		
 		for (int i = 0; i < listCell->getItemCounter(); i++) {
 			listCell->findId(i)->getData().eraseVisitCounter();
+			listCell->findId(i)->getData().setIsKnown(false);
 		}
+		pilaVertices = nullptr;
+		listVisitados = nullptr;
 		visit = 0;
 		//drawMap(false);
 		//panelMap_Paint_1(panelMap, panelMap->InvokePaint);
@@ -2234,5 +2414,6 @@ namespace AImap {
 		aux = arbol->mostrarListaAdyacencia();
 		MessageBox::Show(gcnew String(aux.c_str()));
 	}
+
 };
 }

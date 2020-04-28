@@ -12,6 +12,8 @@ class Cell {
 		int positionY;
 		int lastVisitPosition = 0;
 		bool isKnown = false;
+		bool isGoal = false;
+		bool isStart = false;
 
 	public:
 
@@ -35,6 +37,12 @@ class Cell {
 		}
 		bool getIsKnown() {
 			return isKnown;
+		}
+		bool getIsStart() {
+			return isStart;
+		}
+		bool getIsGoal() {
+			return isGoal;
 		}
 		std::string getName() {
 			std::stringstream toStr;
@@ -75,6 +83,12 @@ class Cell {
 		void setIsKnown(const bool& isKnownX) {
 			isKnown = isKnownX;
 		}
+		void setIsStart(const bool& isStartX) {
+			isStart = isStartX;
+		}
+		void setIsGoal(const bool& isGoalX) {
+			isGoal = isGoalX;
+		}
 
 		Cell& operator =(const Cell& c){
 			id = c.id;
@@ -85,7 +99,8 @@ class Cell {
 			positionY = c.positionY;
 			lastVisitPosition = c.lastVisitPosition;
 			isKnown = c.isKnown;
-
+			isStart = c.isStart;
+			isGoal = c.isGoal;
 			return *this;
 		}
 
