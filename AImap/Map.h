@@ -82,6 +82,7 @@ namespace AImap {
 	Collection<Vertice*> *pilaVertices;
 	Collection<Vertice*> *listVisitados;
 	Collection<Vertice*> *path;
+	Collection<Vertice*> *listVerticesAuxGlobal;
 	Arbol *arbol;
 	cli::array<ComboBox^>^ arrayComboBox;
 	cli::array<TextBox^>^ arrayTextBox;
@@ -100,9 +101,15 @@ namespace AImap {
 	int publicSizeWidthMax;
 	int visit = 0;
 	bool isPlaying = false;
+	bool won = false;
 	private: System::Windows::Forms::Button^  button1;
 	private: System::Windows::Forms::TextBox^  textBox2;
 	private: System::Windows::Forms::TextBox^  textBox3;
+	private: System::Windows::Forms::FlowLayoutPanel^  flowLayoutPanel1;
+	private: System::Windows::Forms::NumericUpDown^  numericUpDown1;
+
+
+
 			 bool isCorruptFile = false;
 
 	public:
@@ -122,6 +129,7 @@ namespace AImap {
 			listPlayer = new Collection<Player>;
 			listColor = new Collection<ColorClass>;
 			listCostoJugador = new Collection<CostoJugador>;
+			listVerticesAuxGlobal = new Collection<Vertice*>;
 			
 			
 			fileNameMapGlobal = fileNameMap;
@@ -193,10 +201,14 @@ namespace AImap {
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
 			this->textBox3 = (gcnew System::Windows::Forms::TextBox());
+			this->flowLayoutPanel1 = (gcnew System::Windows::Forms::FlowLayoutPanel());
+			this->numericUpDown1 = (gcnew System::Windows::Forms::NumericUpDown());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_PlayerIcon))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Player))->BeginInit();
+			this->flowLayoutPanel1->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown1))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// imageList_Player
@@ -254,11 +266,13 @@ namespace AImap {
 			// 
 			// textBox1
 			// 
+			this->textBox1->Enabled = false;
 			this->textBox1->Location = System::Drawing::Point(381, 40);
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->ReadOnly = true;
 			this->textBox1->Size = System::Drawing::Size(87, 20);
 			this->textBox1->TabIndex = 16;
+			this->textBox1->Visible = false;
 			// 
 			// txtPrueba2
 			// 
@@ -273,8 +287,10 @@ namespace AImap {
 			// panelMap
 			// 
 			this->panelMap->AllowDrop = true;
+			this->panelMap->AutoScroll = true;
 			this->panelMap->AutoSize = true;
 			this->panelMap->BackColor = System::Drawing::Color::Silver;
+			this->panelMap->ForeColor = System::Drawing::Color::Black;
 			this->panelMap->Location = System::Drawing::Point(26, 130);
 			this->panelMap->Name = L"panelMap";
 			this->panelMap->Size = System::Drawing::Size(750, 750);
@@ -394,10 +410,12 @@ namespace AImap {
 			// panelTree
 			// 
 			this->panelTree->BackColor = System::Drawing::Color::Silver;
-			this->panelTree->Location = System::Drawing::Point(800, 364);
+			this->panelTree->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->panelTree->Location = System::Drawing::Point(3, 3);
 			this->panelTree->Name = L"panelTree";
-			this->panelTree->Size = System::Drawing::Size(522, 492);
+			this->panelTree->Size = System::Drawing::Size(518, 508);
 			this->panelTree->TabIndex = 36;
+			this->panelTree->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Map::panelTree_Paint);
 			// 
 			// label5
 			// 
@@ -482,19 +500,45 @@ namespace AImap {
 			// 
 			// textBox2
 			// 
-			this->textBox2->Location = System::Drawing::Point(570, 87);
+			this->textBox2->Enabled = false;
+			this->textBox2->Location = System::Drawing::Point(587, 80);
 			this->textBox2->Name = L"textBox2";
 			this->textBox2->ReadOnly = true;
 			this->textBox2->Size = System::Drawing::Size(206, 20);
 			this->textBox2->TabIndex = 43;
+			this->textBox2->Visible = false;
 			// 
 			// textBox3
 			// 
+			this->textBox3->Enabled = false;
 			this->textBox3->Location = System::Drawing::Point(1039, 225);
 			this->textBox3->Name = L"textBox3";
 			this->textBox3->ReadOnly = true;
 			this->textBox3->Size = System::Drawing::Size(206, 20);
 			this->textBox3->TabIndex = 44;
+			this->textBox3->Visible = false;
+			// 
+			// flowLayoutPanel1
+			// 
+			this->flowLayoutPanel1->AutoScroll = true;
+			this->flowLayoutPanel1->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->flowLayoutPanel1->Controls->Add(this->panelTree);
+			this->flowLayoutPanel1->Location = System::Drawing::Point(783, 369);
+			this->flowLayoutPanel1->Name = L"flowLayoutPanel1";
+			this->flowLayoutPanel1->Size = System::Drawing::Size(539, 511);
+			this->flowLayoutPanel1->TabIndex = 45;
+			// 
+			// numericUpDown1
+			// 
+			this->numericUpDown1->InterceptArrowKeys = false;
+			this->numericUpDown1->Location = System::Drawing::Point(656, 88);
+			this->numericUpDown1->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 50, 0, 0, 0 });
+			this->numericUpDown1->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 0 });
+			this->numericUpDown1->Name = L"numericUpDown1";
+			this->numericUpDown1->Size = System::Drawing::Size(120, 20);
+			this->numericUpDown1->TabIndex = 46;
+			this->numericUpDown1->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 20, 0, 0, 0 });
+			this->numericUpDown1->ValueChanged += gcnew System::EventHandler(this, &Map::numericUpDown1_ValueChanged);
 			// 
 			// Map
 			// 
@@ -502,7 +546,9 @@ namespace AImap {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->AutoSize = true;
 			this->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
-			this->ClientSize = System::Drawing::Size(1334, 868);
+			this->ClientSize = System::Drawing::Size(1334, 889);
+			this->Controls->Add(this->numericUpDown1);
+			this->Controls->Add(this->flowLayoutPanel1);
 			this->Controls->Add(this->textBox3);
 			this->Controls->Add(this->textBox2);
 			this->Controls->Add(this->button1);
@@ -511,7 +557,6 @@ namespace AImap {
 			this->Controls->Add(this->label7);
 			this->Controls->Add(this->comboBox_Priority);
 			this->Controls->Add(this->label5);
-			this->Controls->Add(this->panelTree);
 			this->Controls->Add(this->button_Reset);
 			this->Controls->Add(this->label8);
 			this->Controls->Add(this->label6);
@@ -540,6 +585,8 @@ namespace AImap {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Player))->EndInit();
+			this->flowLayoutPanel1->ResumeLayout(false);
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown1))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -1061,35 +1108,54 @@ namespace AImap {
 
 			BufferedGraphicsContext ^bufferContext = BufferedGraphicsManager::Current;
 			BufferedGraphics ^myBuffer;
-			graphicsBuffer = bufferContext->Allocate(this->CreateGraphics(), this->DisplayRectangle);
-			myBuffer = bufferContext->Allocate(this->CreateGraphics(), this->DisplayRectangle);
+			//graphicsBuffer = bufferContext->Allocate(this->CreateGraphics(), this->DisplayRectangle);
+			myBuffer = bufferContext->Allocate(panelMap->CreateGraphics(), panelMap->DisplayRectangle);
+				
+			
 
 			SolidBrush ^sb = gcnew SolidBrush(Color::Red);
 			Pen ^p = gcnew Pen(Color::Blue);
 			System::String ^string = "";
 			System::Drawing::Font ^myFont;
 			Ground ground, groundTwo;
-			Cell cell;
+			Cell cell, cellAux;
+			Vertice *vertice;
 			std::string str;
 			myFont = gcnew System::Drawing::Font("Arial", 7);
-
+		
 			for (int i = 0; i <= publicSizeHeightMax; i++) {
 				for (int j = 0; j <= publicSizeWidthMax; j++) {
 					cell.setPositionX(i);
 					cell.setPositionY(j);
-
+					
 					if (listCell->findPositionXY(cell) != nullptr) {
 						cell = listCell->findPositionXY(cell)->getData();
 						groundTwo.setId(cell.getIdGround());
 						ground = listGround->findData(groundTwo)->getData();
 
-						//g->DrawRectangle(p, i * CELL_MAX_SIZE, j * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
-						myBuffer->Graphics->DrawRectangle(p, i * CELL_MAX_SIZE, j * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
+						if (won) {
+							Collection<Vertice*>* listAux = new Collection<Vertice*>;
+							Pen ^pAux = gcnew Pen(Color::Yellow);
+							pAux->Width = 2.0;
+							while (!path->isEmpty()) {
+								vertice = path->dequeue();
+								cellAux = vertice->elemento;
+								//string += gcnew String(cell2.getName().c_str()) + ",";
+								myBuffer->Graphics->DrawRectangle(pAux, cellAux.getPositionX() * CELL_MAX_SIZE +10, cellAux.getPositionY() * CELL_MAX_SIZE +10, CELL_MAX_SIZE -20, CELL_MAX_SIZE -20);
+								listAux->insertData(vertice);
+							}
+							path = listAux;
+						}
 
+						//g->DrawRectangle(p, i * CELL_MAX_SIZE, j * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
+						
 						//MessageBox::Show(color.getColor(0).ToString() + "-" + color.getColor(1).ToString() + "-" + color.getColor(2).ToString());
 						
-						if ((isPlaying && !cell.getIsKnown()) || ground.getColor(0) == -1 || ground.getColor(1) == -1 || ground.getColor(2) == -1) {
+						if (ground.getColor(0) == -1 || ground.getColor(1) == -1 || ground.getColor(2) == -1) {
 							sb = gcnew SolidBrush(Color::LightGray);
+						}
+						else if ((isPlaying && !cell.getIsKnown())) {
+							sb = gcnew SolidBrush(panelMap->ForeColor);
 						}
 						else {
 							string = "";
@@ -1098,20 +1164,24 @@ namespace AImap {
 							sb = gcnew SolidBrush(Color::FromArgb(ground.getColor(0), ground.getColor(1), ground.getColor(2)));
 							
 							//g->FillRectangle(sb, i * CELL_MAX_SIZE + 1, j * CELL_MAX_SIZE + 1, CELL_MAX_SIZE - 1, CELL_MAX_SIZE - 1);
-							myBuffer->Graphics->FillRectangle(sb, i * CELL_MAX_SIZE + 1, j * CELL_MAX_SIZE + 1, CELL_MAX_SIZE - 1, CELL_MAX_SIZE - 1);
+							
 
 							/*for (int i = 0; i < cell.getLastVisitPosition(); i++) {
 								string += cell.getVisitCounter(i).ToString() + ", ";
 								MessageBox::Show(cell.getId().ToString() + " - "+ cell.getLastVisitPosition().ToString() + " - Pos:"+i.ToString() + cell.getVisitCounter(i).ToString());
 							}*/
+							
+						
+						}
+						myBuffer->Graphics->FillRectangle(sb, i * CELL_MAX_SIZE + 1, j * CELL_MAX_SIZE + 1, CELL_MAX_SIZE - 1, CELL_MAX_SIZE - 1);
+						if (isPlaying && cell.getIsKnown()) {
 							string = gcnew String(cell.getVisitCounter().c_str());
 							if (string != "") {
 								//MessageBox::Show(cell.getLastVisitPosition().ToString() + "-"+string);
-								
+
 								//g->DrawString(string, myFont, gcnew SolidBrush(Color::Black), PointF(i * CELL_MAX_SIZE + 1, j * CELL_MAX_SIZE + 41));
 								myBuffer->Graphics->DrawString(string, myFont, gcnew SolidBrush(Color::Black), PointF(i * CELL_MAX_SIZE + 1, j * CELL_MAX_SIZE + 41));
 							}
-
 						}
 						if (drawId) {
 							//g->DrawString(cell.getIdGround().ToString(), this->Font, gcnew SolidBrush(Color::DarkBlue), PointF(i * CELL_MAX_SIZE + 10, j * CELL_MAX_SIZE + 10));
@@ -1128,9 +1198,137 @@ namespace AImap {
 			myBuffer->Render(panelMap->CreateGraphics());
 		}
 
+		// Buscar Nivel
+		int buscarNivel(Vertice* vertice) {
+			Collection<Vertice*> *listAux = new Collection<Vertice*>;
+			Vertice* actual;
+			int counter = -1;
+			bool found = false;
+			while (!listVerticesAuxGlobal->isEmpty()) {
+				actual = listVerticesAuxGlobal->dequeue();
+				//MessageBox::Show("Comparando: " + actual->nivel.ToString() + ", " + vertice->nivel.ToString());
+				if (actual->nivel == vertice->nivel && !found) {
+					counter++;
+					if (actual == vertice) {
+						found = true;
+					}
+				}
+				listAux->insertData(actual);
+			}
+			listVerticesAuxGlobal = listAux;
+			return counter;
+		}
+
 		// Dibuja el árbol
 		void drawTree() {
+			if (!arbol->Vacio()) {
+				BufferedGraphicsContext ^bufferContext = BufferedGraphicsManager::Current;
+				BufferedGraphics ^myBuffer;
+				int hojas = arbol->hojasTotal();
+				int niveles = arbol->nivelTotal();
+				Point point;
+				int cambio = 0;
 
+				Collection<Vertice*> *listVertices = recorrerAnchura();
+				Collection<Vertice*> *listVerticesNivel = new Collection<Vertice*>;
+				Collection<Vertice*> *listAux = new Collection<Vertice*>;
+				Pen ^p = gcnew Pen(Brushes::Black);
+				p->Width = 2.0F;
+				Vertice* vertice = arbol->first(), *actual, *padre = nullptr, *padreAnterior = nullptr;
+				Cell cell;
+				Ground ground;
+				String ^string;
+
+				this->panelTree->Size = System::Drawing::Size(panelTree->Width, niveles * 75 + 30);
+
+				//graphicsBuffer = bufferContext->Allocate(this->CreateGraphics(), this->DisplayRectangle);
+				myBuffer = bufferContext->Allocate(panelTree->CreateGraphics(), panelTree->DisplayRectangle);
+
+				myBuffer->Graphics->FillRectangle(gcnew SolidBrush(Color::White), 0, 0, panelTree->Width, panelTree->Height);
+				//panelTree->CreateGraphics()->FillRectangle(gcnew SolidBrush(Color::White), 0, 0, panelTree->Width, panelTree->Height);
+
+				/*while (!listVertices->isEmpty()) {
+					actual = listVertices->dequeue();
+					listAux->insertData(actual);
+					string += actual->nivel.ToString() + ",";
+				}*/
+				//MessageBox::Show(string);
+				for (int i = 0; !listVertices->isEmpty(); i++) {
+					actual = listVertices->getFront();
+					//MessageBox::Show("Comparing: " + listVertices->getFront()->nivel.ToString() + ", " + i.ToString());
+					while (!listVertices->isEmpty() && actual->nivel == i) {
+						//buscarNivel(actual);
+						listVerticesNivel->insertData(listVertices->dequeue());
+						if (!listVertices->isEmpty()) {
+							actual = listVertices->getFront();
+						}
+
+					}
+
+
+
+					for (int j = 0; !listVerticesNivel->isEmpty(); j++) {
+						textBox3->Text += i.ToString() + ",";
+						actual = listVerticesNivel->dequeue();
+						//MessageBox::Show(j.ToString());
+						cell = listCell->findData(actual->elemento)->getData();
+						ground.setId(cell.getIdGround());
+						myBuffer->Graphics->DrawString(gcnew String(cell.getName().c_str()) + "V:" + gcnew String(cell.getVisitCounter().c_str()) + ",C:" + listGround->findData(ground)->getData().getValue().ToString(), panelMap->Font, gcnew SolidBrush(Color::Black), PointF(j * 90 + 180, i * 75));
+						//panelTree->CreateGraphics()->DrawString(gcnew String(cell.getName().c_str()) + "V:" + gcnew String(cell.getVisitCounter().c_str()) + ",C:" + listGround->findData(ground)->getData().getValue().ToString(), panelMap->Font, gcnew SolidBrush(Color::Black), PointF(j * 90, i * 75));
+						if ((padre = arbol->anterior(actual)) != nullptr) {
+							if (padre != padreAnterior) {
+
+								padreAnterior = padre;
+								//MessageBox::Show("Nivel: " + buscarNivel(padre).ToString());
+								point = Point(buscarNivel(padre) * 90 + 35 + 180, (i - 1) * 75 + 10);
+								cambio++;
+
+							}
+							myBuffer->Graphics->DrawLine(p, point, Point(j * 90 + 180, i * 75));
+							//panelTree->CreateGraphics()->DrawLine(p, point, Point(j * 90, i * 75));
+						}
+					}
+					cambio = 0;
+					//MessageBox::Show("Ciclo");
+					//vertice = arbol->first();
+				}
+				//MessageBox::Show("Salió");
+				myBuffer->Render(panelTree->CreateGraphics());
+			}
+			
+			
+		}
+
+		Collection<Vertice*> *recorrerAnchura() {
+			Vertice* actual = arbol->first();
+			Arista* arista;
+			Collection<Vertice*> *listVerticesAux = new Collection<Vertice*>;
+			Collection<Vertice*> *colaVerticesAux = new Collection<Vertice*>;
+			String ^string;
+			
+			colaVerticesAux->insertData(actual);
+			textBox3->Text += "what,";
+			while (!colaVerticesAux->isEmpty()) {
+				actual = colaVerticesAux->dequeue();
+				listVerticesAux->insertData(actual);
+				listVerticesAuxGlobal->insertData(actual);
+				string += gcnew String(actual->elemento.getName().c_str()) +"," + actual->nivel.ToString() + ",";
+				arista = actual->listaAdy;
+				while (arista != nullptr) {
+					if (listVerticesAux->findData(arista->verticePertenece) == nullptr && colaVerticesAux->findData(arista->verticePertenece) == nullptr) {
+						//listVerticesAux->insertData(arista->verticePertenece);
+						//string += gcnew String(arista->verticePertenece->elemento.getName().c_str()) + "," + arista->verticePertenece->nivel.ToString() + ",";
+						colaVerticesAux->insertData(arista->verticePertenece);
+						//textBox3->Text += "w,";
+						arista = arista->sigArista;
+					}
+					
+					
+				}
+				//textBox3->Text += "what,";
+			}
+			//MessageBox::Show(string);
+			return listVerticesAux;
 		}
 
 		//Valida si todo está listo para jugar
@@ -1528,45 +1726,15 @@ namespace AImap {
 		}
 
 		void moveTo(Cell cell) {
-			//pictureBox_Player->Location = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
-			//pictureBox_Player->Location = panelMap->PointToClient(Point(cell.getPositionX(), cell.getPositionY()));
-			/*MessageBox::Show("Algo: "+ panelMap->PointToClient(Point(cell.getPositionX() * CELL_MAX_SIZE + 5, cell.getPositionY() * CELL_MAX_SIZE + 5)).ToString()+
-				"Pos: " + cell.getPositionX() + ", "+ cell.getPositionY() + "\n" + 
-				PointToScreen(panelMap->PointToClient(Point(cell.getPositionX(),cell.getPositionY()))).ToString());
-			*/
-			//pictureBox_Player->Location = Point(cell.getPositionX() * CELL_MAX_SIZE + 5, cell.getPositionY() * CELL_MAX_SIZE + 5);
-			//Point point =panelMap->PointToClient(PointToScreen(Point(pictureBox_Player->Location)));
-			//point = Point(point.X / CELL_MAX_SIZE, point.Y / CELL_MAX_SIZE);
-			//textBox2->Text += "Puntos: (" + point.ToString() + "),(" + cell.getPositionX().ToString() + "," + cell.getPositionY().ToString() + ")";
+			
 			moveEvent(Point(cell.getPositionX(), cell.getPositionY()));
-			/*if (point.X < cell.getPositionX()) {
-				//KeyDownEvent(Keys::Right);
-				moveEvent(point);
-				//textBox2->Text += "De(" + point.X.ToString()+","+cell.getPositionX().ToString()+"),";
-			}
-			else if (point.X > cell.getPositionX()) {
-				//KeyDownEvent(Keys::Left);
-				moveEvent(point);
-				///textBox2->Text += "Iz(" + point.X.ToString() + "," + cell.getPositionX().ToString() + "),";
-			}
-			else if (point.Y < cell.getPositionY()) {
-				//KeyDownEvent(Keys::Down);
-				moveEvent(point);
-				//textBox2->Text += "Ab(" + point.Y.ToString() + "," + cell.getPositionY().ToString() + "),";
-			}
-			else if (point.Y > cell.getPositionY()) {
-				//KeyDownEvent(Keys::Up);
-				moveEvent(point);
-				//textBox2->Text += "Ar(" + point.Y.ToString() + "," + cell.getPositionY().ToString() + "),";
-			}
-			else {
-
-			}*/
+			
 		}
 
 		// //////////////////////////////////////////// ALGORTIMOS /////////////////////////////////////////////
 		void A_Profundidad(Cell elem) {
-			timer1->Interval = 1000;
+			int value = Convert::ToInt32(numericUpDown1->Value);
+			timer1->Interval = value * 100;
 			Vertice* orig(arbol->existeVertice(elem));
 			if (orig == nullptr) {
 				/// Error
@@ -1584,7 +1752,7 @@ namespace AImap {
 			
 		}
 
-		void showPath(Vertice* final) {
+		/*void showPath(Vertice* final) {
 			Point point = panelMap->PointToClient(PointToScreen(pictureBox_Start->Location));
 			Vertice* inicial;
 			Cell cell;
@@ -1609,7 +1777,65 @@ namespace AImap {
 			while (!path->isEmpty()) {
 				string += gcnew String(path->pop()->elemento.getName().c_str()) + ",";
 			}
+			drawTree(),
 			MessageBox::Show(string);
+		}*/
+
+		void showPath(Vertice* final) {
+			Point point = panelMap->PointToClient(PointToScreen(pictureBox_Start->Location));
+			Vertice* inicial;
+			Cell cell, cell2;
+			String ^string;
+			point = Point(point.X / CELL_MAX_SIZE, point.Y / CELL_MAX_SIZE);
+			cell.setPositionX(point.X);
+			cell.setPositionY(point.Y);
+
+			cell = listCell->findPositionXY(cell)->getData();
+			inicial = arbol->existeVertice(cell);
+
+			/*BufferedGraphicsContext ^bufferContext = BufferedGraphicsManager::Current;
+			BufferedGraphics ^myBuffer;
+			myBuffer = bufferContext->Allocate(this->CreateGraphics(), this->DisplayRectangle);
+
+			Bitmap ^bm = gcnew Bitmap(panelMap->Width, panelMap->Height);
+			Graphics ^graphics = Graphics::FromImage(bm);
+			Rectangle ^rectangle = panelMap->RectangleToScreen(panelMap->ClientRectangle);
+			graphics->CopyFromScreen(rectangle->Location, Point::Empty, panelMap->Size);
+			bm->Save("mapa.bmp");
+			System::Diagnostics::Process::Start("mapa.bmp");*/
+
+			SolidBrush ^sb = gcnew SolidBrush(Color::Red);
+			Pen ^p = gcnew Pen(Color::Red);
+
+			path->push(final);
+			//textBox3->Text = "";
+			while (final != inicial) {
+				final = arbol->anterior(final);
+				//textBox3->Text += "1";
+				if (final != nullptr) {
+					path->push(final);
+				}
+			}
+
+			/*while (!path->isEmpty()) {
+				cell2 = path->pop()->elemento;
+				string += gcnew String(cell2.getName().c_str()) + ",";
+				//MessageBox::Show(cell2.getPositionX().ToString());
+				//MessageBox::Show(cell2.getPositionY().ToString());
+				myBuffer->Graphics->DrawRectangle(p, cell2.getPositionX() * CELL_MAX_SIZE, cell2.getPositionY() * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
+			}*/
+			MessageBox::Show(string);
+			//myBuffer->Render(panelMap->CreateGraphics());
+
+
+			
+
+
+			//myBuffer->Graphics->DrawRectangle(p, 1 * CELL_MAX_SIZE, 1 * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
+
+			//myBuffer->Render(panelMap->CreateGraphics());
+			
+			drawTree();
 		}
 
 		private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e) {
@@ -1643,7 +1869,8 @@ namespace AImap {
 				}
 			}
 			else {
-				//MessageBox::Show("Empty");
+				timer1->Enabled = false;
+				MessageBox::Show("No se encontró el camino de regreso a casa");
 			}
 			//while (!pilaVertices->isEmpty()) {         /// Trabajar mientras la pila no esté vacía.
 			
@@ -2063,6 +2290,7 @@ namespace AImap {
 		UpdateGraphicsBuffer();
 		if (isPlaying) {
 			drawMap(false);
+			//drawTree();
 		}
 		else {
 			drawMap(true);
@@ -2249,8 +2477,10 @@ namespace AImap {
 				//panelMap->Refresh();
 			}
 		}
+		//drawTree();
 		if (pictureBox_Player->Location == pictureBox_Goal->Location) {
 			timer1->Enabled = false;
+			won = true;
 			showPath(arbol->existeVertice(listVisitados->getTop()->elemento));
 			MessageBox::Show("Has llegado a la meta \n");
 			
@@ -2325,13 +2555,16 @@ namespace AImap {
 		timer1->Stop();
 		enableObject();
 		isPlaying = false;
-		
+		won = false;
+
 		for (int i = 0; i < listCell->getItemCounter(); i++) {
 			listCell->findId(i)->getData().eraseVisitCounter();
 			listCell->findId(i)->getData().setIsKnown(false);
 		}
 		pilaVertices = nullptr;
 		listVisitados = nullptr;
+		listVerticesAuxGlobal->deleteAll();
+		path->deleteAll();
 		visit = 0;
 		//drawMap(false);
 		//panelMap_Paint_1(panelMap, panelMap->InvokePaint);
@@ -2414,6 +2647,25 @@ namespace AImap {
 		aux = arbol->mostrarListaAdyacencia();
 		MessageBox::Show(gcnew String(aux.c_str()));
 	}
-
+	
+	private: System::Void panelTree_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
+		if (won) {
+			drawTree();
+		}
+		else {
+			
+		}
+		
+	}
+private: System::Void numericUpDown1_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
+	int value = Convert::ToInt32(numericUpDown1->Value);
+	
+	if (numericUpDown1->Value < 1) {
+		numericUpDown1->Value = 1;
+		
+	}
+	value *= 50;
+	timer1->Interval = value;
+}
 };
 }

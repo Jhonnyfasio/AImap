@@ -383,6 +383,13 @@ public:
 		return nullptr;
 	}
 
+	Vertice* first() {
+		if (!Vacio()) {
+			return ancla;
+		}
+		return nullptr;
+	}
+
 	//En un nivel especifico cuantos vertices hay
 	int cantidadVertices(int nivel) {
 		Vertice *aux;

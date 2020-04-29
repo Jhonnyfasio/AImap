@@ -541,7 +541,6 @@ public:
 
 	Collection& operator = (const Collection& c) {
 		deleteAll();
-
 		copyCollection(c);
 
 		return *this;
