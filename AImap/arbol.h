@@ -12,7 +12,9 @@ public:
 	Vertice *sigVertice;
 	Arista *listaAdy;
 	Cell elemento;
+	
 	int nivel = -1;
+	bool isPath = false;
 
 	float DataCenterX;
 	float DataCenterY;
@@ -25,19 +27,19 @@ public:
 		//*Text = "";
 	}
 
-	Vertice(Cell elementoX) {
+	Vertice(Cell &elementoX) {
 		elemento = elementoX;
 	}
 
 	SizeF GetSize(Graphics ^gr, Font ^font) {
 
-		return gr->MeasureString(gcnew System::String("A2"), font) + SizeF(10, 10);
+		return gr->MeasureString(gcnew System::String(elemento.getName().c_str()), font) + SizeF(10, 10);
 	}
 
 	// Draw the object centered at (x, y).
 	void Draw(float x, float y, System::Drawing::Graphics ^gr, System::Drawing::Pen ^pen, 
 		System::Drawing::Brush ^bg_brush, System::Drawing::Brush ^text_brush, 
-		System::Drawing::Font ^font)
+		System::Drawing::Font ^font, float xS, float yS)
 	{
 		// Fill and draw an ellipse at our location.
 		System::Drawing::SizeF my_size = GetSize(gr, font);
@@ -45,16 +47,23 @@ public:
 			x - my_size.Width / 2,
 			y - my_size.Height / 2,
 			my_size.Width, my_size.Height);
-		gr->FillEllipse(bg_brush, rect);
+		if (isPath) {
+			gr->FillEllipse(Brushes::Yellow, rect);
+		}
+		else {
+			gr->FillEllipse(bg_brush, rect);
+		}
+		
 		gr->DrawEllipse(pen, rect);
 
 		// Draw the text.
-		//System::Windows::Forms::MessageBox::Show("Drawing: " + gcnew System::String(elemento.getName().c_str()));
 		System::Drawing::StringFormat ^string_format = gcnew System::Drawing::StringFormat();
 		{
 			string_format->Alignment = System::Drawing::StringAlignment::Center;
 			string_format->LineAlignment = System::Drawing::StringAlignment::Center;
 			gr->DrawString(gcnew System::String(elemento.getName().c_str()), font, text_brush, x, y, string_format);
+			gr->DrawString(("Visita: " + gcnew System::String(elemento.getVisitCounter().c_str()) + "\nCosto: " + elemento.getPrice().ToString()), 
+				gcnew System::Drawing::Font("Arial", 7), text_brush, x+xS, y+yS);
 		}
 	}
 
@@ -95,8 +104,10 @@ public:
 class Arbol {
 private:
 	Vertice *ancla;
-
+	System::Drawing::Font ^*myFont;
 public:
+
+	friend class Vertice;
 	Arbol() {
 		Inicializa();
 	}
@@ -510,7 +521,7 @@ public:
 	// Space to skip horizontally between siblings
 	// and vertically between generations.
 	float HOffset = 5;
-	float VOffset = 10;
+	float VOffset = 30;
 
 	// Spacing for verticaly orientation.
 	float Indent = 20;
@@ -520,7 +531,7 @@ public:
 	{
 		Horizontal,
 		Vertical
-	} Orientatio;
+	};
 
 	Orientations Orientation = Orientations::Horizontal;
 	// Drawing properties.
@@ -528,13 +539,13 @@ public:
 
 	// Recursively set the subtree's orientation.
 	void SetTreeDrawingParameters(float h_offset, float v_offset, float indent, float node_radius, 
-		Orientations orientation, Vertice* vertice)
+		Orientations orien, Vertice* vertice)
 	{
 		HOffset = h_offset;
 		VOffset = v_offset;
 		Indent = indent;
 		SpotRadius = node_radius;
-		Orientation = orientation;
+		Orientation = orien;
 
 		// Recursively sedt the properties for the subtree.
 		/*for (it = Children.begin(); it != Children.end(); it++) {
@@ -542,7 +553,7 @@ public:
 		}*/
 		for (Arista* child = vertice->listaAdy; child != nullptr; child = child->sigArista) {
 			SetTreeDrawingParameters(h_offset, v_offset,
-				indent, node_radius, orientation, child->verticePertenece);
+				indent, node_radius, orien, child->verticePertenece);
 		}
 		/*for each(TreeNode child in Children)
 			child.SetTreeDrawingParameters(h_offset, v_offset,
@@ -567,13 +578,14 @@ public:
 	// Set ymin to indicate the bottom edge of our subtree.
 	void Arrange(System::Drawing::Graphics ^gr, float& xmin, float& ymin, Vertice *vertice)
 	{
+		
 		if (Orientation == Arbol::Orientations::Horizontal)
 		{
 			ArrangeHorizontally(gr, xmin, ymin, vertice);
 		}
 		else
 		{
-			//ArrangeVertically(gr, xmin, ymin);
+			ArrangeVertically(gr, xmin, ymin, vertice);
 		}
 	}
 
@@ -650,34 +662,37 @@ public:
 	}
 
 	// Arrange the subtree vertically.
-	/*
-	void ArrangeVertically(Graphics ^gr, float xmin, float ymin)
+
+	void ArrangeVertically(Graphics ^gr, float xmin, float& ymin, Vertice *vertice)
 	{
 		// See how big this node is.
-		SizeF my_size = Data.GetSize(gr, gcnew System::Drawing::Font("Arial", 7));
+		SizeF my_size =vertice->GetSize(gr, gcnew Font("Times New Roman", 12));
 		my_size.Width += 3 * SpotRadius;
 
 		// Set the position of this node's spot.
-		SpotCenterX = xmin + SpotRadius;
-		SpotCenterY = ymin + (my_size.Height - 2 * SpotRadius) / 2;
+		vertice->SpotCenterX = xmin + SpotRadius;
+		vertice->SpotCenterY = ymin + (my_size.Height - 2 * SpotRadius) / 2;
 
 		// Set the position of this node's data.
 
-		DataCenterX = SpotCenterX + SpotRadius + my_size.Width / 2;
-		DataCenterY = SpotCenterY;
+		vertice->DataCenterX = vertice->SpotCenterX + SpotRadius + my_size.Width / 2;
+		vertice->DataCenterY = vertice->SpotCenterY;
 
 
 		// Allow vertical room for this node.
 		ymin += my_size.Height + VOffset;
 
+		/*System::Windows::Forms::MessageBox::Show("Vertically: \n" + vertice->SpotCenterX + "\n" + 
+		vertice->SpotCenterY + "\n" + vertice->DataCenterX + "\n" + vertice->DataCenterY + 
+		"\nYMin: " + ymin);*/
+
 		// Recursively arrange our children.
-		for (TreeNodes child : Children)
-		{
+		for (Arista* child = vertice->listaAdy; child != nullptr; child = child->sigArista) {
 			// Arrange this child's subtree.
-			child.ArrangeVertically(gr, xmin + Indent, ymin);
+			ArrangeVertically(gr, xmin + Indent, ymin, child->verticePertenece);
 		}
 	}
-	*/
+	
 	// Draw the subtree rooted at this node
 	// with the given upper left corner.
 	void DrawTree(Graphics ^gr, float& x, float y)
@@ -692,10 +707,10 @@ public:
 	// Draw the subtree rooted at this node.
 	void DrawTree(Graphics ^gr)
 	{
-		//System::Windows::Forms::MessageBox::Show("1");
+		
 		// Draw the links.
 		DrawSubtreeLinks(gr);
-		//System::Windows::Forms::MessageBox::Show("2");
+		
 		// Draw the nodes.
 		DrawSubtreeNodes(gr, ancla);
 	}
@@ -709,7 +724,7 @@ public:
 		}
 		else
 		{
-			//DrawSubtreeLinksVertical(gr);
+			DrawSubtreeLinksVertical(gr, ancla);
 		}
 	}
 
@@ -725,30 +740,36 @@ public:
 	}
 
 	// Draw the links for the subtree rooted at this node.
-	/*
-	void DrawSubtreeLinksVertical(Graphics ^gr)
+	
+	void DrawSubtreeLinksVertical(Graphics ^gr, Vertice* vertice)
 	{
-		for (TreeNodes child : Children)
-		{
+		
+		for (Arista* child = vertice->listaAdy; child != nullptr; child = child->sigArista) {
 			// Draw the link between this node this child.
-			gr->DrawLine(Pens::Black, SpotCenterX, SpotCenterY, SpotCenterX, child.SpotCenterY);
-			gr->DrawLine(Pens::Black, SpotCenterX, child.SpotCenterY, child.SpotCenterX, child.SpotCenterY);
+			gr->DrawLine(Pens::Black, vertice->SpotCenterX, vertice->SpotCenterY, vertice->SpotCenterX, child->verticePertenece->SpotCenterY);
+			gr->DrawLine(Pens::Black, vertice->SpotCenterX, child->verticePertenece->SpotCenterY, child->verticePertenece->SpotCenterX, child->verticePertenece->SpotCenterY);
 
 			// Recursively make the child draw its subtree nodes.
-			child.DrawSubtreeLinksVertical(gr);
+			DrawSubtreeLinksVertical(gr, child->verticePertenece);
 		}
 	}
-	*/
+	
 	// Draw the nodes for the subtree rooted at this node.
 	void DrawSubtreeNodes(Graphics ^gr, Vertice* vertice)
 	{
 		// Draw this node.
-
-		vertice->Draw(vertice->DataCenterX, vertice->DataCenterY, gr, Pens::Black, Brushes::White, Brushes::Black, gcnew System::Drawing::Font("Arial", 7));
+		if (Orientation == Orientations::Vertical) {
+			vertice->Draw(vertice->DataCenterX, vertice->DataCenterY, gr, Pens::Black, Brushes::White, Brushes::Black, gcnew System::Drawing::Font("Arial", 12), 30, -5);
+		}
+		else {
+			vertice->Draw(vertice->DataCenterX, vertice->DataCenterY, gr, Pens::Black, Brushes::White, Brushes::Black, gcnew System::Drawing::Font("Arial", 12), 4, 15);
+		}
+		
 
 		// If oriented vertically, draw the node's spot.
 		if (Orientation == Arbol::Orientations::Vertical)
 		{
+			//System::Windows::Forms::MessageBox::Show("Vertically");
 			RectangleF rect = RectangleF(
 				vertice->SpotCenterX - SpotRadius, vertice->SpotCenterY - SpotRadius,
 				2 * SpotRadius, 2 * SpotRadius);
@@ -769,42 +790,18 @@ public:
 		}
 	}
 	// Return the TreeNode at this point (or null if there isn't one there).
-	/*
-	Vertice *NodeAtPoint(Graphics ^gr, PointF target_pt, vertice)
+	
+	Vertice *NodeAtPoint(Graphics ^gr, PointF target_pt, Vertice* vertice)
 	{
 		// See if the point is under this node.
-		if (IsAtPoint(gr, gcnew System::Drawing::Font("Arial", 7), PointF(DataCenterX, DataCenterY), target_pt)) return this;
+		if (vertice->IsAtPoint(gr, gcnew System::Drawing::Font("Times New Roman", 12), PointF(vertice->DataCenterX, vertice->DataCenterY), target_pt)) return vertice;
 
 		// See if the point is under a node in the subtree.
-		for (TreeNodes child : Children)
-		{
-			TreeNodes *hit_node = child.NodeAtPoint(gr, target_pt);
+		for (Arista* child = vertice->listaAdy; child != nullptr; child = child->sigArista) {
+			Vertice *hit_node = NodeAtPoint(gr, target_pt, child->verticePertenece);
 			if (hit_node != nullptr) return hit_node;
 		}
 
 		return nullptr;
 	}
-	*/
-	// Delete a target node from this node's subtree.
-	// Return true if we delete the node.
-	/*bool DeleteNode(TreeNodes target)
-	{
-		// See if the target is in our subtree.
-		for (TreeNodes child : Children)
-		{
-			// See if it's the child.
-			if (child == target)
-			{
-				// Delete this child.
-				Children.remove(child);
-				return true;
-			}
-
-			// See if it's in the child's subtree.
-			if (child.DeleteNode(target)) return true;
-		}
-
-		// It's not in our subtree.
-		return false;
-	}*/
 };

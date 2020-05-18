@@ -64,7 +64,7 @@ namespace AImap {
 	private: System::Windows::Forms::ToolTip^  toolTip1;
 	private: System::Windows::Forms::Label^  label8;
 	private: System::Windows::Forms::Label^  label4;
-	private: System::Windows::Forms::Panel^  panelTree;
+
 	private: System::Windows::Forms::Label^  label5;
 	private: System::Windows::Forms::ComboBox^  comboBox_Priority;
 	private: System::Windows::Forms::Label^  label7;
@@ -106,11 +106,22 @@ namespace AImap {
 	private: System::Windows::Forms::Button^  button1;
 	private: System::Windows::Forms::TextBox^  textBox2;
 	private: System::Windows::Forms::TextBox^  textBox3;
-	private: System::Windows::Forms::FlowLayoutPanel^  flowLayoutPanel1;
+
 	private: System::Windows::Forms::NumericUpDown^  numericUpDown1;
 	private: System::Windows::Forms::ComboBox^  comboBox_Distance;
 	private: System::Windows::Forms::Label^  label10;
 	private: System::Windows::Forms::Button^  btn_ShowMap;
+
+
+	private: System::Windows::Forms::GroupBox^  groupBox1;
+
+	private: System::ComponentModel::BackgroundWorker^  backgroundWorker1;
+
+	private: System::Windows::Forms::FlowLayoutPanel^  flowLayoutPanel1;
+	private: System::Windows::Forms::FlowLayoutPanel^  flowLayoutPanel2;
+	private: System::Windows::Forms::Panel^  picTree;
+
+
 
 	bool isCorruptFile = false;
 
@@ -211,7 +222,6 @@ namespace AImap {
 			this->button_Reset = (gcnew System::Windows::Forms::Button());
 			this->toolTip1 = (gcnew System::Windows::Forms::ToolTip(this->components));
 			this->label8 = (gcnew System::Windows::Forms::Label());
-			this->panelTree = (gcnew System::Windows::Forms::Panel());
 			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->comboBox_Priority = (gcnew System::Windows::Forms::ComboBox());
 			this->label7 = (gcnew System::Windows::Forms::Label());
@@ -221,17 +231,21 @@ namespace AImap {
 			this->timer1 = (gcnew System::Windows::Forms::Timer(this->components));
 			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
 			this->textBox3 = (gcnew System::Windows::Forms::TextBox());
-			this->flowLayoutPanel1 = (gcnew System::Windows::Forms::FlowLayoutPanel());
 			this->numericUpDown1 = (gcnew System::Windows::Forms::NumericUpDown());
 			this->comboBox_Distance = (gcnew System::Windows::Forms::ComboBox());
 			this->label10 = (gcnew System::Windows::Forms::Label());
 			this->btn_ShowMap = (gcnew System::Windows::Forms::Button());
+			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+			this->backgroundWorker1 = (gcnew System::ComponentModel::BackgroundWorker());
+			this->flowLayoutPanel1 = (gcnew System::Windows::Forms::FlowLayoutPanel());
+			this->flowLayoutPanel2 = (gcnew System::Windows::Forms::FlowLayoutPanel());
+			this->picTree = (gcnew System::Windows::Forms::Panel());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_PlayerIcon))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Player))->BeginInit();
-			this->flowLayoutPanel1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown1))->BeginInit();
+			this->flowLayoutPanel2->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// imageList_Player
@@ -316,7 +330,7 @@ namespace AImap {
 			this->panelMap->ForeColor = System::Drawing::Color::Black;
 			this->panelMap->Location = System::Drawing::Point(26, 130);
 			this->panelMap->Name = L"panelMap";
-			this->panelMap->Size = System::Drawing::Size(750, 750);
+			this->panelMap->Size = System::Drawing::Size(763, 750);
 			this->panelMap->TabIndex = 14;
 			this->panelMap->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Map::panelMap_Paint_1);
 			this->panelMap->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &Map::panelMap_MouseDown);
@@ -430,17 +444,6 @@ namespace AImap {
 			this->label8->TabIndex = 35;
 			this->label8->Text = L"         Elegir Personaje         ";
 			// 
-			// panelTree
-			// 
-			this->panelTree->BackColor = System::Drawing::Color::Silver;
-			this->panelTree->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->panelTree->Enabled = false;
-			this->panelTree->Location = System::Drawing::Point(3, 3);
-			this->panelTree->Name = L"panelTree";
-			this->panelTree->Size = System::Drawing::Size(518, 508);
-			this->panelTree->TabIndex = 36;
-			this->panelTree->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Map::panelTree_Paint);
-			// 
 			// label5
 			// 
 			this->label5->AutoSize = true;
@@ -542,16 +545,6 @@ namespace AImap {
 			this->textBox3->TabIndex = 44;
 			this->textBox3->Visible = false;
 			// 
-			// flowLayoutPanel1
-			// 
-			this->flowLayoutPanel1->AutoScroll = true;
-			this->flowLayoutPanel1->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->flowLayoutPanel1->Controls->Add(this->panelTree);
-			this->flowLayoutPanel1->Location = System::Drawing::Point(783, 369);
-			this->flowLayoutPanel1->Name = L"flowLayoutPanel1";
-			this->flowLayoutPanel1->Size = System::Drawing::Size(539, 511);
-			this->flowLayoutPanel1->TabIndex = 45;
-			// 
 			// numericUpDown1
 			// 
 			this->numericUpDown1->InterceptArrowKeys = false;
@@ -600,6 +593,39 @@ namespace AImap {
 			this->btn_ShowMap->UseVisualStyleBackColor = false;
 			this->btn_ShowMap->Click += gcnew System::EventHandler(this, &Map::btn_ShowMap_Click);
 			// 
+			// groupBox1
+			// 
+			this->groupBox1->Location = System::Drawing::Point(-23, -46);
+			this->groupBox1->Name = L"groupBox1";
+			this->groupBox1->Size = System::Drawing::Size(200, 100);
+			this->groupBox1->TabIndex = 50;
+			this->groupBox1->TabStop = false;
+			this->groupBox1->Text = L"groupBox1";
+			// 
+			// flowLayoutPanel1
+			// 
+			this->flowLayoutPanel1->Location = System::Drawing::Point(-23, -46);
+			this->flowLayoutPanel1->Name = L"flowLayoutPanel1";
+			this->flowLayoutPanel1->Size = System::Drawing::Size(200, 100);
+			this->flowLayoutPanel1->TabIndex = 51;
+			// 
+			// flowLayoutPanel2
+			// 
+			this->flowLayoutPanel2->AutoScroll = true;
+			this->flowLayoutPanel2->Controls->Add(this->picTree);
+			this->flowLayoutPanel2->Location = System::Drawing::Point(802, 374);
+			this->flowLayoutPanel2->Name = L"flowLayoutPanel2";
+			this->flowLayoutPanel2->Size = System::Drawing::Size(514, 503);
+			this->flowLayoutPanel2->TabIndex = 52;
+			// 
+			// picTree
+			// 
+			this->picTree->BackColor = System::Drawing::SystemColors::ActiveCaption;
+			this->picTree->Location = System::Drawing::Point(3, 3);
+			this->picTree->Name = L"picTree";
+			this->picTree->Size = System::Drawing::Size(499, 479);
+			this->picTree->TabIndex = 53;
+			// 
 			// Map
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -607,11 +633,13 @@ namespace AImap {
 			this->AutoSize = true;
 			this->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->ClientSize = System::Drawing::Size(1334, 889);
+			this->Controls->Add(this->flowLayoutPanel2);
+			this->Controls->Add(this->flowLayoutPanel1);
+			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->btn_ShowMap);
 			this->Controls->Add(this->label10);
 			this->Controls->Add(this->comboBox_Distance);
 			this->Controls->Add(this->numericUpDown1);
-			this->Controls->Add(this->flowLayoutPanel1);
 			this->Controls->Add(this->textBox3);
 			this->Controls->Add(this->textBox2);
 			this->Controls->Add(this->button1);
@@ -648,8 +676,8 @@ namespace AImap {
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Player))->EndInit();
-			this->flowLayoutPanel1->ResumeLayout(false);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericUpDown1))->EndInit();
+			this->flowLayoutPanel2->ResumeLayout(false);
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -1282,7 +1310,7 @@ namespace AImap {
 			listVerticesAuxGlobal = listAux;
 			return counter;
 		}
-
+		/*
 		// Dibuja el árbol
 		void drawTree() {
 			if (!arbol->Vacio()) {
@@ -1320,11 +1348,12 @@ namespace AImap {
 				myBuffer->Graphics->FillRectangle(gcnew SolidBrush(Color::White), 0, 0, panelTree->Width, panelTree->Height);
 				//panelTree->CreateGraphics()->FillRectangle(gcnew SolidBrush(Color::White), 0, 0, panelTree->Width, panelTree->Height);
 
-				/*while (!listVertices->isEmpty()) {
-					actual = listVertices->dequeue();
-					listAux->insertData(actual);
-					string += actual->nivel.ToString() + ",";
-				}*/
+				//while (!listVertices->isEmpty()) {
+				//while (!listVertices->isEmpty()) {
+				//	actual = listVertices->dequeue();
+				//	listAux->insertData(actual);
+				//	string += actual->nivel.ToString() + ",";
+				//}
 				//MessageBox::Show(string);
 				for (int i = 0; !listVertices->isEmpty(); i++) {
 					actual = listVertices->getFront();
@@ -1375,7 +1404,7 @@ namespace AImap {
 			
 			
 		}
-
+		*/
 		Collection<Vertice*> *recorrerAnchura() {
 			Vertice* actual = arbol->first();
 			Arista* arista;
@@ -1626,26 +1655,28 @@ namespace AImap {
 		}
 
 		void setVisit(Point point){
-			Cell cell;
+			Cell *cell = new Cell();
 			int intAux;
 			stringstream toStr;
 
-			cell.setPositionX((int)(point.X / CELL_MAX_SIZE));
-			cell.setPositionY((int)(point.Y / CELL_MAX_SIZE));
+			cell->setPositionX((int)(point.X / CELL_MAX_SIZE));
+			cell->setPositionY((int)(point.Y / CELL_MAX_SIZE));
 
-			if (listCell->findPositionXY(cell) != nullptr) {
+			if (listCell->findPositionXY(*cell) != nullptr) {
 				intAux = ++visit;
 				toStr.str("");
 				toStr << intAux;
-				listCell->findPositionXY(cell)->getData().setVisitCounter(toStr.str());
-				cell = listCell->findPositionXY(cell)->getData();
-				//MessageBox::Show("Here " + cell.getLastVisitPosition().ToString());
+				cell = listCell->findPositionXY(*cell)->getDataPtr();
+				cell->setVisitCounter(toStr.str());
+				//listCell->findPositionXY(*cell)->getData().setVisitCounter(toStr.str());
+				
+				//MessageBox::Show("Here: " + gcnew String(cell->getVisitCounter().c_str()));
 				//MessageBox::Show(intAux.ToString()+", "+listCell->findPositionXY(cell)->getData().getVisitCounter(cell.getLastVisitPosition()-1).ToString());
 				//panelMap_Paint_1(panelMap,panelMap->InvokePaint);
 				panelMap->Refresh();
 			}
 		}
-
+		
 		void unlockCell(Point point) {
 			//Point point = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
 			Cell cell, cellOrigen, cellArriba, cellAbajo, cellIzquierda, cellDerecha;
@@ -1676,8 +1707,10 @@ namespace AImap {
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
 
 					groundAbajo.setId(cell.getIdGround());
+					groundAbajo = listGround->findData(groundAbajo)->getData();
+					cell.setPrice(groundAbajo.getValue());
 					arbol->insertaVertice(cell);
-					if (listGround->findData(groundAbajo)->getData().getIsValid()) {
+					if (groundAbajo.getIsValid()) {
 						destinoAbajo = arbol->existeVertice(cell);
 					}
 					//arbol->insertaVertice(listCell-);
@@ -1694,8 +1727,10 @@ namespace AImap {
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
 
 					groundArriba.setId(cell.getIdGround());
+					groundArriba = listGround->findData(groundArriba)->getData();
+					cell.setPrice(groundArriba.getValue());
 					arbol->insertaVertice(cell);
-					if (listGround->findData(groundArriba)->getData().getIsValid()) {
+					if (groundArriba.getIsValid()) {
 						destinoArriba = arbol->existeVertice(cell);
 					}
 				}
@@ -1711,8 +1746,10 @@ namespace AImap {
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
 					
 					groundDerecha.setId(cell.getIdGround());
+					groundDerecha = listGround->findData(groundDerecha)->getData();
+					cell.setPrice(groundDerecha.getValue());
 					arbol->insertaVertice(cell);
-					if (listGround->findData(groundDerecha)->getData().getIsValid()) {
+					if (groundDerecha.getIsValid()) {
 						destinoDerecha = arbol->existeVertice(cell);
 					}
 					
@@ -1729,8 +1766,10 @@ namespace AImap {
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
 					
 					groundIzquierda.setId(cell.getIdGround());
+					groundIzquierda = listGround->findData(groundIzquierda)->getData();
+					cell.setPrice(groundIzquierda.getValue());
 					arbol->insertaVertice(cell);
-					if (listGround->findData(groundIzquierda)->getData().getIsValid()) {
+					if (groundIzquierda.getIsValid()) {
 						destinoIzquierda = arbol->existeVertice(cell);
 					}
 					
@@ -1771,9 +1810,160 @@ namespace AImap {
 					}
 					
 			}
+			ArrangeTree();
+			picTree->Refresh();
 			
 		}
+		
+		/*void unlockCell(Point point) {
+			//Point point = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
+			Cell *cell = new Cell();
+			Cell cellOrigen;
+			Cell cellArriba, cellAbajo, cellIzquierda, cellDerecha;
+			Vertice *origen, *destinoArriba, *destinoAbajo, *destinoIzquierda, *destinoDerecha, *destino;
+			Ground ground, groundArriba, groundAbajo, groundIzquierda, groundDerecha;
+			String ^string;
 
+			origen = destinoArriba = destinoAbajo = destinoIzquierda = destinoDerecha = nullptr;
+			point = Point(point.X / CELL_MAX_SIZE, point.Y / CELL_MAX_SIZE);
+
+			cell->setPositionX(point.X);
+			cell->setPositionY(point.Y);
+			cell = listCell->findPositionXY(*cell)->getDataPtr();
+			if (cell != nullptr) {
+				cellOrigen = *cell;
+				origen = arbol->existeVertice(*cell);
+				textBox3->Text = "Unlocking: " + point.ToString();
+				//moveTo(cell);
+			}
+			
+			// Valida la casilla hacia abajo
+			Point newPoint = Point(point.X, point.Y + 1);
+			//MessageBox::Show("Finding in: " + newPoint);
+			if (isValidPositionPanelMap(newPoint)) {
+				cell->setPositionX(newPoint.X);
+				cell->setPositionY(newPoint.Y);
+				cell = listCell->findPositionXY(*cell)->getDataPtr();
+				if (cell != nullptr && !cell->getIsKnown()) {
+					//cell = listCell->findPositionXY(*cell)->getData();
+					cell->setIsKnown(true);
+					//listCell->findPositionXY(cell)->getData().setIsKnown(true);
+
+					groundAbajo.setId(cell->getIdGround());
+					groundAbajo = listGround->findData(groundAbajo)->getData();
+					cell->setPrice(groundAbajo.getValue());
+					arbol->insertaVertice(*cell);
+					if (groundAbajo.getIsValid()) {
+						destinoAbajo = arbol->existeVertice(*cell);
+					}
+					//arbol->insertaVertice(listCell-);
+				}
+			}
+
+			// Valida la casilla hacia arriba
+			newPoint = Point(point.X, point.Y - 1);
+			if (isValidPositionPanelMap(newPoint)) {
+				cell->setPositionX(newPoint.X);
+				cell->setPositionY(newPoint.Y);
+				cell = listCell->findPositionXY(*cell)->getDataPtr();
+				if (cell != nullptr && !cell->getIsKnown()) {
+					//cell = listCell->findPositionXY(cell)->getData();
+					cell->setIsKnown(true);
+					//listCell->findPositionXY(*cell)->getData().setIsKnown(true);
+
+					groundArriba.setId(cell->getIdGround());
+					groundArriba = listGround->findData(groundArriba)->getData();
+					cell->setPrice(groundArriba.getValue());
+					arbol->insertaVertice(*cell);
+					if (groundArriba.getIsValid()) {
+						destinoArriba = arbol->existeVertice(*cell);
+					}
+				}
+			}
+
+			// Valida la casilla hacia la derecha
+			newPoint = Point(point.X + 1, point.Y);
+			if (isValidPositionPanelMap(newPoint)) {
+				cell->setPositionX(newPoint.X);
+				cell->setPositionY(newPoint.Y);
+				cell = listCell->findPositionXY(*cell)->getDataPtr();
+				if (cell != nullptr && !cell->getIsKnown()) {
+					//cell = listCell->findPositionXY(cell)->getData();
+					cell->setIsKnown(true);
+					//listCell->findPositionXY(cell)->getData().setIsKnown(true);
+
+					groundDerecha.setId(cell->getIdGround());
+					groundDerecha = listGround->findData(groundDerecha)->getData();
+					cell->setPrice(groundDerecha.getValue());
+					arbol->insertaVertice(*cell);
+					if (groundDerecha.getIsValid()) {
+						destinoDerecha = arbol->existeVertice(*cell);
+					}
+
+				}
+			}
+
+			//Valida la casilla hacia la izquierda
+			newPoint = Point(point.X - 1, point.Y);
+			if (isValidPositionPanelMap(newPoint)) {
+				cell->setPositionX(newPoint.X);
+				cell->setPositionY(newPoint.Y);
+				cell = listCell->findPositionXY(*cell)->getDataPtr();
+				if (cell != nullptr && !cell->getIsKnown()) {
+					//cell = listCell->findPositionXY(cell)->getData();
+					cell->setIsKnown(true);
+					//listCell->findPositionXY(cell)->getData().setIsKnown(true);
+
+					groundIzquierda.setId(cell->getIdGround());
+					groundIzquierda = listGround->findData(groundIzquierda)->getData();
+					cell->setPrice(groundIzquierda.getValue());
+					arbol->insertaVertice(*cell);
+					if (groundIzquierda.getIsValid()) {
+						destinoIzquierda = arbol->existeVertice(*cell);
+					}
+
+				}
+			}
+			textBox3->Text = priority[0];
+			for (int i = 0; i < 4; i++) {
+				if (priority[i] == "Arriba") {
+					destino = destinoArriba;
+					ground = groundArriba;
+					//MessageBox::Show("Arriba");
+				}
+				else if (priority[i] == "Abajo") {
+					destino = destinoAbajo;
+					ground = groundAbajo;
+					//MessageBox::Show("Abajo");
+				}
+				else if (priority[i] == "Derecha") {
+					destino = destinoDerecha;
+					ground = groundDerecha;
+					//MessageBox::Show("Derecha");
+				}
+				else if (priority[i] == "Izquierda") {
+					destino = destinoIzquierda;
+					ground = groundIzquierda;
+					//MessageBox::Show("izquierda");
+				}
+				else {
+					//MessageBox::Show("No obteniendo destino prioridad");
+				}
+				//origen->elemento.getName();
+				//MessageBox::Show("Insertando Origen: " + "hi");
+
+				if (destino != nullptr && !arbol->existeArista(origen, destino)) {
+					//MessageBox::Show("Añandiendo Origen: " + gcnew String(origen->elemento.getName().c_str()) + ", Destino: "+ 
+						//gcnew String(destino->elemento.getName().c_str()));
+					arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
+				}
+
+			}
+			MessageBox::Show("here ok");
+			ArrangeTree();
+			picTree->Refresh();
+
+		}*/
 		void createArrayPriority() {
 			arrayPriority = gcnew cli::array<String^>(24);
 			arrayPriority[0] = "Abajo,Izquierda,Arriba,Derecha,";
@@ -1870,49 +2060,20 @@ namespace AImap {
 			cell = listCell->findPositionXY(cell)->getData();
 			inicial = arbol->existeVertice(cell);
 
-			/*BufferedGraphicsContext ^bufferContext = BufferedGraphicsManager::Current;
-			BufferedGraphics ^myBuffer;
-			myBuffer = bufferContext->Allocate(this->CreateGraphics(), this->DisplayRectangle);
-
-			Bitmap ^bm = gcnew Bitmap(panelMap->Width, panelMap->Height);
-			Graphics ^graphics = Graphics::FromImage(bm);
-			Rectangle ^rectangle = panelMap->RectangleToScreen(panelMap->ClientRectangle);
-			graphics->CopyFromScreen(rectangle->Location, Point::Empty, panelMap->Size);
-			bm->Save("mapa.bmp");
-			System::Diagnostics::Process::Start("mapa.bmp");*/
-
 			SolidBrush ^sb = gcnew SolidBrush(Color::Red);
 			Pen ^p = gcnew Pen(Color::Red);
-
+			final->isPath = true;
 			path->push(final);
 			//textBox3->Text = "";
 			while (final != inicial) {
 				final = arbol->anterior(final);
 				//textBox3->Text += "1";
 				if (final != nullptr) {
+					final->isPath = true;
 					path->push(final);
+					
 				}
 			}
-
-			/*while (!path->isEmpty()) {
-				cell2 = path->pop()->elemento;
-				string += gcnew String(cell2.getName().c_str()) + ",";
-				//MessageBox::Show(cell2.getPositionX().ToString());
-				//MessageBox::Show(cell2.getPositionY().ToString());
-				myBuffer->Graphics->DrawRectangle(p, cell2.getPositionX() * CELL_MAX_SIZE, cell2.getPositionY() * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
-			}*/
-			//MessageBox::Show(string);
-			//myBuffer->Render(panelMap->CreateGraphics());
-
-
-			
-
-
-			//myBuffer->Graphics->DrawRectangle(p, 1 * CELL_MAX_SIZE, 1 * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
-
-			//myBuffer->Render(panelMap->CreateGraphics());
-			
-			drawTree();
 		}
 
 		private: System::Void timer1_Tick(System::Object^  sender, System::EventArgs^  e) {
@@ -2252,6 +2413,7 @@ namespace AImap {
 			 
 			 /////////////////////// Eventos para Drag & drop de estado inicial y final //////////////////////////////77
 	Point ^coordenadas = gcnew Point;
+	Tree ^tree;
 	private: System::Void pictureBox_Start_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 		PictureBox ^pictureBox;
 		//pictureBox_Start->DoDragDrop(pictureBox_Start, DragDropEffects::Move);
@@ -2384,6 +2546,7 @@ namespace AImap {
 		Point point;
 		Point newPoint;
 		Cell cell;
+		Ground ground;
 		priority = gcnew cli::array<String^>(4);
 		//pictureBox_Start->SendToBack();
 		panelMap->SendToBack();
@@ -2417,7 +2580,12 @@ namespace AImap {
 					
 					listCell->findPositionXY(cell)->getData().setIsKnown(true);
 					cell = listCell->findPositionXY(cell)->getData();
+					ground.setId(cell.getIdGround());
+					cell.setPrice(listGround->findData(ground)->getData().getValue());
 					arbol->insertaVertice(cell);
+
+					ArrangeTree();
+					picTree->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &Map::picTree_Paint);
 					//arbol->insertaVertice(listCell-);
 				}
 			}
@@ -2427,6 +2595,7 @@ namespace AImap {
 			if (comboBox_Algoritmos->SelectedIndex == 0) {
 				this->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
 				textBox1->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
+				
 				textBox1->Focus();
 			}
 			else {
@@ -2549,6 +2718,8 @@ namespace AImap {
 				setVisit(panelMap->PointToClient(PointToScreen(pictureBox_Player->Location)));
 				unlockCell(panelMap->PointToClient(PointToScreen(pictureBox_Player->Location)));
 				panelMap->Refresh();
+
+				
 				//drawMap(false);
 				//panelMap_Paint_1(panelMap, panelMap->InvokePaint);
 				//panelMap->Refresh();
@@ -2559,6 +2730,7 @@ namespace AImap {
 			timer1->Enabled = false;
 			won = true;
 			showPath(arbol->existeVertice(listVisitados->getTop()->elemento));
+			picTree->Refresh();
 			MessageBox::Show("Has llegado a la meta \n");
 			
 			//pictureBox_Player->Location = pictureBox_Start->Location;
@@ -2633,6 +2805,8 @@ namespace AImap {
 		enableObject();
 		isPlaying = false;
 		won = false;
+
+		picTree->Paint -= gcnew System::Windows::Forms::PaintEventHandler(this, &Map::picTree_Paint);
 
 		for (int i = 0; i < listCell->getItemCounter(); i++) {
 			listCell->findId(i)->getData().eraseVisitCounter();
@@ -2724,16 +2898,7 @@ namespace AImap {
 		aux = arbol->mostrarListaAdyacencia();
 		MessageBox::Show(gcnew String(aux.c_str()));
 	}
-	
-	private: System::Void panelTree_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
-		if (won) {
-			drawTree();
-		}
-		else {
-			
-		}
-		
-	}
+
 	private: System::Void numericUpDown1_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 	int value = Convert::ToInt32(numericUpDown1->Value);
 	
@@ -2744,12 +2909,121 @@ namespace AImap {
 	value *= 50;
 	timer1->Interval = value;
 }
-	
-	
 	private: System::Void btn_ShowMap_Click(System::Object^  sender, System::EventArgs^  e) {
-	Tree ^tree;
+	
 	tree = gcnew Tree(arbol);
 	tree->Show();
 	}
+
+	///////////////////////////////////////// TreeNode ////////////////////////////////////////////
+			 // Center the tree on the form.
+		void ArrangeTree()
+		{
+			int x, y;
+			Graphics ^gr = picTree->CreateGraphics();
+			{
+				if (arbol->Orientation == arbol->Orientations::Horizontal)
+				{
+					
+					//this->picTree->Size = System::Drawing::Size(picTree->Width + 10, arbol->nivelTotal() * 75 + 30);
+					//}
+					// Arrange the tree once to see how big it is.
+					float xmin = 0, ymin = 0;
+					//MessageBox::Show(gcnew String(arbol->mostrarListaAdyacencia().c_str()));
+					arbol->Arrange(gr, xmin, ymin, arbol->getAncla());
+
+					// Arrange the tree again to center it horizontally.
+					//MessageBox::Show("Again");
+					xmin = (picTree->ClientSize.Width - xmin) / 2;
+					ymin = 10;
+					arbol->Arrange(gr, xmin, ymin, arbol->getAncla());
+					//MessageBox::Show("Again: " + picTree->ClientSize.Width);
+					x = xmin;
+					y = ymin;
+				}
+				else
+				{
+					// Arrange the tree.
+					float xmin = arbol->Indent;//@
+					float ymin = xmin;
+					arbol->Arrange(gr, xmin, ymin, arbol->getAncla());
+					x = xmin;
+					y = ymin;
+				}
+				int nivel = arbol->nivelTotal();
+				if (nivel > 8 && x > 500) {
+					
+					//this->picTree->MaximumSize = System::Drawing::Size(x + 10, y + 10);
+					this->picTree->Size = System::Drawing::Size(x + 30, y + 30);
+					//MessageBox::Show("X min: " + x + " - " + "yMin" + y);
+				}
+				else if (nivel > 8 && x < 500) {
+					this->picTree->Size = System::Drawing::Size(picTree->Width, y + 30);
+				}
+				else if (nivel <= 8 && x > 500) {
+					this->picTree->Size = System::Drawing::Size(x + 30, picTree->Height);
+				}
+			}
+
+			picTree->Refresh();
+		}
+
+		// The currently selected node.
+		Vertice *SelectedNode;
+
+		// Display the text of the node under the mouse.
+		void picTree_MouseMove(System::Object^ sender, System::Windows::Forms::MouseEventArgs e)
+		{
+			// Find the node under the mouse.
+			FindNodeUnderMouse(e.Location);
+
+			// If there is a node under the mouse,
+			// display the node's text.
+			if (SelectedNode == nullptr)
+			{
+				//lblNodeText.Text = "";
+			}
+			else
+			{
+				//lblNodeText.Text = SelectedNode.Data.Text;
+			}
+		}
+
+		// Set SelectedNode to the node under the mouse.
+		void FindNodeUnderMouse(PointF pt)
+		{
+			Graphics ^gr = picTree->CreateGraphics();
+			{
+				SelectedNode = arbol->NodeAtPoint(gr, pt, arbol->getAncla());
+			}
+		}
+
+		// Change the tree's orientation.
+		private: System::Void radHorizontal_Click(System::Object^ sender, System::EventArgs ^e)
+		{
+			arbol->SetTreeDrawingParameters(5, 30, 20, 5,
+				arbol->Orientations::Horizontal, arbol->getAncla());
+			ArrangeTree();
+		}
+
+		private: System::Void radVertical_Click(System::Object^ sender, System::EventArgs ^e)
+		{
+			arbol->SetTreeDrawingParameters(5, 2, 20, 5,
+				arbol->Orientations::Vertical, arbol->getAncla());
+			ArrangeTree();
+		}
+		private: System::Void picTree_Paint(System::Object^  sender, System::Windows::Forms::PaintEventArgs^  e) {
+
+			e->Graphics->SmoothingMode = SmoothingMode::AntiAlias;
+			e->Graphics->TextRenderingHint = TextRenderingHint::AntiAliasGridFit;
+			//MessageBox::Show("Painting");
+			arbol->DrawTree(e->Graphics);
+		}
+		private: System::Void picTree_Resize_1(System::Object^  sender, System::EventArgs^  e) {
+			MessageBox::Show("Rezising");
+			ArrangeTree();
+		}
+
+
 };
 }

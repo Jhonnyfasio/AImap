@@ -11,6 +11,7 @@ class Cell {
 		int positionX;
 		int positionY;
 		int lastVisitPosition = 0;
+		float price;
 		bool isKnown = false;
 		bool isGoal = false;
 		bool isStart = false;
@@ -43,6 +44,9 @@ class Cell {
 		}
 		bool getIsGoal() {
 			return isGoal;
+		}
+		float getPrice() {
+			return price;
 		}
 		std::string getName() {
 			std::stringstream toStr;
@@ -89,6 +93,9 @@ class Cell {
 		void setIsGoal(const bool& isGoalX) {
 			isGoal = isGoalX;
 		}
+		void setPrice(const float& priceX) {
+			price = priceX;
+		}
 
 		Cell& operator =(const Cell& c){
 			id = c.id;
@@ -101,6 +108,7 @@ class Cell {
 			isKnown = c.isKnown;
 			isStart = c.isStart;
 			isGoal = c.isGoal;
+			price = c.price;
 			return *this;
 		}
 
