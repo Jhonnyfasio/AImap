@@ -16,6 +16,7 @@
 #include "player.h"
 #include "costoJugador.h"
 #include "arbol.h"
+#include "Tree.h"
 
 #define MAX_SIZE 15
 #define CELL_MAX_SIZE 50
@@ -36,8 +37,8 @@ namespace AImap {
 	using namespace System::IO;
 	using namespace System::Reflection;
 	using namespace std;
-	
-	
+		
+
 	/// <summary>
 	/// Resumen de Map
 	/// </summary>
@@ -107,10 +108,11 @@ namespace AImap {
 	private: System::Windows::Forms::TextBox^  textBox3;
 	private: System::Windows::Forms::FlowLayoutPanel^  flowLayoutPanel1;
 	private: System::Windows::Forms::NumericUpDown^  numericUpDown1;
+	private: System::Windows::Forms::ComboBox^  comboBox_Distance;
+	private: System::Windows::Forms::Label^  label10;
+	private: System::Windows::Forms::Button^  btn_ShowMap;
 
-
-
-			 bool isCorruptFile = false;
+	bool isCorruptFile = false;
 
 	public:
 	
@@ -130,7 +132,25 @@ namespace AImap {
 			listColor = new Collection<ColorClass>;
 			listCostoJugador = new Collection<CostoJugador>;
 			listVerticesAuxGlobal = new Collection<Vertice*>;
-			
+
+			/*Howtoo::TreeNode *root = new Howtoo::TreeNode(Howtoo::TreeNode::CircleNode("root"));
+			Howtoo::TreeNode *a_node = new Howtoo::TreeNode(Howtoo::TreeNode::CircleNode("A"));
+			Howtoo::TreeNode *b_node = new Howtoo::TreeNode(Howtoo::TreeNode::CircleNode("B"));
+			Howtoo::TreeNode *c_node = new Howtoo::TreeNode(Howtoo::TreeNode::CircleNode("C"));
+			Howtoo::TreeNode *d_node = new Howtoo::TreeNode(Howtoo::TreeNode::CircleNode("D"));
+			Howtoo::TreeNode *e_node = new Howtoo::TreeNode(Howtoo::TreeNode::CircleNode("E"));
+			Howtoo::TreeNode *f_node = new Howtoo::TreeNode(Howtoo::TreeNode::CircleNode("F"));
+			Howtoo::TreeNode *g_node = new Howtoo::TreeNode(Howtoo::TreeNode::CircleNode("G"));
+			Howtoo::TreeNode *h_node = new Howtoo::TreeNode(Howtoo::TreeNode::CircleNode("H"));
+
+			root->AddChild(a_node);
+			root->AddChild(b_node);
+			a_node->AddChild(c_node);
+			a_node->AddChild(d_node);
+			b_node->AddChild(e_node);
+			b_node->AddChild(f_node);
+			b_node->AddChild(g_node);
+			e_node->AddChild(h_node);*/
 			
 			fileNameMapGlobal = fileNameMap;
 
@@ -203,6 +223,9 @@ namespace AImap {
 			this->textBox3 = (gcnew System::Windows::Forms::TextBox());
 			this->flowLayoutPanel1 = (gcnew System::Windows::Forms::FlowLayoutPanel());
 			this->numericUpDown1 = (gcnew System::Windows::Forms::NumericUpDown());
+			this->comboBox_Distance = (gcnew System::Windows::Forms::ComboBox());
+			this->label10 = (gcnew System::Windows::Forms::Label());
+			this->btn_ShowMap = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_PlayerIcon))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->BeginInit();
@@ -267,7 +290,7 @@ namespace AImap {
 			// textBox1
 			// 
 			this->textBox1->Enabled = false;
-			this->textBox1->Location = System::Drawing::Point(381, 40);
+			this->textBox1->Location = System::Drawing::Point(477, 17);
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->ReadOnly = true;
 			this->textBox1->Size = System::Drawing::Size(87, 20);
@@ -304,7 +327,7 @@ namespace AImap {
 			this->button_Play->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->button_Play->ForeColor = System::Drawing::SystemColors::ButtonHighlight;
-			this->button_Play->Location = System::Drawing::Point(489, 13);
+			this->button_Play->Location = System::Drawing::Point(500, 12);
 			this->button_Play->Name = L"button_Play";
 			this->button_Play->Size = System::Drawing::Size(120, 66);
 			this->button_Play->TabIndex = 15;
@@ -411,6 +434,7 @@ namespace AImap {
 			// 
 			this->panelTree->BackColor = System::Drawing::Color::Silver;
 			this->panelTree->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->panelTree->Enabled = false;
 			this->panelTree->Location = System::Drawing::Point(3, 3);
 			this->panelTree->Name = L"panelTree";
 			this->panelTree->Size = System::Drawing::Size(518, 508);
@@ -481,7 +505,7 @@ namespace AImap {
 			this->comboBox_Algoritmos->Items->AddRange(gcnew cli::array< System::Object^  >(2) { L"Manual", L"Algoritmo de Profundidad" });
 			this->comboBox_Algoritmos->Location = System::Drawing::Point(165, 29);
 			this->comboBox_Algoritmos->Name = L"comboBox_Algoritmos";
-			this->comboBox_Algoritmos->Size = System::Drawing::Size(189, 24);
+			this->comboBox_Algoritmos->Size = System::Drawing::Size(142, 24);
 			this->comboBox_Algoritmos->TabIndex = 40;
 			// 
 			// button1
@@ -540,6 +564,42 @@ namespace AImap {
 			this->numericUpDown1->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) { 20, 0, 0, 0 });
 			this->numericUpDown1->ValueChanged += gcnew System::EventHandler(this, &Map::numericUpDown1_ValueChanged);
 			// 
+			// comboBox_Distance
+			// 
+			this->comboBox_Distance->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->comboBox_Distance->FormattingEnabled = true;
+			this->comboBox_Distance->Items->AddRange(gcnew cli::array< System::Object^  >(2) { L"Manual", L"Algoritmo de Profundidad" });
+			this->comboBox_Distance->Location = System::Drawing::Point(329, 29);
+			this->comboBox_Distance->Name = L"comboBox_Distance";
+			this->comboBox_Distance->Size = System::Drawing::Size(142, 24);
+			this->comboBox_Distance->TabIndex = 47;
+			// 
+			// label10
+			// 
+			this->label10->AutoSize = true;
+			this->label10->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->label10->Location = System::Drawing::Point(325, 9);
+			this->label10->Name = L"label10";
+			this->label10->Size = System::Drawing::Size(75, 20);
+			this->label10->TabIndex = 48;
+			this->label10->Text = L"Distancia";
+			// 
+			// btn_ShowMap
+			// 
+			this->btn_ShowMap->BackColor = System::Drawing::Color::LimeGreen;
+			this->btn_ShowMap->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->btn_ShowMap->ForeColor = System::Drawing::SystemColors::ButtonHighlight;
+			this->btn_ShowMap->Location = System::Drawing::Point(1039, 253);
+			this->btn_ShowMap->Name = L"btn_ShowMap";
+			this->btn_ShowMap->Size = System::Drawing::Size(120, 66);
+			this->btn_ShowMap->TabIndex = 49;
+			this->btn_ShowMap->Text = L"Jugar";
+			this->btn_ShowMap->UseVisualStyleBackColor = false;
+			this->btn_ShowMap->Click += gcnew System::EventHandler(this, &Map::btn_ShowMap_Click);
+			// 
 			// Map
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -547,6 +607,9 @@ namespace AImap {
 			this->AutoSize = true;
 			this->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->ClientSize = System::Drawing::Size(1334, 889);
+			this->Controls->Add(this->btn_ShowMap);
+			this->Controls->Add(this->label10);
+			this->Controls->Add(this->comboBox_Distance);
 			this->Controls->Add(this->numericUpDown1);
 			this->Controls->Add(this->flowLayoutPanel1);
 			this->Controls->Add(this->textBox3);
@@ -896,6 +959,7 @@ namespace AImap {
 
 		// Crea botones, textbos y combobox dinámicos para los colores
 		void chargeColor() {
+			ArrayList ^myArray = gcnew ArrayList();
 			Button ^btn;
 			ComboBox ^comboBox;
 			CheckBox ^checkBox;
@@ -1226,7 +1290,7 @@ namespace AImap {
 				BufferedGraphics ^myBuffer;
 				int hojas = arbol->hojasTotal();
 				int niveles = arbol->nivelTotal();
-				Point point;
+				Point point, newPoint;
 				int cambio = 0;
 
 				Collection<Vertice*> *listVertices = recorrerAnchura();
@@ -1236,10 +1300,19 @@ namespace AImap {
 				p->Width = 2.0F;
 				Vertice* vertice = arbol->first(), *actual, *padre = nullptr, *padreAnterior = nullptr;
 				Cell cell;
+				Cell cellGoal;
 				Ground ground;
 				String ^string;
 
-				this->panelTree->Size = System::Drawing::Size(panelTree->Width, niveles * 75 + 30);
+				this->panelTree->Size = System::Drawing::Size(panelTree->Width + 10, niveles * 75 + 30);
+				point = panelMap->PointToClient(PointToScreen(pictureBox_Goal->Location));
+				cellGoal.setPositionX(point.X);
+				cellGoal.setPositionY(point.Y);
+				if (listCell->findData(cellGoal) != nullptr) {
+					listCell->findData(cellGoal)->getData().setIsGoal(true);
+					cellGoal = listCell->findData(cellGoal)->getData();
+				}
+				newPoint = Point(point.X / CELL_MAX_SIZE, point.Y / CELL_MAX_SIZE);
 
 				//graphicsBuffer = bufferContext->Allocate(this->CreateGraphics(), this->DisplayRectangle);
 				myBuffer = bufferContext->Allocate(panelTree->CreateGraphics(), panelTree->DisplayRectangle);
@@ -1271,10 +1344,14 @@ namespace AImap {
 						textBox3->Text += i.ToString() + ",";
 						actual = listVerticesNivel->dequeue();
 						//MessageBox::Show(j.ToString());
+						
 						cell = listCell->findData(actual->elemento)->getData();
 						ground.setId(cell.getIdGround());
-						myBuffer->Graphics->DrawString(gcnew String(cell.getName().c_str()) + "V:" + gcnew String(cell.getVisitCounter().c_str()) + ",C:" + listGround->findData(ground)->getData().getValue().ToString(), panelMap->Font, gcnew SolidBrush(Color::Black), PointF(j * 90 + 180, i * 75));
+						myBuffer->Graphics->DrawString(gcnew String(cell.getName().c_str()) + "V:N" + ",C:" + listGround->findData(ground)->getData().getValue().ToString(), panelMap->Font, gcnew SolidBrush(Color::Black), PointF(j * 90 + 180, i * 75));
 						//panelTree->CreateGraphics()->DrawString(gcnew String(cell.getName().c_str()) + "V:" + gcnew String(cell.getVisitCounter().c_str()) + ",C:" + listGround->findData(ground)->getData().getValue().ToString(), panelMap->Font, gcnew SolidBrush(Color::Black), PointF(j * 90, i * 75));
+						if (actual->elemento == cellGoal) {
+							break;
+						}
 						if ((padre = arbol->anterior(actual)) != nullptr) {
 							if (padre != padreAnterior) {
 
@@ -1824,7 +1901,7 @@ namespace AImap {
 				//MessageBox::Show(cell2.getPositionY().ToString());
 				myBuffer->Graphics->DrawRectangle(p, cell2.getPositionX() * CELL_MAX_SIZE, cell2.getPositionY() * CELL_MAX_SIZE, CELL_MAX_SIZE, CELL_MAX_SIZE);
 			}*/
-			MessageBox::Show(string);
+			//MessageBox::Show(string);
 			//myBuffer->Render(panelMap->CreateGraphics());
 
 
@@ -2281,7 +2358,7 @@ namespace AImap {
 		int id, r, g, b;
 
 		btn = safe_cast<Button^>(sender);
-		MessageBox::Show("Entry");
+		//MessageBox::Show("Entry");
 	}
 	
 	// Pinta el panel
@@ -2657,7 +2734,7 @@ namespace AImap {
 		}
 		
 	}
-private: System::Void numericUpDown1_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
+	private: System::Void numericUpDown1_ValueChanged(System::Object^  sender, System::EventArgs^  e) {
 	int value = Convert::ToInt32(numericUpDown1->Value);
 	
 	if (numericUpDown1->Value < 1) {
@@ -2667,5 +2744,12 @@ private: System::Void numericUpDown1_ValueChanged(System::Object^  sender, Syste
 	value *= 50;
 	timer1->Interval = value;
 }
+	
+	
+	private: System::Void btn_ShowMap_Click(System::Object^  sender, System::EventArgs^  e) {
+	Tree ^tree;
+	tree = gcnew Tree(arbol);
+	tree->Show();
+	}
 };
 }
