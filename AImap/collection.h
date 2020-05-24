@@ -141,21 +141,23 @@ private:
 		}
 
 		if (left->getNext() == right) {
-			if (left->getData() > right->getData()) {
+			if (left->getData()->elemento.getDistanciaHN() > right->getData()->elemento.getDistanciaHN()) {
 				swapData(left, right);
+
 			}
 
 			return;
 		}
 
-		Node *i(left), *j(right);
+		Node *i(left);
+		Node *j(right);
 
 		while (i != j) {
-			while (i != j and i->getData() <= right->getData()) {
+			while (i != j && i->getData()->elemento.getDistanciaHN() <= right->getData()->elemento.getDistanciaHN()) {
 				i = i->getNext();
 			}
 
-			while (i != j and j->getData() > right->getData()) {
+			while (i != j && j->getData()->elemento.getDistanciaHN() > right->getData()->elemento.getDistanciaHN()) {
 				j = j->getPrev();
 			}
 
@@ -252,8 +254,10 @@ public:
 			sortData();
 		}
 
-		Node* p(header), aux(header->getNext());
-		while (aux != header and e >= aux->getData()) {
+		Node* p(header);
+		Node* aux(header->getNext());
+
+		while (aux != header && e->elemento.getDistanciaGN() > aux->getData()->elemento.getDistanciaGN()) {
 			p = aux;
 			aux = aux->getNext();
 		}
@@ -456,6 +460,78 @@ public:
 			aux = aux->getNext();
 		}
 		return false;
+	}
+
+	T findMenorCostoHN() {
+		if (isEmpty()) {
+			return nullptr;
+		}
+		int menorCosto;
+		menorCosto = 9999999;
+		T auxMenor;
+
+		Node* aux(header->getNext());
+		while (aux != header) {
+			if (aux->getData()->elemento.getDistanciaHN() < menorCosto) {
+				menorCosto = aux->getData()->elemento.getDistanciaHN();
+				auxMenor = aux->getData();
+			}
+			aux = aux->getNext();
+		}
+		return auxMenor;
+	}
+
+	T findMenorCostoGN() {
+		if (isEmpty()) {
+			return nullptr;
+		}
+		int menorCosto;
+		menorCosto = 9999999;
+		T auxMenor;
+
+		Node* aux(header->getNext());
+		while (aux != header) {
+			if (aux->getData()->elemento.getDistanciaGN() < menorCosto) {
+				menorCosto = aux->getData()->elemento.getDistanciaGN();
+				auxMenor = aux->getData();
+			}
+			aux = aux->getNext();
+		}
+		return auxMenor;
+	}
+
+	T findMenorCostoAEst() {
+		if (isEmpty()) {
+			return nullptr;
+		}
+		int menorCosto;
+		menorCosto = 9999999;
+		T auxMenor;
+
+		Node* aux(header->getNext());
+		while (aux != header) {
+			float suma = aux->getData()->elemento.getDistanciaGN() + aux->getData()->elemento.getDistanciaHN();
+
+			if (suma < menorCosto) {
+				menorCosto = suma;
+				auxMenor = aux->getData();
+			}
+			aux = aux->getNext();
+		}
+		return auxMenor;
+	}
+
+	float valueGround(const int& toFind) {
+		if (isEmpty()) {
+			return false;
+		}
+		Node* aux(header->getNext());
+		while (aux != header) {
+			if (aux->getData().getId() == toFind) {
+				return aux->getData().getValue();
+			}
+			aux = aux->getNext();
+		}
 	}
 
 	Node* findPositionXY(T& e) {
