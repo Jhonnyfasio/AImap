@@ -63,7 +63,7 @@ public:
 			string_format->Alignment = System::Drawing::StringAlignment::Center;
 			string_format->LineAlignment = System::Drawing::StringAlignment::Center;
 			gr->DrawString(gcnew System::String(elemento.getName().c_str()), font, text_brush, x, y, string_format);
-			gr->DrawString(("Visita: " + gcnew System::String(elemento.getVisitCounter().c_str()) + "\nCosto: " + elemento.getPrice().ToString()), 
+			gr->DrawString(("Visita: " + gcnew System::String(elemento.getVisitCounter().c_str()) + "\nCosto: " + (elemento.getDistanciaGN() + elemento.getDistanciaHN())), 
 				gcnew System::Drawing::Font("Arial", 7), text_brush, x+xS, y+yS);
 		}
 	}

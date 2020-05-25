@@ -116,7 +116,8 @@ namespace AImap {
 	int visit = 0;
 	bool isPlaying = false;
 	bool won = false;
-	
+	private: System::Windows::Forms::Label^  label11;
+
 
 
 
@@ -236,6 +237,7 @@ namespace AImap {
 			this->backgroundWorker1 = (gcnew System::ComponentModel::BackgroundWorker());
 			this->flowLayoutPanel2 = (gcnew System::Windows::Forms::FlowLayoutPanel());
 			this->picTree = (gcnew System::Windows::Forms::Panel());
+			this->label11 = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_PlayerIcon))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Start))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox_Goal))->BeginInit();
@@ -299,13 +301,11 @@ namespace AImap {
 			// 
 			// textBox1
 			// 
-			this->textBox1->Enabled = false;
-			this->textBox1->Location = System::Drawing::Point(477, 17);
+			this->textBox1->Location = System::Drawing::Point(523, 19);
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->ReadOnly = true;
 			this->textBox1->Size = System::Drawing::Size(87, 20);
 			this->textBox1->TabIndex = 16;
-			this->textBox1->Visible = false;
 			// 
 			// txtPrueba2
 			// 
@@ -337,7 +337,7 @@ namespace AImap {
 			this->button_Play->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->button_Play->ForeColor = System::Drawing::SystemColors::ButtonHighlight;
-			this->button_Play->Location = System::Drawing::Point(500, 12);
+			this->button_Play->Location = System::Drawing::Point(546, 14);
 			this->button_Play->Name = L"button_Play";
 			this->button_Play->Size = System::Drawing::Size(120, 66);
 			this->button_Play->TabIndex = 15;
@@ -420,7 +420,7 @@ namespace AImap {
 			this->button_Reset->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->button_Reset->ForeColor = System::Drawing::SystemColors::ButtonHighlight;
-			this->button_Reset->Location = System::Drawing::Point(626, 13);
+			this->button_Reset->Location = System::Drawing::Point(672, 15);
 			this->button_Reset->Name = L"button_Reset";
 			this->button_Reset->Size = System::Drawing::Size(120, 66);
 			this->button_Reset->TabIndex = 34;
@@ -507,8 +507,9 @@ namespace AImap {
 			});
 			this->comboBox_Algoritmos->Location = System::Drawing::Point(165, 29);
 			this->comboBox_Algoritmos->Name = L"comboBox_Algoritmos";
-			this->comboBox_Algoritmos->Size = System::Drawing::Size(142, 24);
+			this->comboBox_Algoritmos->Size = System::Drawing::Size(212, 24);
 			this->comboBox_Algoritmos->TabIndex = 40;
+			this->comboBox_Algoritmos->SelectedIndexChanged += gcnew System::EventHandler(this, &Map::comboBox_Algoritmos_SelectedIndexChanged);
 			// 
 			// button1
 			// 
@@ -536,7 +537,7 @@ namespace AImap {
 			// 
 			// textBox3
 			// 
-			this->textBox3->Location = System::Drawing::Point(1039, 151);
+			this->textBox3->Location = System::Drawing::Point(805, 225);
 			this->textBox3->Multiline = true;
 			this->textBox3->Name = L"textBox3";
 			this->textBox3->ReadOnly = true;
@@ -548,7 +549,7 @@ namespace AImap {
 			this->numericUpDown1->InterceptArrowKeys = false;
 			this->numericUpDown1->Location = System::Drawing::Point(656, 88);
 			this->numericUpDown1->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 50, 0, 0, 0 });
-			this->numericUpDown1->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 1, 0, 0, 0 });
+			this->numericUpDown1->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) { 10, 0, 0, 0 });
 			this->numericUpDown1->Name = L"numericUpDown1";
 			this->numericUpDown1->Size = System::Drawing::Size(120, 20);
 			this->numericUpDown1->TabIndex = 46;
@@ -560,8 +561,8 @@ namespace AImap {
 			this->comboBox_Distance->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 10, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->comboBox_Distance->FormattingEnabled = true;
-			this->comboBox_Distance->Items->AddRange(gcnew cli::array< System::Object^  >(2) { L"Distancia Manhattan", L"Distancia Euclideana" });
-			this->comboBox_Distance->Location = System::Drawing::Point(329, 29);
+			this->comboBox_Distance->Items->AddRange(gcnew cli::array< System::Object^  >(2) { L"Manhattan", L"Euclideana" });
+			this->comboBox_Distance->Location = System::Drawing::Point(398, 29);
 			this->comboBox_Distance->Name = L"comboBox_Distance";
 			this->comboBox_Distance->Size = System::Drawing::Size(142, 24);
 			this->comboBox_Distance->TabIndex = 47;
@@ -571,7 +572,7 @@ namespace AImap {
 			this->label10->AutoSize = true;
 			this->label10->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
-			this->label10->Location = System::Drawing::Point(325, 9);
+			this->label10->Location = System::Drawing::Point(394, 9);
 			this->label10->Name = L"label10";
 			this->label10->Size = System::Drawing::Size(75, 20);
 			this->label10->TabIndex = 48;
@@ -580,14 +581,14 @@ namespace AImap {
 			// btn_ShowMap
 			// 
 			this->btn_ShowMap->BackColor = System::Drawing::Color::LimeGreen;
-			this->btn_ShowMap->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 15.75F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+			this->btn_ShowMap->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->btn_ShowMap->ForeColor = System::Drawing::SystemColors::ButtonHighlight;
-			this->btn_ShowMap->Location = System::Drawing::Point(1039, 253);
+			this->btn_ShowMap->Location = System::Drawing::Point(805, 325);
 			this->btn_ShowMap->Name = L"btn_ShowMap";
-			this->btn_ShowMap->Size = System::Drawing::Size(120, 66);
+			this->btn_ShowMap->Size = System::Drawing::Size(143, 32);
 			this->btn_ShowMap->TabIndex = 49;
-			this->btn_ShowMap->Text = L"Jugar";
+			this->btn_ShowMap->Text = L"Mapa Completo";
 			this->btn_ShowMap->UseVisualStyleBackColor = false;
 			this->btn_ShowMap->Click += gcnew System::EventHandler(this, &Map::btn_ShowMap_Click);
 			// 
@@ -608,6 +609,15 @@ namespace AImap {
 			this->picTree->Size = System::Drawing::Size(499, 479);
 			this->picTree->TabIndex = 53;
 			// 
+			// label11
+			// 
+			this->label11->AutoSize = true;
+			this->label11->Location = System::Drawing::Point(596, 91);
+			this->label11->Name = L"label11";
+			this->label11->Size = System::Drawing::Size(54, 13);
+			this->label11->TabIndex = 53;
+			this->label11->Text = L"Velovidad";
+			// 
 			// Map
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -615,6 +625,7 @@ namespace AImap {
 			this->AutoSize = true;
 			this->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->ClientSize = System::Drawing::Size(1334, 889);
+			this->Controls->Add(this->label11);
 			this->Controls->Add(this->flowLayoutPanel2);
 			this->Controls->Add(this->btn_ShowMap);
 			this->Controls->Add(this->label10);
@@ -1608,6 +1619,10 @@ namespace AImap {
 			pictureBox_Start->Enabled = false;
 			pictureBox_Goal->Enabled = false;
 			button_Play->Enabled = false;
+
+			comboBox_Algoritmos->Enabled = false;
+			comboBox_Distance->Enabled = false;
+			comboBox_Priority->Enabled = false;
 		}
 
 		void enableObject() {
@@ -1632,6 +1647,10 @@ namespace AImap {
 			pictureBox_Start->Enabled = true;
 			pictureBox_Goal->Enabled = true;
 			button_Play->Enabled = true;
+
+			comboBox_Algoritmos->Enabled = true;
+			comboBox_Distance->Enabled = true;
+			comboBox_Priority->Enabled = true;
 		}
 
 		void setVisit(Point point) {
@@ -1648,6 +1667,7 @@ namespace AImap {
 				toStr << intAux;
 				cell = listCell->findPositionXY(*cell)->getDataPtr();
 				cell->setVisitCounter(toStr.str());
+				arbol->existeVertice(*cell)->elemento.setVisitCounter(toStr.str());
 				//listCell->findPositionXY(*cell)->getData().setVisitCounter(toStr.str());
 
 				//MessageBox::Show("Here: " + gcnew String(cell->getVisitCounter().c_str()));
@@ -1756,6 +1776,7 @@ namespace AImap {
 				}
 			}
 			// textBox3->Text = priority[0];
+			origen->isArista = true;
 			for (int i = 0; i < 4; i++) {
 				if (priority[i] == "Arriba") {
 					destino = destinoArriba;
@@ -1896,7 +1917,7 @@ namespace AImap {
 
 				}
 			}
-			textBox3->Text = "";
+			//textBox3->Text = "";
 			float distanceUno;
 			float distanceDos;
 			for (int i = 0; i < 4; i++) {
@@ -1942,6 +1963,7 @@ namespace AImap {
 							//arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
 							arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
 							destino->isArista = true;
+							destino->elemento.setDistanciaGN(origen->elemento.getDistanciaGN() + destino->elemento.getPrice());
 						}
 
 					}
@@ -2342,7 +2364,7 @@ namespace AImap {
 			if (!listaVertices->isEmpty()) {
 
 				//menorCosto = listaVertices->findMenorCostoGN();
-				menorCosto = listaVertices->dequeue();
+				menorCosto = listaVertices->findMenorCostoGN();
 				pathActual = actual = menorCosto;
 
 				//listaVertices->deleteData(menorCosto);      ///Eliminar el vertice, sera el actual
@@ -2352,7 +2374,7 @@ namespace AImap {
 					str = gcnew String(actual->elemento.getName().c_str());
 					textBox1->Text += str;
 					listVisitados->insertData(actual);      ///colocar en visitados
-					moveTo(actual->elemento);
+					moveToDos(actual->elemento);
 
 					aux = actual->listaAdy;
 
@@ -2378,12 +2400,12 @@ namespace AImap {
 								if (distanciaNueva < distanciaExistente) {
 									listaVertices->deleteData(aux->verticePertenece);
 
-
-									//listaVertices->insertData(aux->verticePertenece);
+									MessageBox::Show("Algo");
+									listaVertices->insertData(aux->verticePertenece);
 								}
 
 							}
-							listaVertices->insertOrderedData(aux->verticePertenece);         ///Insertar
+							listaVertices->insertData(aux->verticePertenece);         ///Insertar
 						}
 						aux = aux->sigArista;
 					}
@@ -2446,7 +2468,7 @@ namespace AImap {
 			if (!listaVertices->isEmpty()) {
 
 				menorCosto = listaVertices->findMenorCostoAEst();
-				//textBox3->Text = "Sacando: " + gcnew String(menorCosto->elemento.getName().c_str()) + ":" + menorCosto->elemento.getDistanciaGN();
+				textBox3->Text = "Sacando: " + gcnew String(menorCosto->elemento.getName().c_str()) + ":" + (menorCosto->elemento.getDistanciaGN() + menorCosto->elemento.getDistanciaHN());
 				pathActual = actual = menorCosto;
 
 				listaVertices->deleteData(menorCosto);      ///Eliminar el vertice, sera el actual
@@ -2456,6 +2478,10 @@ namespace AImap {
 					//str = gcnew String(actual->elemento.getName().c_str());
 					//textBox1->Text += str;
 					listVisitados->insertData(actual);      ///colocar en visitados
+
+
+
+
 					moveToDos(actual->elemento);
 
 					aux = actual->listaAdy;
@@ -2465,11 +2491,11 @@ namespace AImap {
 						if (listVisitados->findData(aux->verticePertenece) == nullptr) {        ///si no han sido visitados
 							//textBox3->Text += gcnew String(aux->verticePertenece->elemento.getName().c_str()) + ",";
 							///
-							float distanciaHN = listCell->findData(aux->verticePertenece->elemento)->getData().getDistanciaHN();
-							aux->verticePertenece->elemento.setDistanciaHN(distanciaHN);
+							//float distanciaHN = listCell->findData(aux->verticePertenece->elemento)->getData().getDistanciaHN();
+							//aux->verticePertenece->elemento.setDistanciaHN(distanciaHN);
 
 							float costoPadre = actual->elemento.getDistanciaGN();
-							float costoTerreno = listGround->valueGround(aux->verticePertenece->elemento.getIdGround());
+							float costoTerreno = aux->verticePertenece->elemento.getPrice();
 							float distanciaGN = costoPadre + costoTerreno;
 
 							aux->verticePertenece->elemento.setDistanciaGN(distanciaGN);
@@ -2493,14 +2519,11 @@ namespace AImap {
 									MessageBox::Show("Here");
 									//listaVertices->insertData(aux->verticePertenece);
 								}
-								else {
-									Is = false;
-								}
 
 							}
-							if (Is) {
-								listaVertices->insertData(aux->verticePertenece);         ///Insertar
-							}
+
+							listaVertices->insertData(aux->verticePertenece);         ///Insertar
+							
 							
 						}
 						aux = aux->sigArista;
@@ -2952,38 +2975,27 @@ namespace AImap {
 		if (isReadyToPlay()) {
 			isPlaying = true;
 			disableObject();
-			//drawMap(false);
-			//panelMap_Paint_1(panelMap, panelMap->InvokePaint);
-			//panelMap->Refresh();
 			pictureBox_Player->Location = pictureBox_Start->Location;
-			//MessageBox::Show("hi");
-			//panelMap->Controls->Add(pictureBox_Player);
-			//pictureBox_Player->Location = panelMap->PointToClient(PointToScreen(pictureBox_Start->Location));
-			//MessageBox::Show("hi");
 
 			//CALCULAR DISTANCIAS MANHATTAN Y EUCLIDEANA
 			Cell element, elementGoal;
 			int goalId = pointGoal;
 			elementGoal.setId(goalId);
-			//MessageBox::Show(goalId.ToString());
 			elementGoal = listCell->findData(elementGoal)->getData();
-
-			//MessageBox::Show(pointGoal.ToString());
-			//MessageBox::Show(gcnew String(elementGoal.getName().c_str()));
 
 			for (int i = 0; i < listCell->getItemCounter(); i++) {
 				element.setId(i);
 				element = listCell->findData(element)->getData();
 
-				//MessageBox::Show(gcnew String(element.getName().c_str()));
-
 				/// AGREGAR SI EL COMBOBOX ES MANHATTAN O EUCLIDEANA ///////////////////////////////////////////////////////
-
-				if (comboBox_Distance->SelectedIndex == 0) {
-					listCell->findData(element)->getData().setDistanciaHN(element.calcularDistManhattan(element, elementGoal));
-					//MessageBox::Show(listCell->findData(element)->getData().getDistanciaHN().ToString());
+				int selectedIndex = comboBox_Algoritmos->SelectedIndex;
+				if (selectedIndex == 2) {
+					listCell->findData(element)->getData().setDistanciaHN(0);
 				}
-				else if (comboBox_Distance->SelectedIndex == 1) {
+				if (comboBox_Distance->SelectedIndex == 0 && (selectedIndex == 3 || selectedIndex == 4)) {
+					listCell->findData(element)->getData().setDistanciaHN(element.calcularDistManhattan(element, elementGoal));
+				}
+				else if (comboBox_Distance->SelectedIndex == 1 && (selectedIndex == 3 || selectedIndex == 4)) {
 					listCell->findData(element)->getData().setDistanciaHN(element.calcularDistEuclideana(element, elementGoal));
 				}
 			}
@@ -3037,7 +3049,6 @@ namespace AImap {
 
 			}
 			else {
-				//MessageBox::Show("here");
 				A_AEstrella(cell);
 			}
 
@@ -3050,6 +3061,7 @@ namespace AImap {
 			 // Detectar el click de las teclas para mover el jugador
 	private: System::Void Map_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 		KeyDownEvent(e->KeyCode);
+		MessageBox::Show("HEre");
 	}
 
 	private: void KeyDownEvent(Keys e) {
@@ -3294,6 +3306,8 @@ namespace AImap {
 		won = false;
 
 		picTree->Paint -= gcnew System::Windows::Forms::PaintEventHandler(this, &Map::picTree_Paint);
+		this->KeyDown -= gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
+		textBox1->KeyDown -= gcnew System::Windows::Forms::KeyEventHandler(this, &Map::Map_KeyDown);
 
 		for (int i = 0; i < listCell->getItemCounter(); i++) {
 			listCell->findId(i)->getData().eraseVisitCounter();
@@ -3530,5 +3544,13 @@ namespace AImap {
 	}
 
 
-	};
+	private: System::Void comboBox_Algoritmos_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+		if (comboBox_Algoritmos->SelectedIndex == 3 || comboBox_Algoritmos->SelectedIndex == 4) {
+			comboBox_Distance->Enabled = true;
+		}
+		else {
+			comboBox_Distance->Enabled = false;
+		}
+	}
+};
 }
