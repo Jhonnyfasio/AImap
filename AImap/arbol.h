@@ -60,11 +60,12 @@ public:
 		// Draw the text.
 		System::Drawing::StringFormat ^string_format = gcnew System::Drawing::StringFormat();
 		{
+			float distanciaTotal = elemento.getDistanciaGN() + elemento.getDistanciaHN();
 			string_format->Alignment = System::Drawing::StringAlignment::Center;
 			string_format->LineAlignment = System::Drawing::StringAlignment::Center;
 			gr->DrawString(gcnew System::String(elemento.getName().c_str()), font, text_brush, x, y, string_format);
-			gr->DrawString(("Visita: " + gcnew System::String(elemento.getVisitCounter().c_str()) + "\nCosto: " + (elemento.getDistanciaGN() + elemento.getDistanciaHN())), 
-				gcnew System::Drawing::Font("Arial", 7), text_brush, x+xS, y+yS);
+			gr->DrawString(("Visita: " + gcnew System::String(elemento.getVisitCounter().c_str()) + "\nCosto: " + elemento.getDistanciaGN().ToString() + "+" + elemento.getDistanciaHN().ToString() + "\n= " + distanciaTotal.ToString()),
+				gcnew System::Drawing::Font("Arial", 7), text_brush, x + xS, y + yS);
 		}
 	}
 
