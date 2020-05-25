@@ -602,11 +602,13 @@ namespace AImap {
 			// 
 			// textBox3
 			// 
+			this->textBox3->Enabled = false;
 			this->textBox3->Location = System::Drawing::Point(244, 3);
 			this->textBox3->Multiline = true;
 			this->textBox3->Name = L"textBox3";
 			this->textBox3->Size = System::Drawing::Size(205, 428);
 			this->textBox3->TabIndex = 54;
+			this->textBox3->Visible = false;
 			// 
 			// label11
 			// 
@@ -1712,13 +1714,13 @@ namespace AImap {
 							//textBox3->Text += "\nEliminando; " + gcnew String(destino->elemento.getName().c_str()) +
 							//	"\n\t" + distanceUno + " - " + distanceDos;
 							cellAux = destino->elemento;
-							arbol->eliminarVertice(destino);
+							///arbol->eliminarVertice(destino);
 							//MessageBox::Show("Deleting");
-							arbol->insertaVertice(cellAux);
-							destino = arbol->existeVertice(cellAux);
-							//if (destino->padre != nullptr) {
-							if(destino != nullptr){
-							///arbol->eliminarArista(destino->padre, destino);
+							//arbol->insertaVertice(cellAux);
+							///destino = arbol->existeVertice(cellAux);
+							if (destino->padre != nullptr) {
+							///if(destino != nullptr){
+								arbol->eliminarArista(destino->padre, destino);
 								//destino = arbol->existeVertice(cellAux);
 								arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
 								destino->isArista = true;
