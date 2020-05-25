@@ -466,8 +466,8 @@ public:
 		if (isEmpty()) {
 			return nullptr;
 		}
-		int menorCosto;
-		menorCosto = 999;
+		float menorCosto;
+		menorCosto = 9999;
 		T auxMenor;
 
 		Node* aux(header->getNext());
@@ -485,8 +485,8 @@ public:
 		if (isEmpty()) {
 			return nullptr;
 		}
-		int menorCosto;
-		menorCosto = 999;
+		float menorCosto;
+		menorCosto = 9999;
 		T auxMenor;
 
 		Node* aux(header->getNext());
@@ -504,8 +504,8 @@ public:
 		if (isEmpty()) {
 			return nullptr;
 		}
-		int menorCosto;
-		menorCosto = 9999999;
+		float menorCosto;
+		menorCosto = 9999;
 		T auxMenor;
 
 		Node* aux(header->getNext());

@@ -85,37 +85,37 @@ namespace AImap {
 
 	private: BufferedGraphics ^graphicsBuffer;
 
-	Collection<Cell> *listCell;
-	Collection<Ground> *listGround;
-	Collection<Player> *listPlayer;
-	Collection<Ground> *listColorInUse;
-	Collection<ColorClass> *listColor;
-	Collection<CostoJugador> *listCostoJugador;
+			 Collection<Cell> *listCell;
+			 Collection<Ground> *listGround;
+			 Collection<Player> *listPlayer;
+			 Collection<Ground> *listColorInUse;
+			 Collection<ColorClass> *listColor;
+			 Collection<CostoJugador> *listCostoJugador;
 
-	Collection<Vertice*> *listaVertices;
-	Collection<Vertice*> *pilaVertices;
-	Collection<Vertice*> *listVisitados;
-	Collection<Vertice*> *path;
-	Collection<Vertice*> *listVerticesAuxGlobal;
-	Arbol *arbol;
-	cli::array<ComboBox^>^ arrayComboBox;
-	cli::array<TextBox^>^ arrayTextBox;
-	cli::array<Button^>^ arrayButton;
-	cli::array<CheckBox^>^ arrayCheckBox;
-	cli::array<String^>^ arrayPriority;
-	cli::array <String^>^ priority;
-	String ^fileNameMapGlobal;
-	Point pictureBoxStarPoint, pictureBoxGoalPoint, pictureBoxPlayerPoint;
-	Graphics ^g;
+			 Collection<Vertice*> *listaVertices;
+			 Collection<Vertice*> *pilaVertices;
+			 Collection<Vertice*> *listVisitados;
+			 Collection<Vertice*> *path;
+			 Collection<Vertice*> *listVerticesAuxGlobal;
+			 Arbol *arbol;
+			 cli::array<ComboBox^>^ arrayComboBox;
+			 cli::array<TextBox^>^ arrayTextBox;
+			 cli::array<Button^>^ arrayButton;
+			 cli::array<CheckBox^>^ arrayCheckBox;
+			 cli::array<String^>^ arrayPriority;
+			 cli::array <String^>^ priority;
+			 String ^fileNameMapGlobal;
+			 Point pictureBoxStarPoint, pictureBoxGoalPoint, pictureBoxPlayerPoint;
+			 Graphics ^g;
 
 
-	int pointGoal = -1;
-	int pointStart = -1;
-	int publicSizeHeightMax;
-	int publicSizeWidthMax;
-	int visit = 0;
-	bool isPlaying = false;
-	bool won = false;
+			 int pointGoal = -1;
+			 int pointStart = -1;
+			 int publicSizeHeightMax;
+			 int publicSizeWidthMax;
+			 int visit = 0;
+			 bool isPlaying = false;
+			 bool won = false;
 	private: System::Windows::Forms::Label^  label11;
 	private: System::Windows::Forms::TextBox^  textBox3;
 			 bool isCorruptFile = false;
@@ -148,7 +148,6 @@ namespace AImap {
 			Howtoo::TreeNode *f_node = new Howtoo::TreeNode(Howtoo::TreeNode::CircleNode("F"));
 			Howtoo::TreeNode *g_node = new Howtoo::TreeNode(Howtoo::TreeNode::CircleNode("G"));
 			Howtoo::TreeNode *h_node = new Howtoo::TreeNode(Howtoo::TreeNode::CircleNode("H"));
-
 			root->AddChild(a_node);
 			root->AddChild(b_node);
 			a_node->AddChild(c_node);
@@ -1144,7 +1143,7 @@ namespace AImap {
 			listVerticesAuxGlobal = listAux;
 			return counter;
 		}
-		
+
 		Collection<Vertice*> *recorrerAnchura() {
 			Vertice* actual = arbol->first();
 			Arista* arista;
@@ -1277,11 +1276,7 @@ namespace AImap {
 								for each (TextBox ^var in arrayTextBox)
 								{
 									if (var->Name == string) {
-										specifier = "G";
-										costoJugador.getCosto().ToString();
 										var->Text = costoJugador.getCosto().ToString();
-										//MessageBox::Show(costoJugador.getCosto().ToString(gcnew System::Globalization::CultureInfo("en-US")));
-										//MessageBox::Show("Changing");
 									}
 								}
 							}
@@ -1719,13 +1714,13 @@ namespace AImap {
 							//arbol->insertaVertice(cellAux);
 							///destino = arbol->existeVertice(cellAux);
 							if (destino->padre != nullptr) {
-							///if(destino != nullptr){
+								///if(destino != nullptr){
 								arbol->eliminarArista(destino->padre, destino);
 								//destino = arbol->existeVertice(cellAux);
 								arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
 								destino->isArista = true;
 							}
-							
+
 							if (destino != nullptr) {
 								arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
 								destino->isArista = true;
@@ -1734,8 +1729,8 @@ namespace AImap {
 						}
 					}
 					else {
-							arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
-							destino->isArista = true;					
+						arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
+						destino->isArista = true;
 					}
 				}
 
@@ -1745,155 +1740,6 @@ namespace AImap {
 
 		}
 
-		/*void unlockCell(Point point) {
-			//Point point = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
-			Cell *cell = new Cell();
-			Cell cellOrigen;
-			Cell cellArriba, cellAbajo, cellIzquierda, cellDerecha;
-			Vertice *origen, *destinoArriba, *destinoAbajo, *destinoIzquierda, *destinoDerecha, *destino;
-			Ground ground, groundArriba, groundAbajo, groundIzquierda, groundDerecha;
-			String ^string;
-
-			origen = destinoArriba = destinoAbajo = destinoIzquierda = destinoDerecha = nullptr;
-			point = Point(point.X / CELL_MAX_SIZE, point.Y / CELL_MAX_SIZE);
-
-			cell->setPositionX(point.X);
-			cell->setPositionY(point.Y);
-			cell = listCell->findPositionXY(*cell)->getDataPtr();
-			if (cell != nullptr) {
-				cellOrigen = *cell;
-				origen = arbol->existeVertice(*cell);
-				textBox3->Text = "Unlocking: " + point.ToString();
-				//moveTo(cell);
-			}
-
-			// Valida la casilla hacia abajo
-			Point newPoint = Point(point.X, point.Y + 1);
-			//MessageBox::Show("Finding in: " + newPoint);
-			if (isValidPositionPanelMap(newPoint)) {
-				cell->setPositionX(newPoint.X);
-				cell->setPositionY(newPoint.Y);
-				cell = listCell->findPositionXY(*cell)->getDataPtr();
-				if (cell != nullptr && !cell->getIsKnown()) {
-					//cell = listCell->findPositionXY(*cell)->getData();
-					cell->setIsKnown(true);
-					//listCell->findPositionXY(cell)->getData().setIsKnown(true);
-
-					groundAbajo.setId(cell->getIdGround());
-					groundAbajo = listGround->findData(groundAbajo)->getData();
-					cell->setPrice(groundAbajo.getValue());
-					arbol->insertaVertice(*cell);
-					if (groundAbajo.getIsValid()) {
-						destinoAbajo = arbol->existeVertice(*cell);
-					}
-					//arbol->insertaVertice(listCell-);
-				}
-			}
-
-			// Valida la casilla hacia arriba
-			newPoint = Point(point.X, point.Y - 1);
-			if (isValidPositionPanelMap(newPoint)) {
-				cell->setPositionX(newPoint.X);
-				cell->setPositionY(newPoint.Y);
-				cell = listCell->findPositionXY(*cell)->getDataPtr();
-				if (cell != nullptr && !cell->getIsKnown()) {
-					//cell = listCell->findPositionXY(cell)->getData();
-					cell->setIsKnown(true);
-					//listCell->findPositionXY(*cell)->getData().setIsKnown(true);
-
-					groundArriba.setId(cell->getIdGround());
-					groundArriba = listGround->findData(groundArriba)->getData();
-					cell->setPrice(groundArriba.getValue());
-					arbol->insertaVertice(*cell);
-					if (groundArriba.getIsValid()) {
-						destinoArriba = arbol->existeVertice(*cell);
-					}
-				}
-			}
-
-			// Valida la casilla hacia la derecha
-			newPoint = Point(point.X + 1, point.Y);
-			if (isValidPositionPanelMap(newPoint)) {
-				cell->setPositionX(newPoint.X);
-				cell->setPositionY(newPoint.Y);
-				cell = listCell->findPositionXY(*cell)->getDataPtr();
-				if (cell != nullptr && !cell->getIsKnown()) {
-					//cell = listCell->findPositionXY(cell)->getData();
-					cell->setIsKnown(true);
-					//listCell->findPositionXY(cell)->getData().setIsKnown(true);
-
-					groundDerecha.setId(cell->getIdGround());
-					groundDerecha = listGround->findData(groundDerecha)->getData();
-					cell->setPrice(groundDerecha.getValue());
-					arbol->insertaVertice(*cell);
-					if (groundDerecha.getIsValid()) {
-						destinoDerecha = arbol->existeVertice(*cell);
-					}
-
-				}
-			}
-
-			//Valida la casilla hacia la izquierda
-			newPoint = Point(point.X - 1, point.Y);
-			if (isValidPositionPanelMap(newPoint)) {
-				cell->setPositionX(newPoint.X);
-				cell->setPositionY(newPoint.Y);
-				cell = listCell->findPositionXY(*cell)->getDataPtr();
-				if (cell != nullptr && !cell->getIsKnown()) {
-					//cell = listCell->findPositionXY(cell)->getData();
-					cell->setIsKnown(true);
-					//listCell->findPositionXY(cell)->getData().setIsKnown(true);
-
-					groundIzquierda.setId(cell->getIdGround());
-					groundIzquierda = listGround->findData(groundIzquierda)->getData();
-					cell->setPrice(groundIzquierda.getValue());
-					arbol->insertaVertice(*cell);
-					if (groundIzquierda.getIsValid()) {
-						destinoIzquierda = arbol->existeVertice(*cell);
-					}
-
-				}
-			}
-			textBox3->Text = priority[0];
-			for (int i = 0; i < 4; i++) {
-				if (priority[i] == "Arriba") {
-					destino = destinoArriba;
-					ground = groundArriba;
-					//MessageBox::Show("Arriba");
-				}
-				else if (priority[i] == "Abajo") {
-					destino = destinoAbajo;
-					ground = groundAbajo;
-					//MessageBox::Show("Abajo");
-				}
-				else if (priority[i] == "Derecha") {
-					destino = destinoDerecha;
-					ground = groundDerecha;
-					//MessageBox::Show("Derecha");
-				}
-				else if (priority[i] == "Izquierda") {
-					destino = destinoIzquierda;
-					ground = groundIzquierda;
-					//MessageBox::Show("izquierda");
-				}
-				else {
-					//MessageBox::Show("No obteniendo destino prioridad");
-				}
-				//origen->elemento.getName();
-				//MessageBox::Show("Insertando Origen: " + "hi");
-
-				if (destino != nullptr && !arbol->existeArista(origen, destino)) {
-					//MessageBox::Show("Añandiendo Origen: " + gcnew String(origen->elemento.getName().c_str()) + ", Destino: "+
-						//gcnew String(destino->elemento.getName().c_str()));
-					arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
-				}
-
-			}
-			MessageBox::Show("here ok");
-			ArrangeTree();
-			picTree->Refresh();
-
-		}*/
 		void createArrayPriority() {
 			arrayPriority = gcnew cli::array<String^>(24);
 			arrayPriority[0] = "Abajo,Izquierda,Arriba,Derecha,";
@@ -2130,18 +1976,13 @@ namespace AImap {
 							///
 							/*if (listaVertices->findData(aux->verticePertenece) != nullptr) {   //Buscar si ya existe el adyacente en la lista
 								float distanciaExistente, distanciaNueva;
-
 								distanciaExistente = listaVertices->findData(aux->verticePertenece)->getData()->elemento.getDistanciaGN();
-
 								distanciaNueva = aux->verticePertenece->elemento.getDistanciaGN();
-
 								if (distanciaNueva < distanciaExistente) {
 									listaVertices->deleteData(aux->verticePertenece);
-
 									MessageBox::Show("Algo");
 									listaVertices->insertData(aux->verticePertenece);
 								}
-
 							}*/
 							listaVertices->insertData(aux->verticePertenece);         ///Insertar
 						}
@@ -2210,7 +2051,7 @@ namespace AImap {
 				pathActual = actual = menorCosto;
 
 				listaVertices->deleteData(menorCosto);      ///Eliminar el vertice, sera el actual
-				if(listaVertices->findData(actual) == nullptr) {
+				if (listaVertices->findData(actual) == nullptr) {
 					textBox3->Text += "No existe";
 				}
 				if (listVisitados->findData(actual) == nullptr) {      ///Si el vertice no ha sido visitado
@@ -2221,7 +2062,7 @@ namespace AImap {
 					moveToDos(actual->elemento);
 					textBox3->Text += "\nLlegó";
 					aux = actual->listaAdy;
-					
+
 					while (aux != nullptr) {        ///Recorrido de aristas para los vertices destino
 						//textBox3->Text += ",Insertar: ";
 						textBox3->Text += "Nueva Vuelta \n";
@@ -2259,11 +2100,14 @@ namespace AImap {
 								}
 
 							}
-							textBox3->Text += "\nAl insertar: "+ gcnew String(aux->verticePertenece->elemento.getName().c_str());
-							listaVertices->insertData(aux->verticePertenece);         ///Insertar
-							textBox3->Text += "\nDespués de";
+							else {
+								textBox3->Text += "\nAl insertar: " + gcnew String(aux->verticePertenece->elemento.getName().c_str());
+								listaVertices->insertData(aux->verticePertenece);         ///Insertar
+								textBox3->Text += "\nDespués de";
+							}
 							
-							
+
+
 						}
 						aux = aux->sigArista;
 					}
@@ -2277,230 +2121,247 @@ namespace AImap {
 		}
 	}
 
-	// //////////////////////////////////////////////////////// HERRAMIENTAS ////////////////////////////////////////////////////////////// //
+			 // //////////////////////////////////////////////////////// HERRAMIENTAS ////////////////////////////////////////////////////////////// //
 
-	Ground *colorAux = new Ground();
+			 Ground *colorAux = new Ground();
 
-	//Convierte de System::String a std::string
-	void marshalString(String ^ s, std::string& os) {
-		using namespace Runtime::InteropServices;
-		const char* chars = (const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
-		os = chars;
-		Marshal::FreeHGlobal(IntPtr((void*)chars));
-	}
+			 //Convierte de System::String a std::string
+			 void marshalString(String ^ s, std::string& os) {
+				 using namespace Runtime::InteropServices;
+				 const char* chars = (const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
+				 os = chars;
+				 Marshal::FreeHGlobal(IntPtr((void*)chars));
+			 }
 
-	//  Manda mensajes de error con un std::str
-	void messageError(string str) {
-		String ^systemStr = gcnew String(str.c_str());
-		MessageBox::Show("Error: " + systemStr);
-	}
+			 //  Manda mensajes de error con un std::str
+			 void messageError(string str) {
+				 String ^systemStr = gcnew String(str.c_str());
+				 MessageBox::Show("Error: " + systemStr);
+			 }
 
-	// Valida el click en el botón dinámico del color
-	void btn_color_click(Object^ sender, EventArgs^ e) {
-		Button ^btn;
-		ColorClass *color = new ColorClass();
-		Ground ground;
-		int id, r, g, b;
+			 // Valida el click en el botón dinámico del color
+			 void btn_color_click(Object^ sender, EventArgs^ e) {
+				 Button ^btn;
+				 ColorClass *color = new ColorClass();
+				 Ground ground;
+				 int id, r, g, b;
 
-		btn = safe_cast<Button^>(sender);
-		id = Int32::Parse(btn->Name->Substring(9));
+				 btn = safe_cast<Button^>(sender);
+				 id = Int32::Parse(btn->Name->Substring(9));
 
-		//MessageBox::Show(id.ToString());
-		ground.setId(id);
-		if (listGround->findData(ground) != nullptr) {
-			if (colorDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
-				r = colorDialog1->Color.R;
-				g = colorDialog1->Color.G;
-				b = colorDialog1->Color.B;
-				listGround->findData(ground)->getData().setColor(r, g, b);
-				//listColor->findId(id)->getData().setColor(r,g,b);
-				btn->BackColor = Color::FromArgb(r, g, b);
-				//MessageBox::Show("color establecido como: " + listGround->findData(ground)->getData().getColor(0) + " - ");
-				//drawMap(true);
-				//panelMap_Paint_1(panelMap, panelMap->InvokePaint);
-				panelMap->Refresh();
-			}
-		}
+				 //MessageBox::Show(id.ToString());
+				 ground.setId(id);
+				 if (listGround->findData(ground) != nullptr) {
+					 if (colorDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+						 r = colorDialog1->Color.R;
+						 g = colorDialog1->Color.G;
+						 b = colorDialog1->Color.B;
+						 listGround->findData(ground)->getData().setColor(r, g, b);
+						 //listColor->findId(id)->getData().setColor(r,g,b);
+						 btn->BackColor = Color::FromArgb(r, g, b);
+						 //MessageBox::Show("color establecido como: " + listGround->findData(ground)->getData().getColor(0) + " - ");
+						 //drawMap(true);
+						 //panelMap_Paint_1(panelMap, panelMap->InvokePaint);
+						 panelMap->Refresh();
+					 }
+				 }
 
-	}
+			 }
 
-	// Valida el cambio de nombre en el combobox dinámico del color
-	void comboBox_Color_Name(Object^ sender, EventArgs^ e) {
-		ComboBox ^comboBox;
-		Button ^button = gcnew Button;
-		Button ^buttonAux = gcnew Button;
-		Ground ground;
-		ColorClass color;
-		Color newColor;
-		string str;
-		String ^systemStr;
-		String ^systemStr2;
-		int id;
-		bool repeated = false;
+			 // Valida el cambio de nombre en el combobox dinámico del color
+			 void comboBox_Color_Name(Object^ sender, EventArgs^ e) {
+				 ComboBox ^comboBox;
+				 Button ^button = gcnew Button;
+				 Button ^buttonAux = gcnew Button;
+				 Ground ground;
+				 ColorClass color;
+				 Color newColor;
+				 string str;
+				 String ^systemStr;
+				 String ^systemStr2;
+				 int id;
+				 bool repeated = false;
 
-		comboBox = safe_cast<ComboBox^>(sender);
-		id = Int32::Parse(comboBox->Name->Substring(14));
+				 comboBox = safe_cast<ComboBox^>(sender);
+				 id = Int32::Parse(comboBox->Name->Substring(14));
 
-		//MessageBox::Show("CHANGED");
-		for each (ComboBox^ var in arrayComboBox)
-		{
-			if (comboBox->SelectedIndex == var->SelectedIndex && comboBox->Name != var->Name) {
-				comboBox->SelectedIndex = -1;
-				repeated = true;
-				newColor = Color::Gray;
-				if (listGround->findData(ground) != nullptr) {
-					//MessageBox::Show("asdf: " + button->Name);
-					listGround->findData(ground)->getData().setColor(newColor.Gray.R, newColor.Gray.G, newColor.Gray.B);
-					//drawMap(true);
-					//panelMap_Paint_1(panelMap, panelMap->InvokePaint);
-					panelMap->Refresh();
-				}
-			}
-		}
-		if (!repeated) {
-			for each(Object^ var in this->Controls) {
-				if (var->GetType() == button->GetType()) {
-					button = cli::safe_cast<Button^>(var);
-					//MessageBox::Show("Changing1: " + button->Name);
-					if (button->Name == BUTTON_NAME_COLOR + id.ToString()) {
+				 //MessageBox::Show("CHANGED");
+				 for each (ComboBox^ var in arrayComboBox)
+				 {
+					 if (comboBox->SelectedIndex == var->SelectedIndex && comboBox->Name != var->Name) {
+						 comboBox->SelectedIndex = -1;
+						 repeated = true;
+						 newColor = Color::Gray;
+						 if (listGround->findData(ground) != nullptr) {
+							 //MessageBox::Show("asdf: " + button->Name);
+							 listGround->findData(ground)->getData().setColor(newColor.Gray.R, newColor.Gray.G, newColor.Gray.B);
+							 //drawMap(true);
+							 //panelMap_Paint_1(panelMap, panelMap->InvokePaint);
+							 panelMap->Refresh();
+						 }
+					 }
+				 }
+				 if (!repeated) {
+					 for each(Object^ var in this->Controls) {
+						 if (var->GetType() == button->GetType()) {
+							 button = cli::safe_cast<Button^>(var);
+							 //MessageBox::Show("Changing1: " + button->Name);
+							 if (button->Name == BUTTON_NAME_COLOR + id.ToString()) {
 
-						marshalString(comboBox->Text, str);
-						color.setName(str);
+								 marshalString(comboBox->Text, str);
+								 color.setName(str);
 
-						ground.setId(id);
-						setCostosFromGround(comboBox, ground);
+								 ground.setId(id);
+								 setCostosFromGround(comboBox, ground);
 
-						if (listColor->findData(color) != nullptr) {
-							color = listColor->findData(color)->getData();
-							buttonAux = button;
-							newColor = Color::FromArgb(color.getColor(0), color.getColor(1), color.getColor(2));
-							ground.setId(id);
-							if (listGround->findData(ground) != nullptr) {
-								//MessageBox::Show("asdf: " + button->Name);
-								listGround->findData(ground)->getData().setColor(color.getColor(0), color.getColor(1), color.getColor(2));
-								marshalString(comboBox->Text, str);
-								listGround->findData(ground)->getData().setName(str);
+								 if (listColor->findData(color) != nullptr) {
+									 color = listColor->findData(color)->getData();
+									 buttonAux = button;
+									 newColor = Color::FromArgb(color.getColor(0), color.getColor(1), color.getColor(2));
+									 ground.setId(id);
+									 if (listGround->findData(ground) != nullptr) {
+										 //MessageBox::Show("asdf: " + button->Name);
+										 listGround->findData(ground)->getData().setColor(color.getColor(0), color.getColor(1), color.getColor(2));
+										 marshalString(comboBox->Text, str);
+										 listGround->findData(ground)->getData().setName(str);
 
-								panelMap->Refresh();
-								//panelMap_Paint_1(panelMap, panelMap->InvokePaint);
-								//drawMap(true);
-							}
-
-
-						}
-
-					}
-				}
-			}
-		}
-		buttonAux->BackColor = newColor;
-
-		/*if (comboBox->Text == "Escoga un terreno") {
-			MessageBox::Show("Error, debe de escoger un nombre válido");
-			}
-		else {
-
-			marshalString(comboBox->Text, str);
-			color.setGroundName(str);
-			//colorTwo = listColor->findData()->getData();
-
-			if (listColor->findData(color) == nullptr) {
-				listColor->findData(color)->getData().setGroundName(str);
-			}
-			else if (listColor->getDataByPosition(id).getId()) {
-
-			}
-			else {
-				str = listColor->findData(color)->getData().getGroundName();
-				systemStr = gcnew String(str.c_str());
-				systemStr2 = gcnew String(color.getGroundName().c_str());
-				MessageBox::Show("Error, el nombre para este terreno ya existe, ingrese uno nuevo - " + systemStr + "-" +
-				systemStr2);
-			}
-		}*/
-
-	}
-
-	//Valida el cambio de si es válido el terreno para el juego
-	void checkBox_Color_IsValid(Object^ sender, EventArgs^ e) {
-
-		CheckBox ^checkBox;
-		String ^string;
-		Ground ground;
-		int id;
-		checkBox = safe_cast<CheckBox^>(sender);
-		id = Int32::Parse(checkBox->Name->Substring(14));
+										 panelMap->Refresh();
+										 //panelMap_Paint_1(panelMap, panelMap->InvokePaint);
+										 //drawMap(true);
+									 }
 
 
+								 }
 
-		if (checkBox->Checked) {
-			string = TEXTBOX_NAME_COLOR + id.ToString();
-			for each (TextBox^ var in arrayTextBox) {
-				if (var->Name == string) {
-					var->Enabled = false;
-					ground.setId(id);
-					if (listGround->findData(ground) != nullptr) {
-						listGround->findData(ground)->getData().setIsValid(false);
-					}
-				}
-			}
-		}
-		if (!checkBox->Checked) {
-			string = TEXTBOX_NAME_COLOR + id.ToString();
-			for each (TextBox^ var in arrayTextBox) {
-				if (var->Name == string) {
-					var->Enabled = true;
-					ground.setId(id);
-					if (listGround->findData(ground) != nullptr) {
-						listGround->findData(ground)->getData().setIsValid(true);
-					}
-				}
-			}
-		}
-	}
+							 }
+						 }
+					 }
+				 }
+				 buttonAux->BackColor = newColor;
 
-	// Valida el cambio de valor en el combobox dinámico del color
-	void textBox_Color_Float(Object^ sender, EventArgs^ e) {
-		TextBox ^txt = safe_cast<TextBox^>(sender);
-		Ground ground;
-		CostoJugador costoJugador;
-		String ^text;
-		std::string str;
-		int id;
-		float costo;
-		//MessageBox::Show("Cambió");
-		if (txt->Text == "") {
-			txt->Text == "0";
-		}
-		else if (System::Text::RegularExpressions::Regex::IsMatch(txt->Text, "^[0-9]*[.]?[0-9]+$") ||
-			System::Text::RegularExpressions::Regex::IsMatch(txt->Text, "^[0-9]+[.]$")) {
-			// ((.[0-9]+)|[0-9]+)  
-			id = Int32::Parse(txt->Name->Substring(13));
-			ground.setId(id);
+				 /*if (comboBox->Text == "Escoga un terreno") {
+					 MessageBox::Show("Error, debe de escoger un nombre válido");
+					 }
+				 else {
+					 marshalString(comboBox->Text, str);
+					 color.setGroundName(str);
+					 //colorTwo = listColor->findData()->getData();
+					 if (listColor->findData(color) == nullptr) {
+						 listColor->findData(color)->getData().setGroundName(str);
+					 }
+					 else if (listColor->getDataByPosition(id).getId()) {
+					 }
+					 else {
+						 str = listColor->findData(color)->getData().getGroundName();
+						 systemStr = gcnew String(str.c_str());
+						 systemStr2 = gcnew String(color.getGroundName().c_str());
+						 MessageBox::Show("Error, el nombre para este terreno ya existe, ingrese uno nuevo - " + systemStr + "-" +
+						 systemStr2);
+					 }
+				 }*/
 
-			if (listGround->findData(ground) != nullptr) {
-				text = txt->Text;
-				//MessageBox::Show(System::Single::Parse(("0.12"), gcnew System::Globalization::CultureInfo("en-US")).ToString());
-				listGround->findData(ground)->getData().setValue(System::Math::Truncate((Convert::ToDouble((txt->Text), gcnew System::Globalization::CultureInfo("en-US")) * 100)) / 100);
-				
-				marshalString(comboBox_Player->Text,str);
-				costoJugador.setName(str);
-				costoJugador.setGroundName(listGround->findData(ground)->getData().getName());
-				//MessageBox::Show(gcnew String(listCostoJugador->findData(costoJugador)->getData().getName().c_str()));
-				if (listCostoJugador->findData(costoJugador) != nullptr) {	
-					listCostoJugador->findData(costoJugador)->getData().setCosto(listGround->findData(ground)->getData().getValue());
-					//MessageBox::Show("Cambiando costo: " + costo + " - " + gcnew String(str.c_str()));
-				}
-				
-			}
-		}
-		else {
-			MessageBox::Show("Ingrese un valor numérico correcto");
-			txt->Text = "0";
-		}
-	}
+			 }
 
-	// Cerrar completamente el programa
+			 //Valida el cambio de si es válido el terreno para el juego
+			 void checkBox_Color_IsValid(Object^ sender, EventArgs^ e) {
+				 CostoJugador costoJugador;
+				 CheckBox ^checkBox;
+				 String ^string;
+				 Ground ground;
+				 int id;
+				 float costo;
+				 std::string str;
+				 checkBox = safe_cast<CheckBox^>(sender);
+				 id = Int32::Parse(checkBox->Name->Substring(14));
+
+
+
+				 if (checkBox->Checked) {
+					 string = TEXTBOX_NAME_COLOR + id.ToString();
+					 for each (TextBox^ var in arrayTextBox) {
+						 if (var->Name == string) {
+							 var->Enabled = false;
+							 ground.setId(id);
+							 if (listGround->findData(ground) != nullptr) {
+								 listGround->findData(ground)->getData().setIsValid(false);
+
+								 marshalString(comboBox_Player->Text, str);
+								 costoJugador.setName(str);
+								 costoJugador.setGroundName(listGround->findData(ground)->getData().getName());
+								 //MessageBox::Show(gcnew String(listCostoJugador->findData(costoJugador)->getData().getName().c_str()));
+								 if (listCostoJugador->findData(costoJugador) != nullptr) {
+									 costo = -1;
+									 listCostoJugador->findData(costoJugador)->getData().setCosto(costo);
+								 }
+							 }
+						 }
+					 }
+				 }
+				 if (!checkBox->Checked) {
+					 string = TEXTBOX_NAME_COLOR + id.ToString();
+					 for each (TextBox^ var in arrayTextBox) {
+						 if (var->Name == string) {
+							 var->Enabled = true;
+							 ground.setId(id);
+							 if (listGround->findData(ground) != nullptr) {
+								 listGround->findData(ground)->getData().setIsValid(true);
+
+								 marshalString(comboBox_Player->Text, str);
+								 costoJugador.setName(str);
+								 costoJugador.setGroundName(listGround->findData(ground)->getData().getName());
+								 //MessageBox::Show(gcnew String(listCostoJugador->findData(costoJugador)->getData().getName().c_str()));
+								 if (listCostoJugador->findData(costoJugador) != nullptr) {
+									 //MessageBox::Show("here");
+									 listCostoJugador->findData(costoJugador)->getData().setCosto(System::Math::Truncate((Convert::ToDouble((var->Text), gcnew System::Globalization::CultureInfo("en-US")) * 100)) / 100);
+								 }
+								 }
+						 }
+					 }
+				 }
+			 }
+
+			 // Valida el cambio de valor en el combobox dinámico del color
+			 void textBox_Color_Float(Object^ sender, EventArgs^ e) {
+				 TextBox ^txt = safe_cast<TextBox^>(sender);
+				 Ground ground;
+				 CostoJugador costoJugador;
+				 String ^text;
+				 std::string str;
+				 int id;
+				 float costo;
+				 //MessageBox::Show("Cambió");
+				 if (txt->Text == "") {
+					 txt->Text == "0";
+				 }
+				 else if (System::Text::RegularExpressions::Regex::IsMatch(txt->Text, "^[0-9]*[.]?[0-9]+$") ||
+					 System::Text::RegularExpressions::Regex::IsMatch(txt->Text, "^[0-9]+[.]$")) {
+					 // ((.[0-9]+)|[0-9]+)  
+					 id = Int32::Parse(txt->Name->Substring(13));
+					 ground.setId(id);
+
+					 if (listGround->findData(ground) != nullptr) {
+						 text = txt->Text;
+						 //MessageBox::Show(System::Single::Parse(("0.12"), gcnew System::Globalization::CultureInfo("en-US")).ToString());
+						 listGround->findData(ground)->getData().setValue(System::Math::Truncate((Convert::ToDouble((txt->Text), gcnew System::Globalization::CultureInfo("en-US")) * 100)) / 100);
+
+						 marshalString(comboBox_Player->Text, str);
+						 costoJugador.setName(str);
+						 costoJugador.setGroundName(listGround->findData(ground)->getData().getName());
+						 //MessageBox::Show(gcnew String(listCostoJugador->findData(costoJugador)->getData().getName().c_str()));
+						 if (listCostoJugador->findData(costoJugador) != nullptr) {
+							 listCostoJugador->findData(costoJugador)->getData().setCosto(listGround->findData(ground)->getData().getValue());
+							 //MessageBox::Show("Cambiando costo: " + costo + " - " + gcnew String(str.c_str()));
+						 }
+
+					 }
+				 }
+				 else {
+					 MessageBox::Show("Ingrese un valor numérico correcto");
+					 txt->Text = "0";
+				 }
+			 }
+
+			 // Cerrar completamente el programa
 	private: System::Void Map_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
 		//Application::Exit();
 	}
@@ -2583,9 +2444,9 @@ namespace AImap {
 	}
 
 
-	/////////////////////// Eventos para Drag & drop de estado inicial y final //////////////////////////////77
-	Point ^coordenadas = gcnew Point;
-	Tree ^tree;
+			 /////////////////////// Eventos para Drag & drop de estado inicial y final //////////////////////////////77
+			 Point ^coordenadas = gcnew Point;
+			 Tree ^tree;
 	private: System::Void pictureBox_Start_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 		PictureBox ^pictureBox;
 		//pictureBox_Start->DoDragDrop(pictureBox_Start, DragDropEffects::Move);
@@ -2887,144 +2748,144 @@ namespace AImap {
 		}
 	}
 
-	// Mueve el jugador a una posición en específico.
-	void moveEvent(Point pointNext) {
-		Point pointActual = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
-		Point auxPoint = pointActual;
-		Point auxAuxPoint;
-		Cell cell;
-		stringstream toStr;
-		int locationX, locationY, intAux;
-		bool moved = false;
+			 // Mueve el jugador a una posición en específico.
+			 void moveEvent(Point pointNext) {
+				 Point pointActual = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
+				 Point auxPoint = pointActual;
+				 Point auxAuxPoint;
+				 Cell cell;
+				 stringstream toStr;
+				 int locationX, locationY, intAux;
+				 bool moved = false;
 
-		cell.setPositionX(pointNext.X);
-		cell.setPositionY(pointNext.Y);
-		pointActual = Point(pointActual.X / CELL_MAX_SIZE, pointActual.Y / CELL_MAX_SIZE);
-		// textBox3->Text += gcnew String(listCell->findPositionXY(cell)->getData().getName().c_str()) + ":" + pointNext.ToString() + "," + pointActual.ToString();
-		auxPoint = Point(pointNext.X - pointActual.X, pointNext.Y - pointActual.Y);
+				 cell.setPositionX(pointNext.X);
+				 cell.setPositionY(pointNext.Y);
+				 pointActual = Point(pointActual.X / CELL_MAX_SIZE, pointActual.Y / CELL_MAX_SIZE);
+				 // textBox3->Text += gcnew String(listCell->findPositionXY(cell)->getData().getName().c_str()) + ":" + pointNext.ToString() + "," + pointActual.ToString();
+				 auxPoint = Point(pointNext.X - pointActual.X, pointNext.Y - pointActual.Y);
 
-		if (pictureBox_Player->Location != pictureBox_Goal->Location) {
-			if (auxPoint.X != 0 || auxPoint.Y != 0) {
-				auxAuxPoint = pictureBox_Player->Location;
-				pictureBox_Player->Location = Point(auxAuxPoint.X + (auxPoint.X * CELL_MAX_SIZE), auxAuxPoint.Y + (auxPoint.Y * CELL_MAX_SIZE));
-				moved = true;
-			}
-			else {
-				// Nothing
-			}
-			if (moved) {
-				pointActual = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
-				setVisit(panelMap->PointToClient(PointToScreen(pictureBox_Player->Location)));
-				unlockCell(panelMap->PointToClient(PointToScreen(pictureBox_Player->Location)));
-				panelMap->Refresh();
-
-
-				//drawMap(false);
-				//panelMap_Paint_1(panelMap, panelMap->InvokePaint);
-				//panelMap->Refresh();
-			}
-		}
-		//drawTree();
-		if (pictureBox_Player->Location == pictureBox_Goal->Location) {
-			timer1->Enabled = false;
-			won = true;
-			showPath(arbol->existeVertice(listVisitados->getTop()->elemento));
-			picTree->Refresh();
-			MessageBox::Show("Has llegado a la meta \n");
-
-			//pictureBox_Player->Location = pictureBox_Start->Location;
-			pictureBox_Player->Location = pictureBoxPlayerPoint;
-
-		}
-	}
-
-	void moveEventDos(Point pointNext) {
-		Point pointActual = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
-		Point auxPoint = pointActual;
-		Point auxAuxPoint;
-		Cell cell;
-		stringstream toStr;
-		int locationX, locationY, intAux;
-		bool moved = false;
-
-		cell.setPositionX(pointNext.X);
-		cell.setPositionY(pointNext.Y);
-		pointActual = Point(pointActual.X / CELL_MAX_SIZE, pointActual.Y / CELL_MAX_SIZE);
-		// textBox3->Text += gcnew String(listCell->findPositionXY(cell)->getData().getName().c_str()) + ":" + pointNext.ToString() + "," + pointActual.ToString();
-		auxPoint = Point(pointNext.X - pointActual.X, pointNext.Y - pointActual.Y);
-
-		if (pictureBox_Player->Location != pictureBox_Goal->Location) {
-			if (auxPoint.X != 0 || auxPoint.Y != 0) {
-				auxAuxPoint = pictureBox_Player->Location;
-				pictureBox_Player->Location = Point(auxAuxPoint.X + (auxPoint.X * CELL_MAX_SIZE), auxAuxPoint.Y + (auxPoint.Y * CELL_MAX_SIZE));
-				moved = true;
-			}
-			else {
-				// Nothing
-			}
-			if (moved) {
-				pointActual = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
-				setVisit(panelMap->PointToClient(PointToScreen(pictureBox_Player->Location)));
-				unlockCellDos(panelMap->PointToClient(PointToScreen(pictureBox_Player->Location)));
-				panelMap->Refresh();
+				 if (pictureBox_Player->Location != pictureBox_Goal->Location) {
+					 if (auxPoint.X != 0 || auxPoint.Y != 0) {
+						 auxAuxPoint = pictureBox_Player->Location;
+						 pictureBox_Player->Location = Point(auxAuxPoint.X + (auxPoint.X * CELL_MAX_SIZE), auxAuxPoint.Y + (auxPoint.Y * CELL_MAX_SIZE));
+						 moved = true;
+					 }
+					 else {
+						 // Nothing
+					 }
+					 if (moved) {
+						 pointActual = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
+						 setVisit(panelMap->PointToClient(PointToScreen(pictureBox_Player->Location)));
+						 unlockCell(panelMap->PointToClient(PointToScreen(pictureBox_Player->Location)));
+						 panelMap->Refresh();
 
 
-				//drawMap(false);
-				//panelMap_Paint_1(panelMap, panelMap->InvokePaint);
-				//panelMap->Refresh();
-			}
-		}
-		//drawTree();
-		if (pictureBox_Player->Location == pictureBox_Goal->Location) {
-			timer1->Enabled = false;
-			won = true;
-			showPath(arbol->existeVertice(listVisitados->getTop()->elemento));
-			picTree->Refresh();
-			MessageBox::Show("Has llegado a la meta \n");
+						 //drawMap(false);
+						 //panelMap_Paint_1(panelMap, panelMap->InvokePaint);
+						 //panelMap->Refresh();
+					 }
+				 }
+				 //drawTree();
+				 if (pictureBox_Player->Location == pictureBox_Goal->Location) {
+					 timer1->Enabled = false;
+					 won = true;
+					 showPath(arbol->existeVertice(listVisitados->getTop()->elemento));
+					 picTree->Refresh();
+					 MessageBox::Show("Has llegado a la meta \n");
 
-			//pictureBox_Player->Location = pictureBox_Start->Location;
-			pictureBox_Player->Location = pictureBoxPlayerPoint;
+					 //pictureBox_Player->Location = pictureBox_Start->Location;
+					 pictureBox_Player->Location = pictureBoxPlayerPoint;
 
-		}
-	}
+				 }
+			 }
 
-	// Valida que el jugador no se salga del mapa de juego
-	bool isValidPositionPanelMap(Point ^point) {
-		Cell cell;
-		//if (point->X < 0 || point->Y < 0 || point->X > 750 || point->Y > 750) {
-		if (point->X < 0 || point->Y < 0 || point->X > panelMap->Size.Width || point->Y > panelMap->Size.Height) {
-			//pictureBox_Player->Location = pictureBox_Player->Location;
-			return false;
-		}
-		else {
-			return true;
-		}
+			 void moveEventDos(Point pointNext) {
+				 Point pointActual = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
+				 Point auxPoint = pointActual;
+				 Point auxAuxPoint;
+				 Cell cell;
+				 stringstream toStr;
+				 int locationX, locationY, intAux;
+				 bool moved = false;
 
-	}
-	bool isValidGround(Point auxPoint) {
-		Cell cell;
-		Ground ground;
-		int locationX, locationY, intAux;
+				 cell.setPositionX(pointNext.X);
+				 cell.setPositionY(pointNext.Y);
+				 pointActual = Point(pointActual.X / CELL_MAX_SIZE, pointActual.Y / CELL_MAX_SIZE);
+				 // textBox3->Text += gcnew String(listCell->findPositionXY(cell)->getData().getName().c_str()) + ":" + pointNext.ToString() + "," + pointActual.ToString();
+				 auxPoint = Point(pointNext.X - pointActual.X, pointNext.Y - pointActual.Y);
 
-		locationX = (int)(auxPoint.X / CELL_MAX_SIZE);
-		locationY = (int)(auxPoint.Y / CELL_MAX_SIZE);
+				 if (pictureBox_Player->Location != pictureBox_Goal->Location) {
+					 if (auxPoint.X != 0 || auxPoint.Y != 0) {
+						 auxAuxPoint = pictureBox_Player->Location;
+						 pictureBox_Player->Location = Point(auxAuxPoint.X + (auxPoint.X * CELL_MAX_SIZE), auxAuxPoint.Y + (auxPoint.Y * CELL_MAX_SIZE));
+						 moved = true;
+					 }
+					 else {
+						 // Nothing
+					 }
+					 if (moved) {
+						 pointActual = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
+						 setVisit(panelMap->PointToClient(PointToScreen(pictureBox_Player->Location)));
+						 unlockCellDos(panelMap->PointToClient(PointToScreen(pictureBox_Player->Location)));
+						 panelMap->Refresh();
 
-		cell.setPositionX(locationX);
-		cell.setPositionY(locationY);
 
-		if (listCell->findPositionXY(cell) != nullptr) {
-			ground.setId(listCell->findPositionXY(cell)->getData().getIdGround());
-			if (listGround->findData(ground) != nullptr) {
-				if (listGround->findData(ground)->getData().getIsValid()) {
-					return true;
-				}
-				else {
-					return false;
-				}
-			}
-		}
-		return false;
-	}
+						 //drawMap(false);
+						 //panelMap_Paint_1(panelMap, panelMap->InvokePaint);
+						 //panelMap->Refresh();
+					 }
+				 }
+				 //drawTree();
+				 if (pictureBox_Player->Location == pictureBox_Goal->Location) {
+					 timer1->Enabled = false;
+					 won = true;
+					 showPath(arbol->existeVertice(listVisitados->getTop()->elemento));
+					 picTree->Refresh();
+					 MessageBox::Show("Has llegado a la meta \n");
+
+					 //pictureBox_Player->Location = pictureBox_Start->Location;
+					 pictureBox_Player->Location = pictureBoxPlayerPoint;
+
+				 }
+			 }
+
+			 // Valida que el jugador no se salga del mapa de juego
+			 bool isValidPositionPanelMap(Point ^point) {
+				 Cell cell;
+				 //if (point->X < 0 || point->Y < 0 || point->X > 750 || point->Y > 750) {
+				 if (point->X < 0 || point->Y < 0 || point->X > panelMap->Size.Width || point->Y > panelMap->Size.Height) {
+					 //pictureBox_Player->Location = pictureBox_Player->Location;
+					 return false;
+				 }
+				 else {
+					 return true;
+				 }
+
+			 }
+			 bool isValidGround(Point auxPoint) {
+				 Cell cell;
+				 Ground ground;
+				 int locationX, locationY, intAux;
+
+				 locationX = (int)(auxPoint.X / CELL_MAX_SIZE);
+				 locationY = (int)(auxPoint.Y / CELL_MAX_SIZE);
+
+				 cell.setPositionX(locationX);
+				 cell.setPositionY(locationY);
+
+				 if (listCell->findPositionXY(cell) != nullptr) {
+					 ground.setId(listCell->findPositionXY(cell)->getData().getIdGround());
+					 if (listGround->findData(ground) != nullptr) {
+						 if (listGround->findData(ground)->getData().getIsValid()) {
+							 return true;
+						 }
+						 else {
+							 return false;
+						 }
+					 }
+				 }
+				 return false;
+			 }
 	private: System::Void panelMap_MouseDown(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
 		if (e->Button == Windows::Forms::MouseButtons::Left) {
 			ToolTip ^tt = gcnew ToolTip();
@@ -3073,76 +2934,76 @@ namespace AImap {
 		panelMap->Refresh();
 	}
 
-	System::String^ toolTipMensaje(Point point) {
-		System::String^ informacion;
-		System::String^ coordenadaX;
-		int coordenadaY;
-		Cell cell;
-		Cell cellAux;
-		char letra = 'A';
+			 System::String^ toolTipMensaje(Point point) {
+				 System::String^ informacion;
+				 System::String^ coordenadaX;
+				 int coordenadaY;
+				 Cell cell;
+				 Cell cellAux;
+				 char letra = 'A';
 
 
-		//Coordenada
-		int locationX;
-		int locationY;
+				 //Coordenada
+				 int locationX;
+				 int locationY;
 
-		locationX = (int)(point.X / CELL_MAX_SIZE);
-		locationY = (int)(point.Y / CELL_MAX_SIZE);
+				 locationX = (int)(point.X / CELL_MAX_SIZE);
+				 locationY = (int)(point.Y / CELL_MAX_SIZE);
 
-		cell.setPositionX(locationX);
-		cell.setPositionY(locationY);
+				 cell.setPositionX(locationX);
+				 cell.setPositionY(locationY);
 
-		if (listCell->findPositionXY(cell) != nullptr) {
-			cellAux = listCell->getData(listCell->findPositionXY(cell));
+				 if (listCell->findPositionXY(cell) != nullptr) {
+					 cellAux = listCell->getData(listCell->findPositionXY(cell));
 
-			for (int i = 0; i < cellAux.getPositionX(); i++) {
-				letra += 1;
-			}
-			coordenadaX = System::Char::ToString(letra);
-			coordenadaY = cellAux.getPositionY() + 1;
+					 for (int i = 0; i < cellAux.getPositionX(); i++) {
+						 letra += 1;
+					 }
+					 coordenadaX = System::Char::ToString(letra);
+					 coordenadaY = cellAux.getPositionY() + 1;
 
-			informacion = "Coordenada: " + coordenadaX + "-" + coordenadaY.ToString() + "\n";
+					 informacion = "Coordenada: " + coordenadaX + "-" + coordenadaY.ToString() + "\n";
 
-			Ground groundAux;
-			groundAux.setId(cellAux.getIdGround());
+					 Ground groundAux;
+					 groundAux.setId(cellAux.getIdGround());
 
-			//DESCOMENTAR NOMBRE (Sig 2 lineas)
-			if (listGround->findData(groundAux) != nullptr) {
-				groundAux = listGround->findData(groundAux)->getData();
-			}
-			else {
-				MessageBox::Show("Not found " + groundAux.getId().ToString());
-			}
-			informacion = informacion + "Terreno: " + gcnew String(groundAux.getName().c_str()) + "\n";
+					 //DESCOMENTAR NOMBRE (Sig 2 lineas)
+					 if (listGround->findData(groundAux) != nullptr) {
+						 groundAux = listGround->findData(groundAux)->getData();
+					 }
+					 else {
+						 MessageBox::Show("Not found " + groundAux.getId().ToString());
+					 }
+					 informacion = informacion + "Terreno: " + gcnew String(groundAux.getName().c_str()) + "\n";
 
-			//Costo
-			if (groundAux.getIsValid() && groundAux.getValue() >= 0) {
-				informacion = informacion + "Costo: " + groundAux.getValue().ToString() + "\n";
-			}
-			else {
-				informacion = informacion + "Costo: N/A\n";
-			}
-			//Inicial
-			if (pointStart == cellAux.getId()) {
-				informacion = informacion + "Inicial: Sí \n";
-			}
-			else {
-				informacion = informacion + "Inicial: No \n";
-			}
+					 //Costo
+					 if (groundAux.getIsValid() && groundAux.getValue() >= 0) {
+						 informacion = informacion + "Costo: " + groundAux.getValue().ToString() + "\n";
+					 }
+					 else {
+						 informacion = informacion + "Costo: N/A\n";
+					 }
+					 //Inicial
+					 if (pointStart == cellAux.getId()) {
+						 informacion = informacion + "Inicial: Sí \n";
+					 }
+					 else {
+						 informacion = informacion + "Inicial: No \n";
+					 }
 
-			//Final
-			if (pointGoal == cellAux.getId()) {
-				informacion = informacion + "Final: Sí \n";
-			}
-			else {
-				informacion = informacion + "Final: No \n";
-			}
-			if (cellAux.getVisitCounter() != "") {
-				informacion = informacion + "Visita: " + gcnew String(cellAux.getVisitCounter().c_str()) + "\n";
-			}
-		}
-		return informacion;
-	}
+					 //Final
+					 if (pointGoal == cellAux.getId()) {
+						 informacion = informacion + "Final: Sí \n";
+					 }
+					 else {
+						 informacion = informacion + "Final: No \n";
+					 }
+					 if (cellAux.getVisitCounter() != "") {
+						 informacion = informacion + "Visita: " + gcnew String(cellAux.getVisitCounter().c_str()) + "\n";
+					 }
+				 }
+				 return informacion;
+			 }
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 		String ^systemStr;
 		std::string aux = "hi";
@@ -3166,90 +3027,90 @@ namespace AImap {
 		tree->Show();
 	}
 
-	///////////////////////////////////////// TreeNode ////////////////////////////////////////////
-			// Center the tree on the form.
-	void ArrangeTree()
-	{
-		int x, y;
-		Graphics ^gr = picTree->CreateGraphics();
-		{
-			if (arbol->Orientation == arbol->Orientations::Horizontal)
-			{
+			 ///////////////////////////////////////// TreeNode ////////////////////////////////////////////
+					 // Center the tree on the form.
+			 void ArrangeTree()
+			 {
+				 int x, y;
+				 Graphics ^gr = picTree->CreateGraphics();
+				 {
+					 if (arbol->Orientation == arbol->Orientations::Horizontal)
+					 {
 
-				//this->picTree->Size = System::Drawing::Size(picTree->Width + 10, arbol->nivelTotal() * 75 + 30);
-				//}
-				// Arrange the tree once to see how big it is.
-				float xmin = 0, ymin = 0;
-				//MessageBox::Show(gcnew String(arbol->mostrarListaAdyacencia().c_str()));
-				arbol->Arrange(gr, xmin, ymin, arbol->getAncla());
+						 //this->picTree->Size = System::Drawing::Size(picTree->Width + 10, arbol->nivelTotal() * 75 + 30);
+						 //}
+						 // Arrange the tree once to see how big it is.
+						 float xmin = 0, ymin = 0;
+						 //MessageBox::Show(gcnew String(arbol->mostrarListaAdyacencia().c_str()));
+						 arbol->Arrange(gr, xmin, ymin, arbol->getAncla());
 
-				// Arrange the tree again to center it horizontally.
-				//MessageBox::Show("Again");
-				xmin = (picTree->ClientSize.Width - xmin) / 2;
-				ymin = 10;
-				arbol->Arrange(gr, xmin, ymin, arbol->getAncla());
-				//MessageBox::Show("Again: " + picTree->ClientSize.Width);
-				x = xmin;
-				y = ymin;
-			}
-			else
-			{
-				// Arrange the tree.
-				float xmin = arbol->Indent;//@
-				float ymin = xmin;
-				arbol->Arrange(gr, xmin, ymin, arbol->getAncla());
-				x = xmin;
-				y = ymin;
-			}
-			int nivel = arbol->nivelTotal();
-			if (nivel > 8 && x > 500) {
+						 // Arrange the tree again to center it horizontally.
+						 //MessageBox::Show("Again");
+						 xmin = (picTree->ClientSize.Width - xmin) / 2;
+						 ymin = 10;
+						 arbol->Arrange(gr, xmin, ymin, arbol->getAncla());
+						 //MessageBox::Show("Again: " + picTree->ClientSize.Width);
+						 x = xmin;
+						 y = ymin;
+					 }
+					 else
+					 {
+						 // Arrange the tree.
+						 float xmin = arbol->Indent;//@
+						 float ymin = xmin;
+						 arbol->Arrange(gr, xmin, ymin, arbol->getAncla());
+						 x = xmin;
+						 y = ymin;
+					 }
+					 int nivel = arbol->nivelTotal();
+					 if (nivel > 8 && x > 500) {
 
-				//this->picTree->MaximumSize = System::Drawing::Size(x + 10, y + 10);
-				this->picTree->Size = System::Drawing::Size(x + 30, y + 30);
-				//MessageBox::Show("X min: " + x + " - " + "yMin" + y);
-			}
-			else if (nivel > 8 && x < 500) {
-				this->picTree->Size = System::Drawing::Size(picTree->Width, y + 33);
-			}
-			else if (nivel <= 8 && x > 500) {
-				this->picTree->Size = System::Drawing::Size(x + 33, picTree->Height);
-			}
-		}
+						 //this->picTree->MaximumSize = System::Drawing::Size(x + 10, y + 10);
+						 this->picTree->Size = System::Drawing::Size(x + 30, y + 30);
+						 //MessageBox::Show("X min: " + x + " - " + "yMin" + y);
+					 }
+					 else if (nivel > 8 && x < 500) {
+						 this->picTree->Size = System::Drawing::Size(picTree->Width, y + 33);
+					 }
+					 else if (nivel <= 8 && x > 500) {
+						 this->picTree->Size = System::Drawing::Size(x + 33, picTree->Height);
+					 }
+				 }
 
-		picTree->Refresh();
-	}
+				 picTree->Refresh();
+			 }
 
-	// The currently selected node.
-	Vertice *SelectedNode;
+			 // The currently selected node.
+			 Vertice *SelectedNode;
 
-	// Display the text of the node under the mouse.
-	void picTree_MouseMove(System::Object^ sender, System::Windows::Forms::MouseEventArgs e)
-	{
-		// Find the node under the mouse.
-		FindNodeUnderMouse(e.Location);
+			 // Display the text of the node under the mouse.
+			 void picTree_MouseMove(System::Object^ sender, System::Windows::Forms::MouseEventArgs e)
+			 {
+				 // Find the node under the mouse.
+				 FindNodeUnderMouse(e.Location);
 
-		// If there is a node under the mouse,
-		// display the node's text.
-		if (SelectedNode == nullptr)
-		{
-			//lblNodeText.Text = "";
-		}
-		else
-		{
-			//lblNodeText.Text = SelectedNode.Data.Text;
-		}
-	}
+				 // If there is a node under the mouse,
+				 // display the node's text.
+				 if (SelectedNode == nullptr)
+				 {
+					 //lblNodeText.Text = "";
+				 }
+				 else
+				 {
+					 //lblNodeText.Text = SelectedNode.Data.Text;
+				 }
+			 }
 
-	// Set SelectedNode to the node under the mouse.
-	void FindNodeUnderMouse(PointF pt)
-	{
-		Graphics ^gr = picTree->CreateGraphics();
-		{
-			SelectedNode = arbol->NodeAtPoint(gr, pt, arbol->getAncla());
-		}
-	}
+			 // Set SelectedNode to the node under the mouse.
+			 void FindNodeUnderMouse(PointF pt)
+			 {
+				 Graphics ^gr = picTree->CreateGraphics();
+				 {
+					 SelectedNode = arbol->NodeAtPoint(gr, pt, arbol->getAncla());
+				 }
+			 }
 
-	// Change the tree's orientation.
+			 // Change the tree's orientation.
 	private: System::Void radHorizontal_Click(System::Object^ sender, System::EventArgs ^e)
 	{
 		arbol->SetTreeDrawingParameters(5, 30, 20, 5,
@@ -3284,5 +3145,5 @@ namespace AImap {
 			comboBox_Distance->Enabled = false;
 		}
 	}
-};
+	};
 }

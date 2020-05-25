@@ -9,15 +9,12 @@ class Arista;
 
 class Vertice {
 public:
-	Vertice *padre = nullptr;
 	Vertice *sigVertice;
 	Arista *listaAdy;
 	Cell elemento;
 	bool isArista = false;
 	
-	bool operator == (const Vertice*& c) {
-		return elemento == c->elemento;
-	}
+	Vertice* padre;
 
 	int nivel = -1;
 	bool isPath = false;
@@ -106,10 +103,6 @@ public:
 	float peso;
 
 	friend class Arbol;
-
-	bool operator == (const Vertice*& c) {
-		return verticePertenece == c;
-	}
 };
 
 class Arbol {
@@ -301,7 +294,6 @@ public:
 		else if (actual->verticePertenece == destino) {
 			origen->listaAdy = actual->sigArista;
 			delete(actual);
-			//System::Windows::Forms::MessageBox::Show("Here");
 		}
 		else {
 			while (actual != nullptr) {
@@ -317,7 +309,7 @@ public:
 			}
 
 			if (band == 0) {
-				std::cout << "Los vértices no están conectados entre ellos";
+				//std::cout << "Los vértices no están conectados entre ellos";
 			}
 		}
 	}
@@ -344,21 +336,15 @@ public:
 	void eliminarVertice(Vertice* vertice) {
 		Vertice *actual, *anterior;
 		Arista *aux;
-		bool exit = false;
 
 		actual = ancla;
 
-		while (actual != nullptr && !exit) {
+		while (actual != nullptr) {
 			aux = actual->listaAdy;
-			while (aux != nullptr && !exit) {
-				
+			while (aux != nullptr) {
 				if (aux->verticePertenece == vertice) {
-					//System::Windows::Forms::MessageBox::Show("Actual: "+ gcnew System::String(actual->elemento.getName().c_str())
-					//	+"Comparing: " + gcnew System::String(aux->verticePertenece->elemento.getName().c_str()) + " - " +
-					//	gcnew System::String(vertice->elemento.getName().c_str()));
 					eliminarArista(actual, aux->verticePertenece);
-					exit = true;
-					//break;
+					break;
 				}
 				aux = aux->sigArista;
 			}
@@ -379,7 +365,6 @@ public:
 
 			anterior->sigVertice = actual->sigVertice;
 			delete(actual);
-			
 		}
 	}
 
@@ -389,7 +374,7 @@ public:
 		aristaAux = origen->listaAdy;
 
 		if (aristaAux == nullptr) {
-			std::cout << "Este vértice no tiene aristas";
+			//std::cout << "Este vértice no tiene aristas";
 			return false;
 		}
 
