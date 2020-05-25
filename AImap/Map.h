@@ -543,6 +543,7 @@ namespace AImap {
 			this->textBox3->ReadOnly = true;
 			this->textBox3->Size = System::Drawing::Size(206, 94);
 			this->textBox3->TabIndex = 44;
+			this->textBox3->Visible = false;
 			// 
 			// numericUpDown1
 			// 
@@ -586,9 +587,9 @@ namespace AImap {
 			this->btn_ShowMap->ForeColor = System::Drawing::SystemColors::ButtonHighlight;
 			this->btn_ShowMap->Location = System::Drawing::Point(805, 325);
 			this->btn_ShowMap->Name = L"btn_ShowMap";
-			this->btn_ShowMap->Size = System::Drawing::Size(143, 32);
+			this->btn_ShowMap->Size = System::Drawing::Size(94, 32);
 			this->btn_ShowMap->TabIndex = 49;
-			this->btn_ShowMap->Text = L"Mapa Completo";
+			this->btn_ShowMap->Text = L"Arbol";
 			this->btn_ShowMap->UseVisualStyleBackColor = false;
 			this->btn_ShowMap->Click += gcnew System::EventHandler(this, &Map::btn_ShowMap_Click);
 			// 
@@ -2367,7 +2368,7 @@ namespace AImap {
 				menorCosto = listaVertices->findMenorCostoGN();
 				pathActual = actual = menorCosto;
 
-				//listaVertices->deleteData(menorCosto);      ///Eliminar el vertice, sera el actual
+				listaVertices->deleteData(menorCosto);      ///Eliminar el vertice, sera el actual
 				if (listVisitados->findData(actual) == nullptr) {      ///Si el vertice no ha sido visitado
 					result += actual->elemento.getName() + ", ";              ///Se procesa
 
@@ -2390,7 +2391,7 @@ namespace AImap {
 							aux->verticePertenece->elemento.setDistanciaGN(distancia);
 							//listaVertices->findData(aux->verticePertenece)->getData()->elemento.setDistanciaGN(distancia);
 							///
-							if (listaVertices->findData(aux->verticePertenece) != nullptr) {   //Buscar si ya existe el adyacente en la lista
+							/*if (listaVertices->findData(aux->verticePertenece) != nullptr) {   //Buscar si ya existe el adyacente en la lista
 								float distanciaExistente, distanciaNueva;
 
 								distanciaExistente = listaVertices->findData(aux->verticePertenece)->getData()->elemento.getDistanciaGN();
@@ -2404,7 +2405,7 @@ namespace AImap {
 									listaVertices->insertData(aux->verticePertenece);
 								}
 
-							}
+							}*/
 							listaVertices->insertData(aux->verticePertenece);         ///Insertar
 						}
 						aux = aux->sigArista;
