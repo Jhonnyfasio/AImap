@@ -1731,22 +1731,17 @@ namespace AImap {
 								destino->isArista = true;
 								//destino->elemento.setDistanciaGN(origen->elemento.getDistanciaGN() + destino->elemento.getPrice());
 							}
-							
-							
 						}
-
 					}
 					else {
 							arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
-							destino->isArista = true;
-						
-						
+							destino->isArista = true;					
 					}
 				}
 
 			}
-			//ArrangeTree();
-			//picTree->Refresh();
+			ArrangeTree();
+			picTree->Refresh();
 
 		}
 

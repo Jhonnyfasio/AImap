@@ -301,6 +301,7 @@ public:
 		else if (actual->verticePertenece == destino) {
 			origen->listaAdy = actual->sigArista;
 			delete(actual);
+			//System::Windows::Forms::MessageBox::Show("Here");
 		}
 		else {
 			while (actual != nullptr) {
