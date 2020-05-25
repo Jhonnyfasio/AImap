@@ -4,12 +4,12 @@
 
 class Cell {
 private:
-	int id;
-	int idGround;
+	int id = -1;
+	int idGround = -1;
 	// int visitCounter[20];
 	std::string visitCounter = "";
-	int positionX;
-	int positionY;
+	int positionX = 0;
+	int positionY = 0;
 	int lastVisitPosition = 0;
 	float price;
 	bool isKnown = false;
@@ -105,25 +105,24 @@ public:
 		price = priceX;
 	}
 
-	void setDistanciaGN(const float& distancia) {
-		distanciaGN = distancia;
+	void setDistanciaGN(const float& distanciaGNX) {
+		distanciaGN = distanciaGNX;
 	}
 
-	void setDistanciaHN(const float& distancia) {
-		distanciaHN = distancia;
+	void setDistanciaHN(const float& distanciaHNX) {
+		distanciaHN = distanciaHNX;
 	}
 
 	float calcularDistManhattan(Cell a, Cell b) {
 		float auxDistM;
 
-		auxDistM = (int)(System::Math::Abs(a.positionX - b.positionX) + System::Math::Abs(a.positionY - b.positionY));
+		auxDistM = (System::Math::Abs(a.positionX - b.positionX) + System::Math::Abs(a.positionY - b.positionY));
 
 		return auxDistM;
 	}
 
 	float calcularDistEuclideana(Cell a, Cell b) {
 		float auxDistE;
-		
 
 		auxDistE = System::Math::Truncate(((System::Math::Sqrt((System::Math::Pow((b.positionX - a.positionX), 2)) +
 			(System::Math::Pow((b.positionY - a.positionY), 2)))) * 100)) / 100;

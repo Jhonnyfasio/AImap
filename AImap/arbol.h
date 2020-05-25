@@ -9,11 +9,16 @@ class Arista;
 
 class Vertice {
 public:
+	Vertice *padre = nullptr;
 	Vertice *sigVertice;
 	Arista *listaAdy;
 	Cell elemento;
 	bool isArista = false;
 	
+	bool operator == (const Vertice*& c) {
+		return elemento == c->elemento;
+	}
+
 	int nivel = -1;
 	bool isPath = false;
 
@@ -101,6 +106,10 @@ public:
 	float peso;
 
 	friend class Arbol;
+
+	bool operator == (const Vertice*& c) {
+		return verticePertenece == c;
+	}
 };
 
 class Arbol {
@@ -194,6 +203,7 @@ public:
 		if (aux == nullptr) {
 			origen->listaAdy = nuevaArista;
 			nuevaArista->verticePertenece = destino;
+			nuevaArista->verticePertenece->padre = origen;
 			if (destino->nivel == -1) {
 				destino->nivel = origen->nivel + 1;
 			}
@@ -205,6 +215,7 @@ public:
 
 			aux->sigArista = nuevaArista;
 			nuevaArista->verticePertenece = destino;
+			nuevaArista->verticePertenece->padre = origen;
 			if (destino->nivel == -1) {
 				destino->nivel = origen->nivel + 1;
 			}
@@ -285,7 +296,7 @@ public:
 		actual = origen->listaAdy;
 
 		if (actual == nullptr) {
-			std::cout << "El vértice origen no tiene aristas";
+			//std::cout << "El vértice origen no tiene aristas";
 		}
 		else if (actual->verticePertenece == destino) {
 			origen->listaAdy = actual->sigArista;
@@ -332,15 +343,21 @@ public:
 	void eliminarVertice(Vertice* vertice) {
 		Vertice *actual, *anterior;
 		Arista *aux;
+		bool exit = false;
 
 		actual = ancla;
 
-		while (actual != nullptr) {
+		while (actual != nullptr && !exit) {
 			aux = actual->listaAdy;
-			while (aux != nullptr) {
+			while (aux != nullptr && !exit) {
+				
 				if (aux->verticePertenece == vertice) {
+					//System::Windows::Forms::MessageBox::Show("Actual: "+ gcnew System::String(actual->elemento.getName().c_str())
+					//	+"Comparing: " + gcnew System::String(aux->verticePertenece->elemento.getName().c_str()) + " - " +
+					//	gcnew System::String(vertice->elemento.getName().c_str()));
 					eliminarArista(actual, aux->verticePertenece);
-					break;
+					exit = true;
+					//break;
 				}
 				aux = aux->sigArista;
 			}
@@ -361,6 +378,7 @@ public:
 
 			anterior->sigVertice = actual->sigVertice;
 			delete(actual);
+			
 		}
 	}
 

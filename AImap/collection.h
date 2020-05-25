@@ -467,7 +467,7 @@ public:
 			return nullptr;
 		}
 		int menorCosto;
-		menorCosto = 9999999;
+		menorCosto = 999;
 		T auxMenor;
 
 		Node* aux(header->getNext());
@@ -486,7 +486,7 @@ public:
 			return nullptr;
 		}
 		int menorCosto;
-		menorCosto = 9999999;
+		menorCosto = 999;
 		T auxMenor;
 
 		Node* aux(header->getNext());
