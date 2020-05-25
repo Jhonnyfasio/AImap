@@ -3417,29 +3417,12 @@ namespace AImap {
 		}
 		return informacion;
 	}
+
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 		String ^systemStr;
 		std::string aux = "hi";
 		aux = arbol->mostrarListaAdyacencia();
 		MessageBox::Show(gcnew String(aux.c_str()));
-
-		Cell elem, elem2;
-
-		elem.setId(78);   //123
-		elem2.setId(78);
-
-		elem2 = listCell->findData(elem2)->getData();
-		elem = listCell->findData(elem)->getData();
-
-
-		MessageBox::Show(gcnew String(elem.getName().c_str()));
-		MessageBox::Show(gcnew String(elem2.getName().c_str()));
-
-		//elem.calcularDistManhattan(elem, elem2);
-		//elem.calcularDistEuclideana(elem, elem2);
-
-		MessageBox::Show(elem.calcularDistManhattan(elem, elem2).ToString());
-		MessageBox::Show(elem.calcularDistEuclideana(elem, elem2).ToString());
 	}
 
 	private: System::Void numericUpDown1_ValueChanged(System::Object^  sender, System::EventArgs^  e) {

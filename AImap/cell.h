@@ -116,7 +116,7 @@ public:
 	float calcularDistManhattan(Cell a, Cell b) {
 		float auxDistM;
 
-		auxDistM = (System::Math::Abs(a.positionX - b.positionX) + System::Math::Abs(a.positionY - b.positionY));
+		auxDistM = (int)(System::Math::Abs(a.positionX - b.positionX) + System::Math::Abs(a.positionY - b.positionY));
 
 		return auxDistM;
 	}
