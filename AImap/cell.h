@@ -50,6 +50,12 @@ public:
 	float getPrice() {
 		return price;
 	}
+	float getDistanciaGN() {
+		return distanciaGN;
+	}
+	float getDistanciaHN() {
+		return distanciaHN;
+	}
 	std::string getName() {
 		std::stringstream toStr;
 		std::string str;
@@ -58,7 +64,7 @@ public:
 		str = "(" + str + "," + toStr.str() + ")";
 		return str;
 	}
-
+	/// Setters ///
 	void setId(const int& idX) {
 		id = idX;
 	}
@@ -103,16 +109,8 @@ public:
 		distanciaGN = distancia;
 	}
 
-	float getDistanciaGN() {
-		return distanciaGN;
-	}
-
 	void setDistanciaHN(const float& distancia) {
 		distanciaHN = distancia;
-	}
-
-	float getDistanciaHN() {
-		return distanciaHN;
 	}
 
 	float calcularDistManhattan(Cell a, Cell b) {
@@ -126,7 +124,8 @@ public:
 	float calcularDistEuclideana(Cell a, Cell b) {
 		float auxDistE;
 
-		auxDistE = System::Math::Truncate(((System::Math::Sqrt((System::Math::Pow((b.positionX - a.positionX), 2)) + (System::Math::Pow((b.positionY - a.positionY), 2)))) * 100)) / 100;
+		auxDistE = System::Math::Truncate(((System::Math::Sqrt((System::Math::Pow((b.positionX - a.positionX), 2)) +
+			(System::Math::Pow((b.positionY - a.positionY), 2)))) * 100)) / 100;
 		//(System::Math::Truncate((Convert::ToDouble((txt->Text), gcnew System::Globalization::CultureInfo("en-US")) * 100)) / 100)
 		return auxDistE;
 	}

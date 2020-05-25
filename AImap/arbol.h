@@ -12,6 +12,7 @@ public:
 	Vertice *sigVertice;
 	Arista *listaAdy;
 	Cell elemento;
+	bool isArista = false;
 	
 	int nivel = -1;
 	bool isPath = false;

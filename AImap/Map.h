@@ -72,60 +72,55 @@ namespace AImap {
 	private: System::Windows::Forms::ComboBox^  comboBox_Algoritmos;
 	private: System::Windows::Forms::Timer^ timer1;
 
-	private: BufferedGraphics ^graphicsBuffer;
-
-			 Collection<Cell> *listCell;
-			 Collection<Ground> *listGround;
-			 Collection<Player> *listPlayer;
-			 Collection<Ground> *listColorInUse;
-			 Collection<ColorClass> *listColor;
-			 Collection<CostoJugador> *listCostoJugador;
-
-			 Collection<Vertice*> *listaVertices;
-			 Collection<Vertice*> *pilaVertices;
-			 Collection<Vertice*> *listVisitados;
-			 Collection<Vertice*> *path;
-			 Collection<Vertice*> *listVerticesAuxGlobal;
-			 Arbol *arbol;
-			 cli::array<ComboBox^>^ arrayComboBox;
-			 cli::array<TextBox^>^ arrayTextBox;
-			 cli::array<Button^>^ arrayButton;
-			 cli::array<CheckBox^>^ arrayCheckBox;
-			 cli::array<String^>^ arrayPriority;
-			 cli::array <String^>^ priority;
-			 String ^fileNameMapGlobal;
-			 Point pictureBoxStarPoint, pictureBoxGoalPoint, pictureBoxPlayerPoint;
-			 Graphics ^g;
-
-
-			 int pointGoal = -1;
-			 int pointStart = -1;
-			 int publicSizeHeightMax;
-			 int publicSizeWidthMax;
-			 int visit = 0;
-			 bool isPlaying = false;
-			 bool won = false;
 	private: System::Windows::Forms::Button^  button1;
 	private: System::Windows::Forms::TextBox^  textBox2;
 	private: System::Windows::Forms::TextBox^  textBox3;
-
 	private: System::Windows::Forms::NumericUpDown^  numericUpDown1;
 	private: System::Windows::Forms::ComboBox^  comboBox_Distance;
 	private: System::Windows::Forms::Label^  label10;
 	private: System::Windows::Forms::Button^  btn_ShowMap;
-
-
-
-
 	private: System::ComponentModel::BackgroundWorker^  backgroundWorker1;
-
-
 	private: System::Windows::Forms::FlowLayoutPanel^  flowLayoutPanel2;
 	private: System::Windows::Forms::Panel^  picTree;
 
+	private: BufferedGraphics ^graphicsBuffer;
+
+	Collection<Cell> *listCell;
+	Collection<Ground> *listGround;
+	Collection<Player> *listPlayer;
+	Collection<Ground> *listColorInUse;
+	Collection<ColorClass> *listColor;
+	Collection<CostoJugador> *listCostoJugador;
+
+	Collection<Vertice*> *listaVertices;
+	Collection<Vertice*> *pilaVertices;
+	Collection<Vertice*> *listVisitados;
+	Collection<Vertice*> *path;
+	Collection<Vertice*> *listVerticesAuxGlobal;
+	Arbol *arbol;
+	cli::array<ComboBox^>^ arrayComboBox;
+	cli::array<TextBox^>^ arrayTextBox;
+	cli::array<Button^>^ arrayButton;
+	cli::array<CheckBox^>^ arrayCheckBox;
+	cli::array<String^>^ arrayPriority;
+	cli::array <String^>^ priority;
+	String ^fileNameMapGlobal;
+	Point pictureBoxStarPoint, pictureBoxGoalPoint, pictureBoxPlayerPoint;
+	Graphics ^g;
 
 
-			 bool isCorruptFile = false;
+	int pointGoal = -1;
+	int pointStart = -1;
+	int publicSizeHeightMax;
+	int publicSizeWidthMax;
+	int visit = 0;
+	bool isPlaying = false;
+	bool won = false;
+	
+
+
+
+	bool isCorruptFile = false;
 
 	public:
 
@@ -174,6 +169,7 @@ namespace AImap {
 			createArrayPriority();
 			comboBox_Priority->SelectedIndex = 0;
 			comboBox_Algoritmos->SelectedIndex = 1;
+			comboBox_Distance->SelectedIndex = 0;
 			//UpdateGraphicsBuffer();
 		}
 
@@ -540,10 +536,11 @@ namespace AImap {
 			// 
 			// textBox3
 			// 
-			this->textBox3->Location = System::Drawing::Point(1039, 225);
+			this->textBox3->Location = System::Drawing::Point(1039, 151);
+			this->textBox3->Multiline = true;
 			this->textBox3->Name = L"textBox3";
 			this->textBox3->ReadOnly = true;
-			this->textBox3->Size = System::Drawing::Size(206, 20);
+			this->textBox3->Size = System::Drawing::Size(206, 94);
 			this->textBox3->TabIndex = 44;
 			// 
 			// numericUpDown1
@@ -1675,7 +1672,7 @@ namespace AImap {
 			if (listCell->findPositionXY(cell) != nullptr) {
 				cellOrigen = cell = listCell->findPositionXY(cell)->getData();
 				origen = arbol->existeVertice(cell);
-				textBox3->Text = "Unlocking: " + point.ToString();
+				// textBox3->Text = "Unlocking: " + point.ToString();
 				//moveTo(cell);
 			}
 
@@ -1758,7 +1755,7 @@ namespace AImap {
 
 				}
 			}
-			textBox3->Text = priority[0];
+			// textBox3->Text = priority[0];
 			for (int i = 0; i < 4; i++) {
 				if (priority[i] == "Arriba") {
 					destino = destinoArriba;
@@ -1790,6 +1787,7 @@ namespace AImap {
 					//MessageBox::Show("Añandiendo Origen: " + gcnew String(origen->elemento.getName().c_str()) + ", Destino: "+ 
 						//gcnew String(destino->elemento.getName().c_str()));
 					arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
+					destino->isArista = true;
 				}
 
 			}
@@ -1800,10 +1798,12 @@ namespace AImap {
 
 		void unlockCellDos(Point point) {
 			//Point point = panelMap->PointToClient(PointToScreen(pictureBox_Player->Location));
-			Cell cell, cellOrigen, cellArriba, cellAbajo, cellIzquierda, cellDerecha;
+			Cell cell, cellOrigen, cellArriba, cellAbajo, cellIzquierda, cellDerecha, cellAux;
 			Vertice *origen, *destinoArriba, *destinoAbajo, *destinoIzquierda, *destinoDerecha, *destino;
 			Ground ground, groundArriba, groundAbajo, groundIzquierda, groundDerecha;
 			String ^string;
+			float priceDestino;
+			float priceOrigen;
 
 			origen = destinoArriba = destinoAbajo = destinoIzquierda = destinoDerecha = nullptr;
 			point = Point(point.X / CELL_MAX_SIZE, point.Y / CELL_MAX_SIZE);
@@ -1813,7 +1813,7 @@ namespace AImap {
 			if (listCell->findPositionXY(cell) != nullptr) {
 				cellOrigen = cell = listCell->findPositionXY(cell)->getData();
 				origen = arbol->existeVertice(cell);
-				textBox3->Text = "Unlocking: " + point.ToString();
+				// textBox3->Text = "Unlocking: " + point.ToString();
 				//moveTo(cell);
 			}
 
@@ -1896,11 +1896,14 @@ namespace AImap {
 
 				}
 			}
-			textBox3->Text = priority[0];
+			textBox3->Text = "";
+			float distanceUno;
+			float distanceDos;
 			for (int i = 0; i < 4; i++) {
 				if (priority[i] == "Arriba") {
 					destino = destinoArriba;
 					ground = groundArriba;
+					//priceDestino = destino->elemento.getPrice();
 					//MessageBox::Show("Arriba");
 				}
 				else if (priority[i] == "Abajo") {
@@ -1925,7 +1928,27 @@ namespace AImap {
 				if (destino != nullptr && !arbol->existeArista(origen, destino) && listVisitados->findData(destino) == nullptr) {
 					//MessageBox::Show("Añandiendo Origen: " + gcnew String(origen->elemento.getName().c_str()) + ", Destino: "+ 
 						//gcnew String(destino->elemento.getName().c_str()));
-					arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
+					if (destino->isArista) {
+						distanceUno = destino->elemento.getDistanciaHN() + destino->elemento.getPrice() + origen->elemento.getDistanciaGN();
+						distanceDos = destino->elemento.getDistanciaHN() + destino->elemento.getDistanciaGN();
+						if (distanceUno < distanceDos) {
+							textBox3->Text += "\nEliminando; " + gcnew String(destino->elemento.getName().c_str()) +
+								"\n\t" + distanceUno + " - " + distanceDos;
+							cellAux = destino->elemento;
+							arbol->eliminarVertice(destino);
+							//MessageBox::Show("Deleting");
+							arbol->insertaVertice(cellAux);
+							destino = arbol->existeVertice(cellAux);
+							//arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
+							arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
+							destino->isArista = true;
+						}
+
+					}
+					else {
+						arbol->insertaArista(origen, destino, listGround->findData(ground)->getData().getValue());
+						destino->isArista = true;
+					}
 				}
 
 			}
@@ -2343,6 +2366,7 @@ namespace AImap {
 							float distancia = costoPadre + costoTerreno;
 
 							aux->verticePertenece->elemento.setDistanciaGN(distancia);
+							//listaVertices->findData(aux->verticePertenece)->getData()->elemento.setDistanciaGN(distancia);
 							///
 							if (listaVertices->findData(aux->verticePertenece) != nullptr) {   //Buscar si ya existe el adyacente en la lista
 								float distanciaExistente, distanciaNueva;
@@ -2422,24 +2446,24 @@ namespace AImap {
 			if (!listaVertices->isEmpty()) {
 
 				menorCosto = listaVertices->findMenorCostoAEst();
-
+				//textBox3->Text = "Sacando: " + gcnew String(menorCosto->elemento.getName().c_str()) + ":" + menorCosto->elemento.getDistanciaGN();
 				pathActual = actual = menorCosto;
 
 				listaVertices->deleteData(menorCosto);      ///Eliminar el vertice, sera el actual
 				if (listVisitados->findData(actual) == nullptr) {      ///Si el vertice no ha sido visitado
-					result += actual->elemento.getName() + ", ";              ///Se procesa
+					//result += actual->elemento.getName() + ", ";              ///Se procesa
 
-					str = gcnew String(actual->elemento.getName().c_str());
-					textBox1->Text += str;
+					//str = gcnew String(actual->elemento.getName().c_str());
+					//textBox1->Text += str;
 					listVisitados->insertData(actual);      ///colocar en visitados
 					moveToDos(actual->elemento);
 
 					aux = actual->listaAdy;
-
+					
 					while (aux != nullptr) {        ///Recorrido de aristas para los vertices destino
-						textBox3->Text += ",Insertar: ";
+						//textBox3->Text += ",Insertar: ";
 						if (listVisitados->findData(aux->verticePertenece) == nullptr) {        ///si no han sido visitados
-							textBox3->Text += gcnew String(aux->verticePertenece->elemento.getName().c_str()) + ",";
+							//textBox3->Text += gcnew String(aux->verticePertenece->elemento.getName().c_str()) + ",";
 							///
 							float distanciaHN = listCell->findData(aux->verticePertenece->elemento)->getData().getDistanciaHN();
 							aux->verticePertenece->elemento.setDistanciaHN(distanciaHN);
@@ -2449,6 +2473,8 @@ namespace AImap {
 							float distanciaGN = costoPadre + costoTerreno;
 
 							aux->verticePertenece->elemento.setDistanciaGN(distanciaGN);
+							//textBox3->Text = (aux->verticePertenece->elemento.getDistanciaGN().ToString() + " - " +
+							//	listaVertices->findData(aux->verticePertenece)->getData()->elemento.getDistanciaGN().ToString());
 							///
 							if (listaVertices->findData(aux->verticePertenece) != nullptr) {   //Buscar si ya existe el adyacente en la lista
 								float distanciaExistenteGN, distanciaNueva, distanciaExistenteHN, distanciaExistente;
@@ -2459,7 +2485,7 @@ namespace AImap {
 								distanciaExistente = distanciaExistenteGN + distanciaExistenteHN;
 
 								distanciaNueva = aux->verticePertenece->elemento.getDistanciaGN() + aux->verticePertenece->elemento.getDistanciaHN();
-								textBox3->Text = "Distancias: " + distanciaNueva + " - " +distanciaExistente;
+								// textBox3->Text = "Distancias: " + distanciaNueva + " - " +distanciaExistente;
 								if (distanciaNueva < distanciaExistente) {
 									Is = true;
 									listaVertices->deleteData(aux->verticePertenece);
@@ -2939,6 +2965,7 @@ namespace AImap {
 			Cell element, elementGoal;
 			int goalId = pointGoal;
 			elementGoal.setId(goalId);
+			//MessageBox::Show(goalId.ToString());
 			elementGoal = listCell->findData(elementGoal)->getData();
 
 			//MessageBox::Show(pointGoal.ToString());
@@ -2954,6 +2981,7 @@ namespace AImap {
 
 				if (comboBox_Distance->SelectedIndex == 0) {
 					listCell->findData(element)->getData().setDistanciaHN(element.calcularDistManhattan(element, elementGoal));
+					//MessageBox::Show(listCell->findData(element)->getData().getDistanciaHN().ToString());
 				}
 				else if (comboBox_Distance->SelectedIndex == 1) {
 					listCell->findData(element)->getData().setDistanciaHN(element.calcularDistEuclideana(element, elementGoal));
@@ -3110,7 +3138,7 @@ namespace AImap {
 		cell.setPositionX(pointNext.X);
 		cell.setPositionY(pointNext.Y);
 		pointActual = Point(pointActual.X / CELL_MAX_SIZE, pointActual.Y / CELL_MAX_SIZE);
-		textBox3->Text += gcnew String(listCell->findPositionXY(cell)->getData().getName().c_str()) + ":" + pointNext.ToString() + "," + pointActual.ToString();
+		// textBox3->Text += gcnew String(listCell->findPositionXY(cell)->getData().getName().c_str()) + ":" + pointNext.ToString() + "," + pointActual.ToString();
 		auxPoint = Point(pointNext.X - pointActual.X, pointNext.Y - pointActual.Y);
 
 		if (pictureBox_Player->Location != pictureBox_Goal->Location) {
@@ -3160,7 +3188,7 @@ namespace AImap {
 		cell.setPositionX(pointNext.X);
 		cell.setPositionY(pointNext.Y);
 		pointActual = Point(pointActual.X / CELL_MAX_SIZE, pointActual.Y / CELL_MAX_SIZE);
-		textBox3->Text += gcnew String(listCell->findPositionXY(cell)->getData().getName().c_str()) + ":" + pointNext.ToString() + "," + pointActual.ToString();
+		// textBox3->Text += gcnew String(listCell->findPositionXY(cell)->getData().getName().c_str()) + ":" + pointNext.ToString() + "," + pointActual.ToString();
 		auxPoint = Point(pointNext.X - pointActual.X, pointNext.Y - pointActual.Y);
 
 		if (pictureBox_Player->Location != pictureBox_Goal->Location) {
