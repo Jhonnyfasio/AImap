@@ -18,8 +18,9 @@ namespace AImap {
 		MenuMap(void)
 		{
 			InitializeComponent();
-			//float numero = 10;
-			//MessageBox:Show(numero);
+			float numero = 0.10;
+			String ^specifier = "G";
+			//System::Windows::Forms::MessageBox::Show(numero.ToString(specifier, gcnew System::Globalization::CultureInfo("eu-Es")));
 			//
 			//TODO: agregar código de constructor aquí
 			//

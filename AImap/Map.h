@@ -590,7 +590,7 @@ namespace AImap {
 			this->btn_ShowMap->Name = L"btn_ShowMap";
 			this->btn_ShowMap->Size = System::Drawing::Size(94, 32);
 			this->btn_ShowMap->TabIndex = 49;
-			this->btn_ShowMap->Text = L"Arbol";
+			this->btn_ShowMap->Text = L"Árbol";
 			this->btn_ShowMap->UseVisualStyleBackColor = false;
 			this->btn_ShowMap->Click += gcnew System::EventHandler(this, &Map::btn_ShowMap_Click);
 			// 
@@ -618,7 +618,7 @@ namespace AImap {
 			this->label11->Name = L"label11";
 			this->label11->Size = System::Drawing::Size(54, 13);
 			this->label11->TabIndex = 53;
-			this->label11->Text = L"Velovidad";
+			this->label11->Text = L"Velocidad";
 			// 
 			// Map
 			// 
@@ -1531,10 +1531,9 @@ namespace AImap {
 								for each (TextBox ^var in arrayTextBox)
 								{
 									if (var->Name == string) {
-										specifier = "G";
-										costoJugador.getCosto().ToString();
-										var->Text = costoJugador.getCosto().ToString(gcnew System::Globalization::CultureInfo("en-ES"));
-										//MessageBox::Show(costoJugador.getCosto().ToString(gcnew System::Globalization::CultureInfo("en-US")));
+										var->Text = costoJugador.getCosto().ToString();
+										//MessageBox::Show();
+										//Console::WriteLine(costoJugador.getCosto().ToString());
 										//MessageBox::Show("Changing");
 									}
 								}
@@ -2755,22 +2754,20 @@ namespace AImap {
 				text = txt->Text;
 				//MessageBox::Show(System::Single::Parse(("0.12"), gcnew System::Globalization::CultureInfo("en-US")).ToString());
 				listGround->findData(ground)->getData().setValue(System::Math::Truncate((Convert::ToDouble((txt->Text), gcnew System::Globalization::CultureInfo("en-US")) * 100)) / 100);
-				txt->Text = (System::Math::Truncate((Convert::ToDouble((txt->Text), gcnew System::Globalization::CultureInfo("en-US")) * 100)) / 100).ToString();
+				//txt->Text = (System::Math::Truncate((Convert::ToDouble((txt->Text), gcnew System::Globalization::CultureInfo("en-US")) * 100)) / 100).ToString();
 				
 				marshalString(comboBox_Player->Text,str);
 				costoJugador.setName(str);
 				costoJugador.setGroundName(listGround->findData(ground)->getData().getName());
-				//MessageBox::Show(gcnew String(listCostoJugador->findData(costoJugador)->getData().getName().c_str()));
 				if (listCostoJugador->findData(costoJugador) != nullptr) {
-					costo = System::Math::Truncate((Convert::ToDouble((txt->Text), gcnew System::Globalization::CultureInfo("en-US")) * 100)) / 100;
-					listCostoJugador->findData(costoJugador)->getData().setCosto(costo);
-					//MessageBox::Show("Cambiando costo: " + costo + " - " + gcnew String(str.c_str()));
+					listCostoJugador->findData(costoJugador)->getData().setCosto(System::Math::Truncate((Convert::ToDouble((txt->Text), gcnew System::Globalization::CultureInfo("en-US")) * 100)) / 100);
+
 				}
 				
 			}
 		}
 		else {
-			MessageBox::Show("Ingrese un valor numérico correcto");
+			
 			txt->Text = "0";
 		}
 	}
@@ -3023,6 +3020,7 @@ namespace AImap {
 				}
 				else if (comboBox_Distance->SelectedIndex == 1 && (selectedIndex == 3 || selectedIndex == 4)) {
 					listCell->findData(element)->getData().setDistanciaHN(element.calcularDistEuclideana(element, elementGoal));
+					//MessageBox::Show(listCell->FindData(element)->getData().getDistancia)
 				}
 			}
 

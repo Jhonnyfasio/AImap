@@ -123,6 +123,7 @@ public:
 
 	float calcularDistEuclideana(Cell a, Cell b) {
 		float auxDistE;
+		
 
 		auxDistE = System::Math::Truncate(((System::Math::Sqrt((System::Math::Pow((b.positionX - a.positionX), 2)) +
 			(System::Math::Pow((b.positionY - a.positionY), 2)))) * 100)) / 100;
