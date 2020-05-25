@@ -18,6 +18,8 @@ namespace AImap {
 		MenuMap(void)
 		{
 			InitializeComponent();
+			//float numero = 10;
+			//MessageBox:Show(numero);
 			//
 			//TODO: agregar código de constructor aquí
 			//

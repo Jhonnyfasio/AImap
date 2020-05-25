@@ -582,6 +582,7 @@ namespace AImap {
 			// btn_ShowMap
 			// 
 			this->btn_ShowMap->BackColor = System::Drawing::Color::LimeGreen;
+			this->btn_ShowMap->Enabled = false;
 			this->btn_ShowMap->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(0)));
 			this->btn_ShowMap->ForeColor = System::Drawing::SystemColors::ButtonHighlight;
@@ -1129,6 +1130,7 @@ namespace AImap {
 
 			//algo = reader->ReadToEnd();
 			generalString = reader->Split('|');
+
 			//MessageBox::Show(reader + " - "+ generalString + " - " + generalString->Length);
 			for (int i = 0; i < generalString->Length - 1; i++)
 			{
@@ -1487,6 +1489,7 @@ namespace AImap {
 			String ^string;
 			std::string str;
 			int id;
+			System::String ^specifier;
 
 			if (comboBox_Player->Text != "") {
 
@@ -1498,6 +1501,7 @@ namespace AImap {
 
 						marshalString(comboBox_Player->Text, str);
 						costoJugador.setName(str);
+						//MessageBox::Show(gcnew String(str.c_str()));
 
 						if (listCostoJugador->findData(costoJugador) != nullptr) {
 							id = Int32::Parse(var->Name->Substring(14));
@@ -1527,7 +1531,10 @@ namespace AImap {
 								for each (TextBox ^var in arrayTextBox)
 								{
 									if (var->Name == string) {
-										var->Text = costoJugador.getCosto().ToString();
+										specifier = "G";
+										costoJugador.getCosto().ToString();
+										var->Text = costoJugador.getCosto().ToString(gcnew System::Globalization::CultureInfo("en-ES"));
+										//MessageBox::Show(costoJugador.getCosto().ToString(gcnew System::Globalization::CultureInfo("en-US")));
 										//MessageBox::Show("Changing");
 									}
 								}
@@ -1624,6 +1631,8 @@ namespace AImap {
 			comboBox_Algoritmos->Enabled = false;
 			comboBox_Distance->Enabled = false;
 			comboBox_Priority->Enabled = false;
+
+			btn_ShowMap->Enabled = true;
 		}
 
 		void enableObject() {
@@ -1652,6 +1661,8 @@ namespace AImap {
 			comboBox_Algoritmos->Enabled = true;
 			comboBox_Distance->Enabled = true;
 			comboBox_Priority->Enabled = true;
+
+			btn_ShowMap->Enabled = false;
 		}
 
 		void setVisit(Point point) {
@@ -2725,8 +2736,11 @@ namespace AImap {
 	void textBox_Color_Float(Object^ sender, EventArgs^ e) {
 		TextBox ^txt = safe_cast<TextBox^>(sender);
 		Ground ground;
+		CostoJugador costoJugador;
 		String ^text;
+		std::string str;
 		int id;
+		float costo;
 		//MessageBox::Show("Cambió");
 		if (txt->Text == "") {
 			txt->Text == "0";
@@ -2742,6 +2756,17 @@ namespace AImap {
 				//MessageBox::Show(System::Single::Parse(("0.12"), gcnew System::Globalization::CultureInfo("en-US")).ToString());
 				listGround->findData(ground)->getData().setValue(System::Math::Truncate((Convert::ToDouble((txt->Text), gcnew System::Globalization::CultureInfo("en-US")) * 100)) / 100);
 				txt->Text = (System::Math::Truncate((Convert::ToDouble((txt->Text), gcnew System::Globalization::CultureInfo("en-US")) * 100)) / 100).ToString();
+				
+				marshalString(comboBox_Player->Text,str);
+				costoJugador.setName(str);
+				costoJugador.setGroundName(listGround->findData(ground)->getData().getName());
+				//MessageBox::Show(gcnew String(listCostoJugador->findData(costoJugador)->getData().getName().c_str()));
+				if (listCostoJugador->findData(costoJugador) != nullptr) {
+					costo = System::Math::Truncate((Convert::ToDouble((txt->Text), gcnew System::Globalization::CultureInfo("en-US")) * 100)) / 100;
+					listCostoJugador->findData(costoJugador)->getData().setCosto(costo);
+					//MessageBox::Show("Cambiando costo: " + costo + " - " + gcnew String(str.c_str()));
+				}
+				
 			}
 		}
 		else {
@@ -3478,10 +3503,10 @@ namespace AImap {
 				//MessageBox::Show("X min: " + x + " - " + "yMin" + y);
 			}
 			else if (nivel > 8 && x < 500) {
-				this->picTree->Size = System::Drawing::Size(picTree->Width, y + 30);
+				this->picTree->Size = System::Drawing::Size(picTree->Width, y + 33);
 			}
 			else if (nivel <= 8 && x > 500) {
-				this->picTree->Size = System::Drawing::Size(x + 30, picTree->Height);
+				this->picTree->Size = System::Drawing::Size(x + 33, picTree->Height);
 			}
 		}
 
