@@ -537,11 +537,12 @@ namespace AImap {
 			// 
 			// textBox3
 			// 
-			this->textBox3->Location = System::Drawing::Point(805, 225);
+			this->textBox3->Enabled = false;
+			this->textBox3->Location = System::Drawing::Point(1059, 303);
 			this->textBox3->Multiline = true;
 			this->textBox3->Name = L"textBox3";
 			this->textBox3->ReadOnly = true;
-			this->textBox3->Size = System::Drawing::Size(206, 94);
+			this->textBox3->Size = System::Drawing::Size(206, 16);
 			this->textBox3->TabIndex = 44;
 			this->textBox3->Visible = false;
 			// 
@@ -624,6 +625,7 @@ namespace AImap {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+			this->AutoScroll = true;
 			this->AutoSize = true;
 			this->AutoSizeMode = System::Windows::Forms::AutoSizeMode::GrowAndShrink;
 			this->ClientSize = System::Drawing::Size(1334, 889);
